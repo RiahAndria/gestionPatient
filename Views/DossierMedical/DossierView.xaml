@@ -1,0 +1,10 @@
+<UserControl x:Class="Patients.Views.DossierMedical.DossierView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        <Border Background="White" CornerRadius="8" Padding="20">
+             <StackPanel>
+                <TextBlock Text="Dossier du patient" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" />
+                <Button Content="Test" Click="BtnTest_Click" />
+            </StackPanel>
+        </Border>
+</UserControl>

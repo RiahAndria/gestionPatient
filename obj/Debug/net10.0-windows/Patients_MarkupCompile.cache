@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\HP\OneDrive\Desktop\Cours\C#\projet_exam\Patients\App.xaml
-61198473171
+61086598663
 
-13-2144180578
+16-1462505905
 206-1943539212
-MainWindow.xaml;Views\DossierView.xaml;Views\HistoriqueView.xaml;Views\MedecinFormView.xaml;Views\PatientFormView.xaml;Views\RendezVousView.xaml;
+MainWindow.xaml;Views\DossierMedical\DossierView.xaml;Views\Historique\HistoriqueView.xaml;Views\Medecin\MedecinFormView.xaml;Views\Patient\PatientFormView.xaml;Views\RendezVous\RendezVousView.xaml;
 
 True
 

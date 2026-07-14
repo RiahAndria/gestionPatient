@@ -9,4 +9,6 @@ public class Dossier
    public string GroupeSanguin { get; set; } = string.Empty; // Pas obligatoire
    public string Allergies { get; set; } = string.Empty;
    public string Diagnotique { get; set; } = string.Empty;
+   public string Traitement { get; set; } = string.Empty;
+   public string Antecedents { get; set; } = string.Empty;
 }

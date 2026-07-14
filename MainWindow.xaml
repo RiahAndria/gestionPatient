@@ -1,7 +1,11 @@
 <Window x:Class="Patients.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:views="clr-namespace:Patients.Views"
+        xmlns:patient="clr-namespace:Patients.Views.Patient"
+        xmlns:medecin="clr-namespace:Patients.Views.Medecin"
+        xmlns:dossier="clr-namespace:Patients.Views.DossierMedical"
+        xmlns:historique="clr-namespace:Patients.Views.Historique"
+        xmlns:rendezvous="clr-namespace:Patients.Views.RendezVous"
         Title="Gestion des patients" Height="700" Width="900">
 
     <Grid Background="#F3F4F6">
@@ -12,23 +16,23 @@
 
         <TabControl Grid.Row="0" Margin="20,15,20,10" Background="Transparent" BorderThickness="0" MaxWidth="500">
             <TabItem Header="Patient" FontSize="14" FontWeight="SemiBold">
-                <views:PatientFormView Margin="0,10,0,0"/>
+                <patient:PatientFormView Margin="0,10,0,0"/>
             </TabItem>
             
             <TabItem Header="Médecin" FontSize="14" FontWeight="SemiBold">
-                <views:MedecinFormView Margin="0,10,0,0"/>
+                <medecin:MedecinFormView Margin="0,10,0,0"/>
             </TabItem>
 
             <TabItem Header="Dossier" FontSize="14" FontWeight="SemiBold">
-                <views:DossierView Margin="0,10,0,0"/>
+                <dossier:DossierView Margin="0,10,0,0"/>
             </TabItem>
 
             <TabItem Header="Historique" FontSize="14" FontWeight="SemiBold">
-                <views:HistoriqueView Margin="0,10,0,0"/>
+                <historique:HistoriqueView Margin="0,10,0,0"/>
             </TabItem>
 
             <TabItem Header="Rendez-vous" FontSize="14" FontWeight="SemiBold">
-                <views:RendezVousView Margin="0,10,0,0"/>
+                <rendezvous:RendezVousView Margin="0,10,0,0"/>
             </TabItem>
 
         </TabControl>

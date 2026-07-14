@@ -8,5 +8,4 @@ public class RendezVous
    public DateTime Date { get; set; }
    public string Heure { get; set; } = string.Empty;
    public string Motif { get; set; } = string.Empty;
-   public string Antecedents { get; set; } = string.Empty;
 }

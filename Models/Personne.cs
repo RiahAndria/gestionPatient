@@ -7,7 +7,7 @@ public class Personne
     public string Prenom { get; set; } = string.Empty;
     public DateTime DateNaissance { get; set; }
     public string Genre { get; set; } = string.Empty;
-    public string adresse { get; set; } = string.Empty;
-    public string telephone { get; set; } = string.Empty;
-    public string email { get; set; } = string.Empty;
+    public string Adresse { get; set; } = string.Empty;
+    public string Telephone { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 }
