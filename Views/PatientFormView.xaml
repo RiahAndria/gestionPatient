@@ -1,0 +1,52 @@
+<UserControl x:Class="Patients.Views.PatientFormView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="White" CornerRadius="8" Padding="20">
+        <StackPanel>
+            <TextBlock Text="Ajouter un patient" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Nom" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtNom" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Prénom" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtPrenom" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Date de naissance" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <DatePicker x:Name="dpDateNaissance" Height="32"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Genre" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="cbGenre" Height="32" VerticalContentAlignment="Center">
+                        <ComboBoxItem Content="Homme"/>
+                        <ComboBoxItem Content="Femme"/>
+                        <ComboBoxItem Content="Autre" IsSelected="True"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+
+            <Button Content="Ajouter le patient" Click="btnAjouter_Click" Height="36" Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>
+            <TextBlock x:Name="txtMessage" Text="" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+        </StackPanel>
+    </Border>
+</UserControl>
