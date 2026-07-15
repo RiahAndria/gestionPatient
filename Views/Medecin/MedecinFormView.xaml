@@ -66,6 +66,44 @@
                 </StackPanel>
             </Grid>
 
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Statut" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtStatutMedecin" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Fonction" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtFonctionMedecin" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Taux Horaire" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtTauxHoraireMedecin" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Disponibilité" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="cbDisponibiliteMedecin" Height="32" VerticalContentAlignment="Center">
+                        <ComboBoxItem Content="Disponible"/>
+                        <ComboBoxItem Content="Indisponible" IsSelected="True"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
             <Button Content="Ajouter le médecin" Click="btnAjouterMedecin_Click" Height="36" Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>
             <TextBlock x:Name="txtMessageMedecin" Text="" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center" Margin="0,8,0,0"/>
         </StackPanel>
