@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Patients.Models;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Patients.Data
 {
@@ -18,8 +20,20 @@ namespace Patients.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // La chaîne de connexion PostgreSQL (à adapter avec ton mot de passe)
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=gestion_patients_db;Username=postgres;Password=riah1234");
+            if (!optionsBuilder.IsConfigured)
+            {
+                // 1. On va chercher le fichier appsettings.json
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .Build();
+
+                // 2. On récupère la chaîne de connexion "DefaultConnection"
+                string connectionString = configuration.GetConnectionString("DefaultConnection")!;
+                
+                // 3. On l'injecte dans Npgsql
+                optionsBuilder.UseNpgsql(connectionString);
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
