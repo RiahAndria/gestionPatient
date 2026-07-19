@@ -74,29 +74,15 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Numero Dossier" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
-                    <TextBox x:Name="txtNumDossierPatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
-                </StackPanel>
+                
 
-                <StackPanel Grid.Column="2">
+                <StackPanel Grid.Column="0">
                     <TextBlock Text="Numero Assurance" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
                     <TextBox x:Name="txtNumAssurancePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="4">
-                    <TextBlock Text="Medecin Traitant" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
-                    <TextBox x:Name="txtNomMedecinTraitantPatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
-<!--            
-                    <ComboBox x:Name="cbNomMedecinTraitantPatient" Height="32" VerticalContentAlignment="Center">
-                        <ComboBoxItem Content="Medecin 1"/>
-                    </ComboBox>
--->
-                </StackPanel>
 
             </Grid>
             <Button Content="Ajouter le patient" Click="btnAjouter_Click" Height="36" Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>

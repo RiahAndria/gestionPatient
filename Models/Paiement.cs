@@ -1,5 +1,3 @@
-using System;
-
 namespace Patients.Models;
 
 public class Paiement

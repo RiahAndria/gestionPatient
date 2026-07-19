@@ -22,16 +22,13 @@ namespace Patients.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // 1. On va chercher le fichier appsettings.json
                 IConfigurationRoot configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
 
-                // 2. On récupère la chaîne de connexion "DefaultConnection"
                 string connectionString = configuration.GetConnectionString("DefaultConnection")!;
                 
-                // 3. On l'injecte dans Npgsql
                 optionsBuilder.UseNpgsql(connectionString);
             }
         }

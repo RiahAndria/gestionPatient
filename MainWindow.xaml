@@ -6,48 +6,59 @@
         xmlns:dossier="clr-namespace:Patients.Views.DossierMedical"
         xmlns:historique="clr-namespace:Patients.Views.Historique"
         xmlns:rendezvous="clr-namespace:Patients.Views.RendezVous"
-        Title="Gestion des patients" Height="700" Width="900">
+        Title="Gestion Médicale" Height="800" Width="1000">
 
     <Grid Background="#F3F4F6">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <TabControl Margin="15" Background="Transparent" BorderThickness="0">
+            
+            <TabItem Header="Patients" FontSize="14" FontWeight="SemiBold">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,10,0,0">
+                        <patient:PatientFormView x:Name="PatientForm"/>
+                        
+                        <Border Background="White" CornerRadius="8" Margin="0,20,0,20" Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="Liste des Patients" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                                
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtRecherche" Grid.Column="0" Height="32" Padding="6" 
+                                             VerticalContentAlignment="Center" Tag="Rechercher par matricule, nom ou prénom..."/>
+                                    <Button Content="Rechercher" Grid.Column="1" Width="100" Margin="10,0,0,0" 
+                                            Click="btnRecherche_Click" Background="#4B5563" Foreground="White"/>
+                                </Grid>
 
-        <TabControl Grid.Row="0" Margin="20,15,20,10" Background="Transparent" BorderThickness="0" MaxWidth="500">
-            <TabItem Header="Patient" FontSize="14" FontWeight="SemiBold">
-                <patient:PatientFormView Margin="0,10,0,0"/>
+                                <DataGrid x:Name="dgPatients" AutoGenerateColumns="False" IsReadOnly="True" 
+                                          MouseDoubleClick="dgPatients_MouseDoubleClick" Height="300">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Matricule" Binding="{Binding NumeroDossier}" Width="120"/>
+                                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*"/>
+                                        <DataGridTextColumn Header="Prénom" Binding="{Binding Prenom}" Width="*"/>
+                                        <DataGridTextColumn Header="Genre" Binding="{Binding Genre}" Width="100"/>
+                                        <DataGridTextColumn Header="Âge" Binding="{Binding DateNaissance}" Width="80"/> 
+                                        </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
             
-            <TabItem Header="Médecin" FontSize="14" FontWeight="SemiBold">
+            <TabItem Header="Médecins" FontSize="14" FontWeight="SemiBold">
                 <medecin:MedecinFormView Margin="0,10,0,0"/>
             </TabItem>
-
-            <TabItem Header="Dossier" FontSize="14" FontWeight="SemiBold">
+            <TabItem Header="Dossiers" FontSize="14" FontWeight="SemiBold">
                 <dossier:DossierView Margin="0,10,0,0"/>
             </TabItem>
-
             <TabItem Header="Historique" FontSize="14" FontWeight="SemiBold">
                 <historique:HistoriqueView Margin="0,10,0,0"/>
             </TabItem>
-
             <TabItem Header="Rendez-vous" FontSize="14" FontWeight="SemiBold">
                 <rendezvous:RendezVousView Margin="0,10,0,0"/>
             </TabItem>
-
         </TabControl>
-
-        <Border Grid.Row="1" Background="White" CornerRadius="8" Margin="20,0,20,20" Padding="15">
-            <DataGrid x:Name="dgPersonnes" AutoGenerateColumns="False" IsReadOnly="True">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                    <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*"/>
-                    <DataGridTextColumn Header="Prénom" Binding="{Binding Prenom}" Width="*"/>
-                    <DataGridTextColumn Header="Date de Naissance" Binding="{Binding DateNaissance, StringFormat=dd/MM/yyyy}" Width="140"/>
-                    <DataGridTextColumn Header="Genre" Binding="{Binding Genre}" Width="100"/>
-                    <DataGridTextColumn Header="Rôle" Binding="{Binding Role}" Width="100"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
     </Grid>
 </Window>
