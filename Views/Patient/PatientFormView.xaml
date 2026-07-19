@@ -49,8 +49,6 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
@@ -58,12 +56,8 @@
                     <TextBox x:Name="txtAdressePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
+                
                 <StackPanel Grid.Column="2">
-                    <TextBlock Text="Numéro de téléphone" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
-                    <TextBox x:Name="txtTelephonePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
-                </StackPanel>
-
-                <StackPanel Grid.Column="4">
                     <TextBlock Text="Adresse e-mail" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
                     <TextBox x:Name="txtEmailPatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
                 </StackPanel>
@@ -76,9 +70,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                
-
                 <StackPanel Grid.Column="0">
+                    <TextBlock Text="Numéro de téléphone" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtTelephonePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
                     <TextBlock Text="Numero Assurance" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
                     <TextBox x:Name="txtNumAssurancePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
                 </StackPanel>
