@@ -37,8 +37,8 @@
                                         <DataGridTextColumn Header="Matricule" Binding="{Binding NumeroDossier}" Width="120"/>
                                         <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*"/>
                                         <DataGridTextColumn Header="Prénom" Binding="{Binding Prenom}" Width="*"/>
-                                        <DataGridTextColumn Header="Genre" Binding="{Binding Genre}" Width="100"/>
-                                        <DataGridTextColumn Header="Âge" Binding="{Binding DateNaissance}" Width="80"/> 
+                                        <DataGridTextColumn Header="Genre" Binding="{Binding Genre}" Width="150"/>
+                                        <DataGridTextColumn Header="Âge" Binding="{Binding DateNaissance}" Width="150"/> 
                                         </DataGrid.Columns>
                                 </DataGrid>
                             </StackPanel>

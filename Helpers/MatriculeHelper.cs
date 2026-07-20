@@ -15,6 +15,8 @@ public static class MatriculeHelper
         string codeAssurance = estAssure ? "10" : "00";
 
         // Gestion du compteur alphanumérique (000A à 999Z)
+        //  je compte trouver un moyen pour passer de 999Z à 000AA mlus tard mais bon... 
+        // Pour le moment on vas en rester là
         string codeUnique = $"{_compteurNumerique:D3}{_lettreCourante}";
 
         // Incrémentation pour le prochain patient
