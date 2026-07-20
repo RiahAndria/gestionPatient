@@ -44,7 +44,44 @@
                     </ComboBox>
                 </StackPanel>
             </Grid>
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Adresse" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtAdressePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Adresse e-mail" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtEmailPatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Numéro de téléphone" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtTelephonePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Numero Assurance" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="txtNumAssurancePatient" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+
+            </Grid>
             <Button Content="Ajouter le patient" Click="btnAjouter_Click" Height="36" Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>
             <TextBlock x:Name="txtMessage" Text="" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center" Margin="0,8,0,0"/>
         </StackPanel>

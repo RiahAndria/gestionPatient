@@ -11,7 +11,6 @@ public partial class DossierView : UserControl
 
     private void BtnTest_Click(object sender, System.Windows.RoutedEventArgs e)
     {
-        // Logique pour le bouton Test
         System.Windows.MessageBox.Show("Bouton Test cliqué !");
     }
 }
