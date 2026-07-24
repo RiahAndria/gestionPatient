@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -65,14 +63,13 @@ public class PatientService
 
             // et maintenant on insère dans la table patient... Je vous ai dit que faire un putain d'héritage était une perte de temps ici
             string queryPatient = @"
-                INSERT INTO PATIENT (ID, NUMERODOSSIER, NUMEROPRESCRITPTION, NOM, PRENOM, DATEDENAISSANCE, GENRE, ADRESSE, TELEPHONE, MAIL)
-                VALUES (@Id, @NumeroDossier, @NumeroPrescription, @Nom, @Prenom, @DateNaissance, @Genre, @Adresse, @Telephone, @Mail);";
+                INSERT INTO PATIENT (ID, NUMERODOSSIER, NOM, PRENOM, DATEDENAISSANCE, GENRE, ADRESSE, TELEPHONE, MAIL)
+                VALUES (@Id, @NumeroDossier, @Nom, @Prenom, @DateNaissance, @Genre, @Adresse, @Telephone, @Mail);";
 
             using (var cmdPatient = new NpgsqlCommand(queryPatient, conn, transaction))
             {
                 cmdPatient.Parameters.AddWithValue("Id", patient.Id);
                 cmdPatient.Parameters.AddWithValue("NumeroDossier", patient.NumeroDossier);
-                cmdPatient.Parameters.AddWithValue("NumeroPrescription", string.IsNullOrEmpty(patient.NumeroPrescritption) ? (object)DBNull.Value : patient.NumeroPrescritption);
                 cmdPatient.Parameters.AddWithValue("Nom", patient.Nom);
                 cmdPatient.Parameters.AddWithValue("Prenom", patient.Prenom);
                 cmdPatient.Parameters.AddWithValue("DateNaissance", patient.DateNaissance);
@@ -80,8 +77,8 @@ public class PatientService
                 cmdPatient.Parameters.AddWithValue("Adresse", patient.Adresse);
                 cmdPatient.Parameters.AddWithValue("Telephone", patient.Telephone);
                 cmdPatient.Parameters.AddWithValue("Mail", patient.Email);
-                
-                cmdPatient.ExecuteNonQuery();
+
+            cmdPatient.ExecuteNonQuery();
             }
 
             // Valider l'ensemble si tout s'est bien passé
@@ -100,10 +97,9 @@ public class PatientService
         var liste = new List<Patient>();
         string query = @"
             SELECT p.ID, p.NOM, p.PRENOM, p.DATEDENAISSANCE, p.GENRE, p.ADRESSE, p.TELEPHONE, p.MAIL, 
-                   pa.NUMERODOSSIER, pa.NUMEROPRESCRITPTION
+                pa.NUMERODOSSIER
             FROM PATIENT pa
             INNER JOIN PERSONNE p ON pa.ID = p.ID;";
-
         using var conn = new NpgsqlConnection(_connectionString);
         using var cmd = new NpgsqlCommand(query, conn);
         
@@ -122,9 +118,7 @@ public class PatientService
                 Adresse = reader.GetString(5),
                 Telephone = reader.GetString(6),
                 Email = reader.GetString(7),
-                NumeroDossier = reader.GetString(8),
-                // Sécurisation contre le NULL :
-                NumeroPrescritption = reader.IsDBNull(9) ? string.Empty : reader.GetString(9)
+                NumeroDossier = reader.GetString(8)
             });
         }
 

@@ -1,0 +1,48 @@
+<!-- on crée un rendez-vous pour un patient avec un médecin à une date et heure précises-->
+<UserControl x:Class="Patients.Views.RendezVous.RendezVousFormView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Margin="16">
+        <TextBlock Text="Nouveau rendez-vous" Style="{StaticResource TitrePage}"/>
+
+        <TextBlock Text="Patient" Style="{StaticResource Libelle}"/>
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="90"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="txtRecherchePatient" Grid.Column="0" Style="{StaticResource ChampSaisie}"
+                     TextChanged="txtRecherchePatient_TextChanged"/>
+        </Grid>
+        <ComboBox x:Name="cbPatient" Style="{StaticResource ComboSaisie}" Margin="0,0,0,12" DisplayMemberPath="NomComplet"/>
+
+        <TextBlock Text="Médecin disponible" Style="{StaticResource Libelle}"/>
+        <ComboBox x:Name="cbMedecin" Style="{StaticResource ComboSaisie}" Margin="0,0,0,12" DisplayMemberPath="NomComplet"/>
+
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Date" Style="{StaticResource Libelle}"/>
+                <DatePicker x:Name="dpDate" Height="34"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Heure (HH:mm)" Style="{StaticResource Libelle}"/>
+                <TextBox x:Name="txtHeure" Style="{StaticResource ChampSaisie}" Text="09:00"/>
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Text="Motif" Style="{StaticResource Libelle}"/>
+        <TextBox x:Name="txtMotif" Style="{StaticResource ChampSaisie}" Height="60" TextWrapping="Wrap"
+                 AcceptsReturn="True" Margin="0,0,0,16"/>
+
+        <TextBlock x:Name="txtMessage" Margin="0,0,0,10" FontSize="12"/>
+
+        <Button Content="Créer le rendez-vous" Style="{StaticResource BoutonPrimaire}"
+                HorizontalAlignment="Right" Click="btnCreer_Click"/>
+    </StackPanel>
+</UserControl>
