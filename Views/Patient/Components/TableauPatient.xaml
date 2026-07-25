@@ -1,0 +1,31 @@
+<UserControl x:Class="Patients.Views.Patient.Components.TableauPatient"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="White" CornerRadius="8" Padding="15">
+        <StackPanel>
+            <TextBlock Text="Liste des Patients" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+            
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="txtRecherche" Grid.Column="0" Height="32" Padding="6" 
+                         VerticalContentAlignment="Center" Tag="Rechercher par matricule, nom ou prénom..."/>
+                <Button Content="Rechercher" Grid.Column="1" Width="100" Margin="10,0,0,0" 
+                        Click="btnRecherche_Click" Background="#4B5563" Foreground="White"/>
+            </Grid>
+
+            <DataGrid x:Name="dgPatients" AutoGenerateColumns="False" IsReadOnly="True" 
+                      MouseDoubleClick="dgPatients_MouseDoubleClick" Height="300">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Matricule" Binding="{Binding NumeroDossier}" Width="120"/>
+                    <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*"/>
+                    <DataGridTextColumn Header="Prénom" Binding="{Binding Prenom}" Width="*"/>
+                    <DataGridTextColumn Header="Genre" Binding="{Binding Genre}" Width="150"/>
+                    <DataGridTextColumn Header="Âge" Binding="{Binding DateNaissance}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Border>
+</UserControl>
