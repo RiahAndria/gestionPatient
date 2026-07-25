@@ -37,25 +37,25 @@ public class PatientService
             using (var cmdDossier = new NpgsqlCommand(queryDossier, conn, transaction))
             {
                 cmdDossier.Parameters.AddWithValue("NumeroDossier", patient.NumeroDossier);
-                cmdDossier.Parameters.AddWithValue("Poids", 0.0);           // Valeur par défaut
-                cmdDossier.Parameters.AddWithValue("Taille", 0.0);          // Valeur par défaut
-                cmdDossier.Parameters.AddWithValue("GroupeSanguin", "N/A"); // Valeur par défaut
-                cmdDossier.Parameters.AddWithValue("Allergies", DBNull.Value);
-                cmdDossier.Parameters.AddWithValue("Antecedents", DBNull.Value);
+                cmdDossier.Parameters.AddWithValue("Poids", 0.0);                   // Valeur par défaut
+                cmdDossier.Parameters.AddWithValue("Taille", 0.0);                  // Valeur par défaut
+                cmdDossier.Parameters.AddWithValue("GroupeSanguin", "N/A");         // Valeur par défaut
+                cmdDossier.Parameters.AddWithValue("Allergies", DBNull.Value);      // Aucun
+                cmdDossier.Parameters.AddWithValue("Antecedents", DBNull.Value);    // Inconnu
                 cmdDossier.ExecuteNonQuery();
             }
 
             // et maintenant on insère dans la table personne, svp faites que ça marche sinon je pète un câble
             string queryPersonne = @"
                 INSERT INTO PERSONNE (ID, NOM, PRENOM, DATEDENAISSANCE, GENRE, ADRESSE, TELEPHONE, MAIL)
-                VALUES (@Id, @Nom, @Prenom, @DateNaissance, @Genre, @Adresse, @Telephone, @Mail);";
+                VALUES (@Id, @Nom, @Prenom, @DateNaissance, @Genre, @Adresse, @Telephone, @Mail);"; 
 
             using (var cmdPersonne = new NpgsqlCommand(queryPersonne, conn, transaction))
             {
-                cmdPersonne.Parameters.AddWithValue("Id", patient.Id);
-                cmdPersonne.Parameters.AddWithValue("Nom", patient.Nom);
-                cmdPersonne.Parameters.AddWithValue("Prenom", patient.Prenom);
-                cmdPersonne.Parameters.AddWithValue("DateNaissance", patient.DateNaissance);
+                cmdPersonne.Parameters.AddWithValue("Id", patient.Id);                              // Matricule généré par ma fonction là (à vérifier)
+                cmdPersonne.Parameters.AddWithValue("Nom", patient.Nom);                            // Nom à vérifier avec un regex
+                cmdPersonne.Parameters.AddWithValue("Prenom", patient.Prenom);                      // Idem Nom
+                cmdPersonne.Parameters.AddWithValue("DateNaissance", patient.DateNaissance);        // 
                 cmdPersonne.Parameters.AddWithValue("Genre", patient.Genre);
                 cmdPersonne.Parameters.AddWithValue("Adresse", patient.Adresse);
                 cmdPersonne.Parameters.AddWithValue("Telephone", patient.Telephone);
