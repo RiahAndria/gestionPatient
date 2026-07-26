@@ -9,7 +9,7 @@ namespace Patients.Data
     {
         // Liste des tables dans la base de donnée
         public DbSet<Personne> Personnes { get; set; }
-        public DbSet<Patient> Patients { get; set; }
+        public DbSet<Patients.Models.Patient> Patients { get; set; }
         public DbSet<Medecin> Medecins { get; set; }
         public DbSet<Dossier> Dossiers { get; set; }
         public DbSet<RendezVous> RendezVous { get; set; }
@@ -37,7 +37,7 @@ namespace Patients.Data
         {
             // Héritage de personne -> Patient et Personne -> Medecin
             modelBuilder.Entity<Personne>().ToTable("PERSONNE");
-            modelBuilder.Entity<Patient>().ToTable("PATIENT");
+            modelBuilder.Entity<Patients.Models.Patient>().ToTable("PATIENT");
             modelBuilder.Entity<Medecin>().ToTable("MEDECIN");
 
             // Mappage des autres tables (pour respecter les noms en MAJUSCULES de la BDD)

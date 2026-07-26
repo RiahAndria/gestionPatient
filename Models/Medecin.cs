@@ -1,11 +1,20 @@
 namespace Patients.Models;
 
+// public class Medecin : Personne
+// {
+//     public string statut {get; set; } = string.Empty; 
+//     public string numero_ordre {get; set; } = string.Empty;
+//     public string nom_fonction {get; set; } = string.Empty;
+//     public int code_fonction {get; set; } = 0;
+//     public int taux_horaire {get; set; } 
+// }
+
+
 public class Medecin : Personne
 {
-    public string  Statut { get; set; } = string.Empty; // Statut du médecin (ex: interne, résident, spécialiste, etc.)
-    public string Fonction { get; set; } = string.Empty; // Fonction du médecin (ex: chirurgien, généraliste, pédiatre, etc.)
-    public decimal TauxHoraire { get; set; }
-    public bool EstDisponible { get; set; } = true; // Indique si le médecin est disponible pour des consultations
-    public string NumeroConsultation { get; set; } = string.Empty; 
-    public string NumeroPrescritption { get; set; } = string.Empty; 
+    public string statut {get; set; } = string.Empty; 
+    public string numero_ordre {get; set; } = string.Empty;
+    public string nom_fonction {get; set; } = string.Empty;
+    public int code_fonction {get; set; } = 0;
+    public decimal taux_horaire {get; set; } 
 }

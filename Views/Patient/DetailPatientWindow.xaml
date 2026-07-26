@@ -38,7 +38,6 @@
                     <TextBlock x:Name="lblMedecin" Grid.Row="4" Grid.Column="1" Margin="0,5"/>
                 </Grid>
             </Border>
-            
             <Button Content="Fermer" Width="100" Height="30" Margin="0,20,0,0" HorizontalAlignment="Right" Click="BtnFermer_Click"/>
         </StackPanel>
     </Grid>

@@ -5,7 +5,7 @@ namespace Patients;
 
 public partial class DetailPatientWindow : Window
 {
-    public DetailPatientWindow(Patient patient)
+    public DetailPatientWindow(Patients.Models.Patient patient)
     {
         InitializeComponent();
         

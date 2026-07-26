@@ -20,7 +20,7 @@ public class PatientService
 
         _connectionString = configuration.GetConnectionString("DefaultConnection")!;
     }
-    public void AjouterPatient(Patient patient)
+    public void AjouterPatient(Patients.Models.Patient patient)
     {
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
@@ -95,9 +95,9 @@ public class PatientService
     }
 
     // Récupérer la liste complète de tous les patients
-    public List<Patient> ObtenirTousLesPatients()
+    public List<Patients.Models.Patient> ObtenirTousLesPatients()
     {
-        var liste = new List<Patient>();
+        var liste = new List<Patients.Models.Patient>();
         string query = @"
             SELECT p.ID, p.NOM, p.PRENOM, p.DATEDENAISSANCE, p.GENRE, p.ADRESSE, p.TELEPHONE, p.MAIL, 
                    pa.NUMERODOSSIER, pa.NUMEROPRESCRITPTION
@@ -112,7 +112,7 @@ public class PatientService
         
         while (reader.Read())
         {
-            liste.Add(new Patient
+            liste.Add(new Patients.Models.Patient
             {
                 Id = reader.GetString(0),
                 Nom = reader.GetString(1),
@@ -132,7 +132,7 @@ public class PatientService
     }
 
     // Mettre à jour les données d'un patient existant
-    public void ModifierPatient(Patient patient)
+    public void ModifierPatient(Patients.Models.Patient patient)
     {
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();

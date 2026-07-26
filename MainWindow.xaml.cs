@@ -9,7 +9,7 @@ namespace Patients;
 
 public partial class MainWindow : Window
 {
-    public static List<Patient> ListePatientsGlobal = new List<Patient>();
+    public static List<Patients.Models.Patient> ListePatientsGlobal = new List<Patients.Models.Patient>();
     private readonly PatientService _patientService = new PatientService();
 
     public MainWindow()
@@ -59,7 +59,7 @@ public partial class MainWindow : Window
     // Double click pour ouvrir les info du patient. Trop fier de ça aussi XD
     private void dgPatients_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        if (dgPatients.SelectedItem is Patient patientSelectionne)
+        if (dgPatients.SelectedItem is Patients.Models.Patient patientSelectionne)
         {
             DetailPatientWindow detailWindow = new DetailPatientWindow(patientSelectionne);
             detailWindow.ShowDialog();
