@@ -15,7 +15,7 @@ namespace Patients.Data
         public DbSet<RendezVous> RendezVous { get; set; }
         public DbSet<Consultation> Consultations { get; set; }
         public DbSet<Ordonance> Ordonances { get; set; }
-        public DbSet<Paiement> Paiements { get; set; }
+        //public DbSet<Paiement> Paiements { get; set; }
         public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -45,7 +45,7 @@ namespace Patients.Data
             modelBuilder.Entity<RendezVous>().ToTable("RENDEZ_VOUS").HasKey(r => r.NumRendezVous);
             modelBuilder.Entity<Consultation>().ToTable("CONSULTATION").HasKey(c => c.NumeroConsultation);
             modelBuilder.Entity<Ordonance>().ToTable("ORDONANCE").HasKey(o => o.NumeroPrescritption);
-            modelBuilder.Entity<Paiement>().ToTable("PAIEMENT").HasKey(p => p.NumeroPaiement);
+            //modelBuilder.Entity<Paiement>().ToTable("PAIEMENT").HasKey(p => p.NumeroPaiement);
             modelBuilder.Entity<Notification>().ToTable("NOTIFICATION").HasKey(n => n.NumeroNotif);
             
             base.OnModelCreating(modelBuilder);

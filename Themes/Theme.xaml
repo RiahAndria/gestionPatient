@@ -1,0 +1,197 @@
+<!--ce fichier sert à définir le thème global de l'application -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <Color x:Key="ColBackground">#F3F4F6</Color>
+    <Color x:Key="ColSurface">#FFFFFF</Color>
+    <Color x:Key="ColPrimary">#2563EB</Color>
+    <Color x:Key="ColPrimaryDark">#1D4ED8</Color>
+    <Color x:Key="ColSuccess">#16A34A</Color>
+    <Color x:Key="ColDanger">#DC2626</Color>
+    <Color x:Key="ColWarning">#D97706</Color>
+    <Color x:Key="ColTextPrimary">#111827</Color>
+    <Color x:Key="ColTextSecondary">#6B7280</Color>
+    <Color x:Key="ColBorder">#E5E7EB</Color>
+
+    <SolidColorBrush x:Key="BrushBackground" Color="{StaticResource ColBackground}"/>
+    <SolidColorBrush x:Key="BrushSurface" Color="{StaticResource ColSurface}"/>
+    <SolidColorBrush x:Key="BrushPrimary" Color="{StaticResource ColPrimary}"/>
+    <SolidColorBrush x:Key="BrushPrimaryDark" Color="{StaticResource ColPrimaryDark}"/>
+    <SolidColorBrush x:Key="BrushSuccess" Color="{StaticResource ColSuccess}"/>
+    <SolidColorBrush x:Key="BrushDanger" Color="{StaticResource ColDanger}"/>
+    <SolidColorBrush x:Key="BrushWarning" Color="{StaticResource ColWarning}"/>
+    <SolidColorBrush x:Key="BrushTextPrimary" Color="{StaticResource ColTextPrimary}"/>
+    <SolidColorBrush x:Key="BrushTextSecondary" Color="{StaticResource ColTextSecondary}"/>
+    <SolidColorBrush x:Key="BrushBorder" Color="{StaticResource ColBorder}"/>
+
+    <!-- ============ TYPOGRAPHIE ============ -->
+    <Style x:Key="TitrePage" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
+    </Style>
+
+    <Style x:Key="TitreSection" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
+    </Style>
+
+    <Style x:Key="Libelle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+
+    <!-- ============ CARTE / CONTENEUR ============ -->
+    <Style x:Key="Carte" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource BrushSurface}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="18"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="#000000" Opacity="0.06" BlurRadius="12" ShadowDepth="2"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============ CHAMPS DE SAISIE ============ -->
+    <Style x:Key="ChampSaisie" TargetType="TextBox">
+        <Setter Property="Height" Value="34"/>
+        <Setter Property="Padding" Value="8,6"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="{StaticResource BrushSurface}"/>
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource BrushPrimary}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ComboSaisie" TargetType="ComboBox">
+        <Setter Property="Height" Value="34"/>
+        <Setter Property="Padding" Value="8,6"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <!-- ============ BOUTONS ============ -->
+    <Style x:Key="BoutonBase" TargetType="Button">
+        <Setter Property="Height" Value="34"/>
+        <Setter Property="Padding" Value="16,0"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.88"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BoutonPrimaire" TargetType="Button" BasedOn="{StaticResource BoutonBase}">
+        <Setter Property="Background" Value="{StaticResource BrushPrimary}"/>
+    </Style>
+
+    <Style x:Key="BoutonSucces" TargetType="Button" BasedOn="{StaticResource BoutonBase}">
+        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+    </Style>
+
+    <Style x:Key="BoutonDanger" TargetType="Button" BasedOn="{StaticResource BoutonBase}">
+        <Setter Property="Background" Value="{StaticResource BrushDanger}"/>
+    </Style>
+
+    <Style x:Key="BoutonSecondaire" TargetType="Button" BasedOn="{StaticResource BoutonBase}">
+        <Setter Property="Background" Value="#F3F4F6"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+    </Style>
+
+    <!-- ============ BADGE DE STATUT ============ -->
+    <Style x:Key="Badge" TargetType="Border">
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="10,3"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <!-- ============ DATAGRID ============ -->
+    <Style x:Key="GrilleModerne" TargetType="DataGrid">
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BrushBorder}"/>
+        <Setter Property="RowHeight" Value="42"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="{StaticResource BrushSurface}"/>
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="CanUserAddRows" Value="False"/>
+        <Setter Property="ColumnHeaderHeight" Value="38"/>
+    </Style>
+
+    <Style x:Key="EnteteGrille" TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="#F9FAFB"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="10,0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushBorder}"/>
+    </Style>
+    <!-- ============ SOUS-NAVIGATION (pilules) ============ -->
+    <!-- Pour une page qui contient elle-meme plusieurs sous-sections,
+         ex: la page "Rendez-vous" contenant "Rendez-vous" / "Paiements". -->
+    <Style x:Key="ConteneurSousNav" TargetType="Border">
+        <Setter Property="Background" Value="#F3F4F6"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Margin" Value="0,4,0,16"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style x:Key="SousOnglet" TargetType="RadioButton">
+        <Setter Property="Padding" Value="18,7"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="fond" Background="Transparent" CornerRadius="7" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="fond" Property="Background" Value="{StaticResource BrushSurface}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BrushPrimary}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource BrushPrimary}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

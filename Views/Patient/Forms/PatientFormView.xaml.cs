@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using Patients.Models;
 using Patients.Services;
 
-namespace Patients.Views.Patient;
+namespace Patients.Views.Patient.Forms;
 
 public partial class PatientFormView : UserControl
 {
@@ -50,11 +50,10 @@ public partial class PatientFormView : UserControl
         {
             _patientService.AjouterPatient(nouveauPatient);
 
-            MainWindow.ListePatientsGlobal = _patientService.ObtenirTousLesPatients();
-
+            // Rafraîchir le tableau via MainWindow sans exposer directement le contrôle interne
             if (Window.GetWindow(this) is MainWindow principal)
             {
-                principal.RafraichirTableau();
+                principal.RefreshPatientList();
             }
 
             ViderFormulaire();
@@ -64,9 +63,6 @@ public partial class PatientFormView : UserControl
         }
         catch (Exception ex)
         {
-            // Le log d'erreur en bas du bouton là...
-            //  Au début je croyais que ça servait à rien
-            // En fait c'est grave utile XD
             txtMessage.Foreground = System.Windows.Media.Brushes.Red;
             txtMessage.Text = $"Erreur BDD : {ex.Message}";
         }

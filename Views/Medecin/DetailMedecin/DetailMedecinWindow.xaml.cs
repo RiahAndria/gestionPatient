@@ -1,7 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+// using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.VisualBasic;
 using Medecins.Services;
 using Patients.Models;
@@ -10,11 +10,6 @@ namespace Patient.Views.Medecin.DetailMedecin
 {
     public partial class DetailMedecinWindow : Window
     {
-        // public DetailMedecinWindow(string id_medecin_a_affiche)
-        // {
-        //     InitializeComponent();
-        //     DetailMedecin_a_Affichee(id_medecin_a_affiche);
-        // }
 
         public DetailMedecinWindow(Patients.Models.Medecin medecin_a_affiche)
         {
@@ -29,13 +24,7 @@ namespace Patient.Views.Medecin.DetailMedecin
 
         public void DetailMedecin_a_Affichee(Patients.Models.Medecin donnee_medecin)
         {
-            // MedecinService MS = new MedecinService();
-            // Patients.Models.Medecin DonneeMedecinAffichee = MS.ObtenirDonnePersonnelMedecin(id_medecin);
-            // TXTMatricule.Text = DonneeMedecinAffichee.Id;
-            // TXTIdentite.Text = DonneeMedecinAffichee.Nom + " " + DonneeMedecinAffichee.Prenom;
-            // TXTDateNaissance.Text = $"Née le {DonneeMedecinAffichee.DateNaissance}";
-            // TXTAdress.Text = DonneeMedecinAffichee.Adresse;
-            // TXTContact.Text = $"Tel- {DonneeMedecinAffichee.Telephone} et email- {DonneeMedecinAffichee.Email}";
+            
             TXTMatricule.Text = donnee_medecin.Id ;
             TXTIdentite.Text = donnee_medecin.Nom + " " + donnee_medecin.Prenom;
             TXTDateNaissance.Text = $"Née le {donnee_medecin.DateNaissance}";

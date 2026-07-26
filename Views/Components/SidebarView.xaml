@@ -1,0 +1,106 @@
+<UserControl x:Class="Patients.Views.Components.SidebarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <UserControl.Resources>
+        <Style x:Key="GlassNavButton" TargetType="RadioButton">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Foreground" Value="#CBD5E1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Margin" Value="0,4"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border" 
+                                Background="Transparent" 
+                                CornerRadius="12" 
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1AFFFFFF"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#33FFFFFF"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#33FFFFFF"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#66FFFFFF"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border CornerRadius="20" Margin="16" BorderThickness="1" BorderBrush="#26FFFFFF">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#500F172A" Offset="0.0"/>
+                <GradientStop Color="#70020617" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <DockPanel Margin="16,24">
+            <StackPanel DockPanel.Dock="Top" Margin="8,8,0,36">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="36" Height="36" CornerRadius="10" Background="#2563EB" Margin="0,0,12,0">
+                        <materialDesign:PackIcon Kind="HeartPulse" Width="22" Height="22" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel>
+                        <TextBlock Text="Gestion Patient" FontSize="18" FontWeight="Bold" Foreground="#FFFFFF"/>
+                        <TextBlock Text="Projet C#" FontSize="11" Foreground="#94A3B8"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Top">
+                <RadioButton x:Name="NavPatients" IsChecked="True" Style="{StaticResource GlassNavButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="AccountGroupOutline" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Patients" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="NavMedecins" Style="{StaticResource GlassNavButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Doctor" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Médecins" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="NavDossiers" Style="{StaticResource GlassNavButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FolderOutline" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Dossiers" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="NavHistorique" Style="{StaticResource GlassNavButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="History" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Historique" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="NavRendezVous" Style="{StaticResource GlassNavButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CalendarClockOutline" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Rendez-vous" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

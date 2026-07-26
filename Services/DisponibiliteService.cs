@@ -7,7 +7,7 @@ using Dapper;
 using System.DirectoryServices;
 using Patients.Models;
 
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+// using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Patients.Services;
 

@@ -1,68 +1,43 @@
-using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using Patients.Models;
 using Patients.Services;
-
 namespace Patients;
 
 public partial class MainWindow : Window
 {
     public static List<Patients.Models.Patient> ListePatientsGlobal = new List<Patients.Models.Patient>();
     private readonly PatientService _patientService = new PatientService();
+    // public static List<Patient> ListePatientsGlobal = new List<Patient>();
 
     public MainWindow()
     {
         InitializeComponent();
-
-        try
-        {
-            ListePatientsGlobal = _patientService.ObtenirTousLesPatients();
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Erreur lors du chargement des données depuis PostgreSQL : {ex.Message}", 
-                            "Erreur de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        RafraichirTableau();
+        SetupNavigation();
     }
 
-    // Cette fonction sert à forcer l'affichage à se recharger
-    public void RafraichirTableau()
+    private void SetupNavigation()
     {
-        dgPatients.ItemsSource = null;
-        dgPatients.ItemsSource = ListePatientsGlobal;
+        // Relie les RadioButtons du composant SidebarView aux onglets du TabControl
+        SidebarNav.PatientsButton.Checked += (s, e) => MainTabControl.SelectedItem = TabPatients;
+        SidebarNav.MedecinsButton.Checked += (s, e) => MainTabControl.SelectedItem = TabMedecins;
+        SidebarNav.DossiersButton.Checked += (s, e) => MainTabControl.SelectedItem = TabDossiers;
+        SidebarNav.HistoriqueButton.Checked += (s, e) => MainTabControl.SelectedItem = TabHistorique;
+        SidebarNav.RendezVousButton.Checked += (s, e) => MainTabControl.SelectedItem = TabRendezVous;
     }
 
-    // Le bouton de recherche là...
-    //  Faudrait rajouter un bouton pour réinitialier mais j'ai la flemme
-    private void btnRecherche_Click(object sender, RoutedEventArgs e)
+    public void RefreshPatientList()
     {
-        string filtre = txtRecherche.Text.ToLower().Trim();
-        
-        if (string.IsNullOrWhiteSpace(filtre))
-        {
-            dgPatients.ItemsSource = ListePatientsGlobal;
-        }
-        else
-        {
-            var resultat = ListePatientsGlobal.FindAll(p => 
-                p.NumeroDossier.ToLower().Contains(filtre) || 
-                p.Nom.ToLower().Contains(filtre) || 
-                p.Prenom.ToLower().Contains(filtre));
-            dgPatients.ItemsSource = resultat;
-        }
+        PatientList?.ChargerDonnees();
     }
 
     // Double click pour ouvrir les info du patient. Trop fier de ça aussi XD
-    private void dgPatients_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-        if (dgPatients.SelectedItem is Patients.Models.Patient patientSelectionne)
-        {
-            DetailPatientWindow detailWindow = new DetailPatientWindow(patientSelectionne);
-            detailWindow.ShowDialog();
-        }
-    }
+    // private void dgPatients_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    // {
+    //     if (dgPatients.SelectedItem is Patients.Models.Patient patientSelectionne)
+    //     {
+    //         DetailPatientWindow detailWindow = new DetailPatientWindow(patientSelectionne);
+    //         detailWindow.ShowDialog();
+    //     }
+    // }
 }

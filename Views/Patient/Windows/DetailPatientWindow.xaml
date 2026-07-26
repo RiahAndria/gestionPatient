@@ -1,0 +1,106 @@
+<Window x:Class="Patients.Views.Patient.DetailPatientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Dossier Médical Complet" Height="650" Width="900" 
+        WindowStartupLocation="CenterScreen" AllowsTransparency="True" WindowStyle="None" Background="Transparent">
+
+    <Window.Resources>
+        <Style x:Key="GlassSection" TargetType="Border">
+            <Setter Property="Background" Value="#B2FFFFFF"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#40FFFFFF"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.05" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="25" Background="#F0F4F8" BorderBrush="#2563EB" BorderThickness="1">
+        <Grid>
+            <Image Source="/Assets/bg.jpg" Stretch="UniformToFill" Opacity="0.1">
+                <Image.Effect><BlurEffect Radius="20"/></Image.Effect>
+            </Image>
+
+            <DockPanel Margin="20">
+                <Border DockPanel.Dock="Top" Height="80" Margin="0,0,0,10">
+                    <Grid>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Name="lblIdentite" FontSize="24" FontWeight="Bold" Foreground="#1E293B"/>
+                            <TextBlock x:Name="lblMatricule" FontSize="14" Foreground="#2563EB" FontWeight="SemiBold"/>
+                        </StackPanel>
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="BtnFermer_Click">
+                             <materialDesign:PackIcon Kind="CloseCircle" Foreground="#64748B" Width="24" Height="24"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.5*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <Border Style="{StaticResource GlassSection}">
+                            <StackPanel>
+                                <TextBlock Text="Constantes Vitales" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
+                                <UniformGrid Columns="3">
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="Poids" FontSize="12" Foreground="#64748B"/>
+                                        <TextBlock x:Name="lblPoids" FontSize="18" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="Taille" FontSize="12" Foreground="#64748B"/>
+                                        <TextBlock x:Name="lblTaille" FontSize="18" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="Groupe Sanguin" FontSize="12" Foreground="#64748B"/>
+                                        <TextBlock x:Name="lblGroupe" FontSize="18" FontWeight="Bold" Foreground="#DC2626"/>
+                                    </StackPanel>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource GlassSection}">
+                            <StackPanel>
+                                <TextBlock Text="Traitements en cours" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
+                                <TextBlock x:Name="txtTraitements" TextWrapping="Wrap" FontSize="14" FontStyle="Italic"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource GlassSection}" Height="150">
+                            <StackPanel>
+                                <TextBlock Text="Allergies &amp; Alertes" FontWeight="Bold" Margin="0,0,0,10" Foreground="#DC2626"/>
+                                <TextBlock x:Name="txtAllergies" TextWrapping="Wrap" FontSize="14" Foreground="#991B1B"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <Border Style="{StaticResource GlassSection}">
+                            <StackPanel>
+                                <TextBlock Text="Contact &amp; Assurance" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
+                                <TextBlock x:Name="lblContact" Margin="0,0,0,5" FontSize="13"/>
+                                <Separator Background="#E2E8F0" Margin="0,5"/>
+                                <TextBlock x:Name="lblAssurance" FontSize="13" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource GlassSection}" VerticalAlignment="Stretch">
+                            <StackPanel>
+                                <TextBlock Text="Antécédents" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
+                                <TextBlock x:Name="txtAntecedents" TextWrapping="Wrap" FontSize="13" Height="200"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>
