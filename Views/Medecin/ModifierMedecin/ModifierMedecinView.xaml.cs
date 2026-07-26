@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using Patients.Services;
 using Medecins.Services;
+using System.Text.Json;
 
 namespace Patients.Views.Medecin.ModifierMedecin;
 
@@ -169,6 +170,7 @@ public partial class ModifierMedecinView : Window
             if (estEnregistre)
             {
                 txtMessageMedecin.Text = "Modification efféctué avec succès !";
+                //je sais pas comment recharger la liste apres l'ajout et modification zut 
                 // BtnFermerModif_Click();
                 // .RechargerListeMedecin();
             }
@@ -181,7 +183,6 @@ public partial class ModifierMedecinView : Window
         {
             txtMessageMedecin.Text = "Erreur de connexion.";
         }
-
     }
 }
     

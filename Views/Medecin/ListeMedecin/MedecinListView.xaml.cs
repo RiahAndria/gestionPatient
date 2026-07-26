@@ -28,7 +28,7 @@ namespace Patients.Views.Medecin.ListeMedecin
         public void BtnOuvrirFenetre_Click(Object sender, RoutedEventArgs e)
         {
             //recuperation du valeur de Tag
-            DataGrid grid = sender as DataGrid;
+            DataGrid? grid = sender as DataGrid;
             
             if (grid?.SelectedItem is Patients.Models.Medecin medecinSelectionne)
             {  
@@ -53,12 +53,11 @@ namespace Patients.Views.Medecin.ListeMedecin
 
         public void btnSupprimerMedecin(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
-            if (btn != null && btn.Tag != null)
+            Button? btn = sender as Button;
+            if (btn?.Tag is string valTag && !string.IsNullOrEmpty(valTag))
             {
                 try
                 {
-                    var valTag = btn.Tag.ToString();
                     MessageBoxResult result = MessageBox.Show(
                         "Voulez-vous supprimer ce Medecin?",
                         "Confirmation",
