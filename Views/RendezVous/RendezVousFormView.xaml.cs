@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Patients.Models;
@@ -12,11 +14,22 @@ public partial class RendezVousFormView : UserControl
     private readonly PatientLookupService _patients = new();
     private readonly MedecinLookupService _medecins = new();
 
-    public RendezVousFormView()
+    public RendezVousFormView(string? patientId = null)
     {
         InitializeComponent();
-        cbPatient.ItemsSource = _patients.Rechercher("");
+        var patientOptions = _patients.Rechercher("");
+        cbPatient.ItemsSource = patientOptions;
         cbMedecin.ItemsSource = _medecins.ObtenirDisponibles();
+
+        if (!string.IsNullOrWhiteSpace(patientId) && patientOptions.Any())
+        {
+            cbPatient.SelectedItem = patientOptions.FirstOrDefault(p => p.Id == patientId);
+        }
+
+        if (cbPatient.SelectedItem == null && cbPatient.Items.Count > 0)
+        {
+            cbPatient.SelectedIndex = 0;
+        }
     }
 
     private void txtRecherchePatient_TextChanged(object sender, TextChangedEventArgs e)
