@@ -30,4 +30,5 @@ public partial class MainWindow : Window
     {
         PatientList?.ChargerDonnees();
     }
+
 }

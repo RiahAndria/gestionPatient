@@ -134,7 +134,7 @@ public class PatientService
 
         try
         {
-            //Update de la table personne
+            // Mise à jour de la table PERSONNE
             string updatePersonne = @"
                 UPDATE PERSONNE 
                 SET NOM = @Nom, PRENOM = @Prenom, DATEDENAISSANCE = @DateNaissance, 
@@ -152,6 +152,27 @@ public class PatientService
                 cmdPers.Parameters.AddWithValue("Mail", patient.Email);
                 cmdPers.Parameters.AddWithValue("Id", patient.Id);
                 cmdPers.ExecuteNonQuery();
+            }
+
+            // Mise à jour de la table PATIENT, pour que la vue patient reflète bien les changements
+            string updatePatient = @"
+                UPDATE PATIENT
+                SET NUMERODOSSIER = @NumeroDossier, NOM = @Nom, PRENOM = @Prenom, DATEDENAISSANCE = @DateNaissance,
+                    GENRE = @Genre, ADRESSE = @Adresse, TELEPHONE = @Telephone, MAIL = @Mail
+                WHERE ID = @Id;";
+
+            using (var cmdPat = new NpgsqlCommand(updatePatient, conn, transaction))
+            {
+                cmdPat.Parameters.AddWithValue("NumeroDossier", patient.NumeroDossier);
+                cmdPat.Parameters.AddWithValue("Nom", patient.Nom);
+                cmdPat.Parameters.AddWithValue("Prenom", patient.Prenom);
+                cmdPat.Parameters.AddWithValue("DateNaissance", patient.DateNaissance);
+                cmdPat.Parameters.AddWithValue("Genre", patient.Genre);
+                cmdPat.Parameters.AddWithValue("Adresse", patient.Adresse);
+                cmdPat.Parameters.AddWithValue("Telephone", patient.Telephone);
+                cmdPat.Parameters.AddWithValue("Mail", patient.Email);
+                cmdPat.Parameters.AddWithValue("Id", patient.Id);
+                cmdPat.ExecuteNonQuery();
             }
 
             transaction.Commit();
@@ -172,12 +193,38 @@ public class PatientService
 
         try
         {
-            // On supprime d'adord patient puis on supprime personne... Bordel d'héritage de merde...
+            string recupererNumeroDossier = "SELECT NUMERODOSSIER FROM PATIENT WHERE ID = @Id;";
+            string numeroDossier = string.Empty;
+
+            using (var cmdRecuperation = new NpgsqlCommand(recupererNumeroDossier, conn, transaction))
+            {
+                cmdRecuperation.Parameters.AddWithValue("Id", idPatient);
+                var resultat = cmdRecuperation.ExecuteScalar();
+                numeroDossier = resultat?.ToString() ?? string.Empty;
+            }
+
+            string deleteRendezVous = "DELETE FROM RENDEZ_VOUS WHERE ID = @Id;";
+            using (var cmdRdv = new NpgsqlCommand(deleteRendezVous, conn, transaction))
+            {
+                cmdRdv.Parameters.AddWithValue("Id", idPatient);
+                cmdRdv.ExecuteNonQuery();
+            }
+
             string deletePatient = "DELETE FROM PATIENT WHERE ID = @Id;";
             using (var cmdPat = new NpgsqlCommand(deletePatient, conn, transaction))
             {
                 cmdPat.Parameters.AddWithValue("Id", idPatient);
                 cmdPat.ExecuteNonQuery();
+            }
+
+            if (!string.IsNullOrWhiteSpace(numeroDossier))
+            {
+                string deleteDossier = "DELETE FROM DOSSIER_MEDICAL WHERE NUMERODOSSIER = @NumeroDossier;";
+                using (var cmdDossier = new NpgsqlCommand(deleteDossier, conn, transaction))
+                {
+                    cmdDossier.Parameters.AddWithValue("NumeroDossier", numeroDossier);
+                    cmdDossier.ExecuteNonQuery();
+                }
             }
 
             string deletePersonne = "DELETE FROM PERSONNE WHERE ID = @Id;";
