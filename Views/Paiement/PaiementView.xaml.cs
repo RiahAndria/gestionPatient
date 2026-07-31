@@ -1,24 +1,26 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Patients.Services;
 
 namespace Patients.Views.Paiement;
-//création de la vue pour le paiement
+
 public partial class PaiementView : UserControl
-{// Service pour gérer les paiements
+{
     private readonly PaiementService _paiementService = new();
-// Constructeur de la vue
+
     public PaiementView()
     {
         InitializeComponent();
         Rafraichir();
     }
-// Méthode pour rafraîchir les données affichées dans la vue
+
     private void Rafraichir()
     {
         try
         {
+            cbRdvAcompte.ItemsSource = _paiementService.ObtenirRendezVousEligiblesAcompte();
             dgEnAttente.ItemsSource = _paiementService.ObtenirEnAttente();
             dgHistorique.ItemsSource = _paiementService.ObtenirHistoriquePayes();
         }
@@ -27,14 +29,42 @@ public partial class PaiementView : UserControl
             AfficherMessage($"Erreur lors du chargement des paiements : {ex.Message}", succes: false);
         }
     }
-// Méthode pour gérer le clic sur le bouton "Confirmer"
+
+    private void btnEncaisserAcompte_Click(object sender, RoutedEventArgs e)
+    {
+        if (cbRdvAcompte.SelectedItem is not Models.RendezVousAffichage rdv)
+        {
+            AfficherMessage("Sélectionne un rendez-vous.", succes: false);
+            return;
+        }
+        if (!decimal.TryParse(txtMontantAcompte.Text, out var montant) || montant <= 0)
+        {
+            AfficherMessage("Renseigne un montant d'acompte valide.", succes: false);
+            return;
+        }
+
+        var mode = (cbModeAcompte.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Espèces";
+
+        try
+        {
+            _paiementService.EncaisserAcompte(rdv.NumeroRdv, montant, mode);
+            AfficherMessage($"Acompte de {montant:N0} Ar encaissé pour {rdv.PatientNom}.", succes: true);
+            txtMontantAcompte.Clear();
+        }
+        catch (Exception ex)
+        {
+            AfficherMessage($"Impossible d'encaisser l'acompte : {ex.Message}", succes: false);
+        }
+
+        Rafraichir();
+    }
+
     private void btnConfirmer_Click(object sender, RoutedEventArgs e)
     {
         if ((sender as Button)?.Tag is not string numeroPaiement) return;
 
         try
         {
-            // Simplification maquette : mode de paiement fixe a "Espèces"
             _paiementService.ConfirmerPaiement(numeroPaiement, "Espèces");
             AfficherMessage($"Paiement {numeroPaiement} confirmé.", succes: true);
         }
@@ -45,7 +75,7 @@ public partial class PaiementView : UserControl
 
         Rafraichir();
     }
-// Méthode pour gérer le clic sur le bouton "Relancer"
+
     private void btnRelancer_Click(object sender, RoutedEventArgs e)
     {
         if ((sender as Button)?.Tag is not string numeroPaiement) return;
@@ -62,7 +92,7 @@ public partial class PaiementView : UserControl
 
         Rafraichir();
     }
-// Méthode pour gérer le clic sur le bouton "Traiter impayés"
+
     private void btnTraiterImpayes_Click(object sender, RoutedEventArgs e)
     {
         try
@@ -77,10 +107,10 @@ public partial class PaiementView : UserControl
 
         Rafraichir();
     }
-// Méthode pour afficher les messages d'erreur ou de succès
+
     private void AfficherMessage(string message, bool succes)
     {
-        txtMessage.Foreground = succes ? Brushes.Green : Brushes.Red;
+        txtMessage.Foreground = succes ? new SolidColorBrush(Color.FromRgb(0x16, 0xA3, 0x4A)) : Brushes.Red;
         txtMessage.Text = message;
     }
 }

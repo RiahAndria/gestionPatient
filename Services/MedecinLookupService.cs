@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -5,6 +6,14 @@ using Patients.Models;
 
 namespace Patients.Services;
 
+// Recherche legere des medecins, utilisee pour peupler la ComboBox du
+// formulaire de creation de rendez-vous.
+//
+// Le filtre sur la disponibilite (ancienne colonne MEDECIN.DISPONIBILITE,
+// supprimee par la refonte du schema) n'existe plus ici : tous les
+// medecins sont renvoyes. A terme, ce filtre doit interroger la table
+// TEMPS d'Alinot (creneaux de 15 min) pour ne proposer que les medecins
+// libres a la date/heure choisie dans le formulaire - a concevoir avec lui.
 public class MedecinLookupService
 {
     private readonly string _connectionString;
@@ -19,17 +28,16 @@ public class MedecinLookupService
         _connectionString = configuration.GetConnectionString("DefaultConnection")!;
     }
 
-    // Ne renvoie que les medecins marques disponibles (DISPONIBILITE = true).
-    // Note : ceci ne verifie PAS les conflits de creneau, seulement la disponibilite generale declaree par Alinot dans son module.
     public List<MedecinOption> ObtenirDisponibles()
     {
         var resultat = new List<MedecinOption>();
 
+        // FONCTION est une table separee depuis la refonte (CODE_FONCTION -> NOM_FONCTION).
         string query = @"
-            SELECT m.ID_HER_2, p.NOM, p.PRENOM, m.FONCTION
+            SELECT m.ID_MEDECIN, p.NOM, p.PRENOM, f.NOM_FONCTION
             FROM MEDECIN m
-            INNER JOIN PERSONNE p ON m.ID_HER_2 = p.ID
-            WHERE m.DISPONIBILITE = true
+            INNER JOIN PERSONNE p ON m.ID_MEDECIN = p.ID
+            INNER JOIN FONCTION f ON m.CODE_FONCTION = f.CODE_FONCTION
             ORDER BY p.NOM, p.PRENOM;";
 
         using var conn = new NpgsqlConnection(_connectionString);

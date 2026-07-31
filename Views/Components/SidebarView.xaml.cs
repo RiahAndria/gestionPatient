@@ -15,4 +15,5 @@ public partial class SidebarView : UserControl
     public RadioButton DossiersButton => NavDossiers;
     public RadioButton HistoriqueButton => NavHistorique;
     public RadioButton RendezVousButton => NavRendezVous;
+    public RadioButton PaiementsButton => NavPaiements;
 }
