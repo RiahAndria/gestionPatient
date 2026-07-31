@@ -8,7 +8,7 @@
             <DockPanel Margin="0,0,0,20">
                 <StackPanel DockPanel.Dock="Left">
                     <TextBlock Text="Nouveau Patient" Style="{StaticResource TitreSection}" Margin="0"/>
-                    <TextBlock Text="Renseignez les informations médicales et administratives" Style="{StaticResource Libelle}" FontSize="12"/>
+                    <TextBlock Text="Ajouter un nouveau patient" Style="{StaticResource Libelle}" FontSize="12"/>
                 </StackPanel>
             </DockPanel>
 
