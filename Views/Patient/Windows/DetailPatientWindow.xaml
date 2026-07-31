@@ -97,7 +97,22 @@
                                 <TextBlock x:Name="txtAllergies" TextWrapping="Wrap" FontSize="14" Foreground="#991B1B"/>
                             </StackPanel>
                         </Border>
+                        <Border Style="{StaticResource GlassSection}">
+                            <StackPanel>
+                                <TextBlock Text="Historique des Consultations" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
+                                
+                                <!-- Liste/DataGrid résumé des consultations passées du patient -->
+                                <DataGrid x:Name="dgHistoriqueConsultations" AutoGenerateColumns="False" IsReadOnly="True" Height="150" Background="Transparent" BorderThickness="0">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Date" Binding="{Binding DateConsultation, StringFormat=dd/MM/yyyy}" Width="90"/>
+                                        <DataGridTextColumn Header="N°" Binding="{Binding NumeroConsultation}" Width="80"/>
+                                        <DataGridTextColumn Header="Diagnostic" Binding="{Binding Diagnostique}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
+                    
 
                     <!-- Colonne de droite : Coordonnées et Historique -->
                     <StackPanel Grid.Column="1">
