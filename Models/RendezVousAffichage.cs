@@ -1,6 +1,9 @@
 namespace Patients.Models;
 
-// Utilisés pour peupler les ComboBox patient/médecin sans charger tout l'objet Patient/Medecin complet (plus léger, et découplé du reste).
+// Options utilisees pour peupler les ComboBox patient/medecin du
+// formulaire de creation de rendez-vous (evite de charger l'objet
+// Patient/Medecin complet, on n'a besoin que du strict necessaire pour
+// l'affichage et la selection).
 public class PatientOption
 {
     public string Id { get; set; } = string.Empty;
@@ -15,7 +18,8 @@ public class MedecinOption
     public string Fonction { get; set; } = string.Empty;
 }
 
-// Ligne "prête à afficher" pour la grille des rendez-vous : le RDV brut + les noms lisibles du patient et du médecin (au lieu de deux ID bruts).
+// Une ligne de la grille des rendez-vous : le rendez-vous, avec les noms
+// du patient et du medecin deja lisibles (au lieu de leurs ID bruts).
 public class RendezVousAffichage
 {
     public string NumeroRdv { get; set; } = string.Empty;
@@ -23,8 +27,11 @@ public class RendezVousAffichage
     public string MedecinNom { get; set; } = string.Empty;
     public DateTime DateHeure { get; set; }
     public string Motif { get; set; } = string.Empty;
-    public string Statut { get; set; } = string.Empty; // PLANIFIE | ANNULE | TERMINE (valeurs telles que stockées en base)
 
+    // Valeur telle que stockee en base : PLANIFIE, ANNULE ou TERMINE.
+    public string Statut { get; set; } = string.Empty;
+
+    // Version en francais du statut, pour l'affichage a l'ecran.
     public string StatutAffiche => Statut switch
     {
         "PLANIFIE" => "Planifié",
@@ -33,6 +40,7 @@ public class RendezVousAffichage
         _ => Statut
     };
 
+    // Couleur du badge affiche dans la grille, selon le statut.
     public System.Windows.Media.Brush CouleurStatut => Statut switch
     {
         "PLANIFIE" => new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x25, 0x63, 0xEB)),
