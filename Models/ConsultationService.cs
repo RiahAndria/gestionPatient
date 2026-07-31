@@ -7,9 +7,8 @@ namespace Patients.Services
 {
     public class ConsultationService
     {
-        // Chaîne de connexion PostgreSQL (à adapter selon vos identifiants)
+        // Chaîne de connexion PostgreSQL
         private readonly string _connectionString = "Host=localhost;Database=patients_db;Username=postgres;Password=votre_mot_de_passe";
-
         /// <summary>
         /// Enregistre une consultation et son ordonnance facultative dans une transaction ADO.NET.
         /// </summary>
@@ -18,13 +17,12 @@ namespace Patients.Services
             using (var conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
-
                 // Début de la transaction ADO.NET
                 using (var transaction = conn.BeginTransaction())
                 {
                     try
                     {
-                        // 1. Insertion de la CONSULTATION
+                        // ... Insertion de la CONSULTATION
                         string sqlConsultation = @"
                             INSERT INTO CONSULTATION (NUMEROCONSULTATION, DIAGNOSTIQUE, NOTESMEDICALES)
                             VALUES (@numCons, @diag, @notes);";
@@ -36,8 +34,7 @@ namespace Patients.Services
                             cmd.Parameters.AddWithValue("@notes", consultation.NotesMedicales);
                             cmd.ExecuteNonQuery();
                         }
-
-                        // 2. Insertion de l'ORDONANCE (si elle existe)
+                        // ... Insertion de l'ORDONANCE (si elle existe)
                         if (ordonnance != null)
                         {
                             string sqlOrdonnance = @"
@@ -54,7 +51,6 @@ namespace Patients.Services
                                 cmdOrd.ExecuteNonQuery();
                             }
                         }
-
                         // Validation définitive
                         transaction.Commit();
                         return true;
@@ -69,7 +65,6 @@ namespace Patients.Services
                 }
             }
         }
-
         /// <summary>
         /// Récupère une consultation et son ordonnance via un NpgsqlDataReader.
         /// </summary>
@@ -78,7 +73,6 @@ namespace Patients.Services
             using (var conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
-
                 string query = @"
                     SELECT c.NUMEROCONSULTATION, c.DIAGNOSTIQUE, c.NOTESMEDICALES,
                            o.NUMEROPRESCRIPTION, o.TRAITEMENT, o.DUREE
@@ -100,8 +94,7 @@ namespace Patients.Services
                                 Diagnostique = reader.GetString(1),
                                 NotesMedicales = reader.GetString(2)
                             };
-
-                            // Vérification si une ordonnance est associée (colonne 3 non NULL)
+                            // Vérification si une ordonnance est associée
                             if (!reader.IsDBNull(3))
                             {
                                 consultation.OrdonnanceAssociee = new Ordonnance
@@ -113,7 +106,6 @@ namespace Patients.Services
                                     Diagnostique = consultation.Diagnostique
                                 };
                             }
-
                             return consultation;
                         }
                     }

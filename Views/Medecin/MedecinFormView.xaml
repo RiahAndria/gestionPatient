@@ -43,6 +43,7 @@
                         <ComboBoxItem Content="Autre" IsSelected="True"/>
                     </ComboBox>
                 </StackPanel>
+                
             </Grid>
             <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
@@ -80,7 +81,10 @@
 
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Fonction" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
-                    <TextBox x:Name="txtFonctionMedecin" Height="32" Padding="6" VerticalContentAlignment="Center"/>
+                    <ComboBox x:Name="txtFonctionMedecin" Height="32" VerticalContentAlignment="Center">
+                        <ComboBoxItem Content="Medecin generaliste" IsSelected="True"/>
+                        <ComboBoxItem Content="Chirurgie generale" />
+                    </ComboBox>
                 </StackPanel>
             </Grid>
 
@@ -97,11 +101,8 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="2">
-                    <TextBlock Text="Disponibilité" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
-                    <ComboBox x:Name="cbDisponibiliteMedecin" Height="32" VerticalContentAlignment="Center">
-                        <ComboBoxItem Content="Disponible"/>
-                        <ComboBoxItem Content="Indisponible" IsSelected="True"/>
-                    </ComboBox>
+                    <TextBlock Text="Numéro d'Ordre des Médecins" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
+                    <TextBox x:Name="numeroOrdreMedecin" Height="32" Padding="6" VerticalContentAlignment="Center"/>
                 </StackPanel>
             </Grid>
             <Button Content="Ajouter le médecin" Click="btnAjouterMedecin_Click" Height="36" Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>

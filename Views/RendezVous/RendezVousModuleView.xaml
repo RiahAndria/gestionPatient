@@ -1,0 +1,24 @@
+<!-- Sous-navigation : Rendez-vous / Paiements. Regroupes dans une
+     seule page car le paiement decoule toujours d'un rendez-vous
+     via la consultation  -->
+<UserControl x:Class="Patients.Views.RendezVous.RendezVousModuleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Margin="0,10,0,0">
+
+        <TextBlock Text="Rendez-vous" Style="{StaticResource TitrePage}"/>
+        <Border Style="{StaticResource ConteneurSousNav}">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Name="ongletRendezVous" Content="Rendez-vous" GroupName="SousNavRdv"
+                             Style="{StaticResource SousOnglet}" Checked="ongletRendezVous_Checked"/>
+                <RadioButton x:Name="ongletPaiements" Content="Paiements" GroupName="SousNavRdv"
+                             Style="{StaticResource SousOnglet}" Checked="ongletPaiements_Checked" Margin="4,0,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Contenu de l'onglet actif -->
+        <ContentControl x:Name="contenuOnglet"/>
+
+    </StackPanel>
+</UserControl>

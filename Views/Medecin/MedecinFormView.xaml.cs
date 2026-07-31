@@ -2,7 +2,11 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Text.RegularExpressions;
-using Patients.Services; 
+using Medecins.Services;
+using Patients.Models;
+using Patients.Helpers;
+using Patients.Views.Medecin.ListeMedecin;
+
 
 namespace Patients.Views.Medecin;
 
@@ -15,6 +19,11 @@ public partial class MedecinFormView : UserControl
         InitializeComponent();
     }
 
+
+    /*Tache reste à faire : realiser les filitre de regex 
+        (ONM)
+        creation de fonction qui genere de matricule
+    */
     private void btnAjouterMedecin_Click(object sender, RoutedEventArgs e)
     {
         // Vérif nom et prénom
@@ -121,30 +130,63 @@ public partial class MedecinFormView : UserControl
 
         if (!int.TryParse(txtTauxHoraireMedecin.Text, out int tauxHoraire) || tauxHoraire < 0)
         {
-            txtMessageMedecin.Text = "Veuillez entrer un taux horaire valide (nombre entier positif).";
+            // txtMessageMedecin.Text = "Veuillez entrer un taux horaire valide (nombre entier positif).";
+            txtMessageMedecin.Text = $"Veuillez entrer un taux horaire valide (nombre entier positif).";
             return;
         }
 
-        // ici on appel le service enregistrerMedecin même si elle est encore vide
-        bool estEnregistre = _medecinService.EnregistrerMedecin(
-            txtNomMedecin.Text,
-            txtPrenomMedecin.Text,
-            dpDateNaissanceMedecin.SelectedDate.Value,
-            txtAdresseMedecin.Text,
-            txtTelephoneMedecin.Text,
-            txtEmailMedecin.Text,
-            txtStatutMedecin.Text,
-            txtFonctionMedecin.Text,
-            tauxHoraire
-        );
-
-        if (estEnregistre)
+        //regex de numero d'ordre de medecin 
+        string ONMregex = @"^[0-9]{9}$";
+        if (!Regex.IsMatch(numeroOrdreMedecin.Text, ONMregex))
         {
-            txtMessageMedecin.Text = "Médecin ajouté avec succès !";
+            txtMessageMedecin.Text = "Votre Numéro d'ordre de médecin est invalide";
+            return;   
         }
-        else
+
+        //generer matricule
+        string matricule = MatriculeHelperMedecin.GenererMatricule(cbGenreMedecin.Text , txtFonctionMedecin.Text);
+        
+        //recuperer le code_focntion
+        // MedecinService serviceMed = new MedecinService();
+        int code_fonc = _medecinService.RecupererCodeFonction(txtFonctionMedecin.Text);
+
+        // ici on appel le service enregistrerMedecin même si elle est encore vide 
+        try
         {
-            txtMessageMedecin.Text = "Une erreur est survenue lors de l'enregistrement dans le service.";
+            Patients.Models.Medecin nouveauMedecin = new Patients.Models.Medecin
+            {
+                Id = matricule,
+                Nom = txtNomMedecin.Text,
+                Prenom = txtPrenomMedecin.Text,
+                DateNaissance = dpDateNaissanceMedecin.SelectedDate.Value,
+                Genre = cbGenreMedecin.Text,
+                Adresse = txtAdresseMedecin.Text,
+                Telephone = txtTelephoneMedecin.Text,
+                Email = txtEmailMedecin.Text,
+                statut = txtStatutMedecin.Text,
+                numero_ordre = numeroOrdreMedecin.Text,
+                code_fonction = code_fonc,
+                nom_fonction = txtFonctionMedecin.Text,
+                taux_horaire = tauxHoraire,
+            };
+
+            bool estEnregistre = _medecinService.AjouterMedecin(nouveauMedecin);
+
+            if (estEnregistre)
+            {
+                MaPage MedecinFormV = new MaPage();
+                MedecinFormV.RechargerListeMedecin();
+                txtMessageMedecin.Text = "Médecin ajouté avec succès !";
+                // _medecinService.ObtenirTousLesMedecin();
+            }
+            else
+            {
+                txtMessageMedecin.Text = "Une erreur est survenue lors de l'enregistrement dans le service.";
+            }
+        } 
+        catch
+        {
+            txtMessageMedecin.Text = "Erreur de connexion.";   
         }
     }
 }

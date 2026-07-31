@@ -1,0 +1,91 @@
+<!-- on affiche la liste des rendez-vous avec possibilité de recherche, filtrage et actions sur les rendez-vous -->
+<UserControl x:Class="Patients.Views.RendezVous.RendezVousListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Margin="0,0,0,0">
+
+        <!-- ===== Barre de filtres ===== -->
+        <Border Style="{StaticResource Carte}">
+            <StackPanel>
+                <TextBlock Text="Recherche" Style="{StaticResource TitreSection}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="180"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <TextBlock Text="Patient ou médecin" Style="{StaticResource Libelle}"/>
+                        <TextBox x:Name="txtRecherche" Style="{StaticResource ChampSaisie}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                        <TextBlock Text="Date" Style="{StaticResource Libelle}"/>
+                        <DatePicker x:Name="dpDate" Height="34"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                        <TextBlock Text="Statut" Style="{StaticResource Libelle}"/>
+                        <ComboBox x:Name="cbStatut" Style="{StaticResource ComboSaisie}" SelectedIndex="0">
+                            <ComboBoxItem Content="Tous"/>
+                            <ComboBoxItem Content="Planifié"/>
+                            <ComboBoxItem Content="Annulé"/>
+                            <ComboBoxItem Content="Terminé"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" Margin="0,0,10,0"/>
+
+                    <Button Grid.Column="4" Content="Nouveau RDV" Style="{StaticResource BoutonPrimaire}"
+                            VerticalAlignment="Bottom" Click="btnNouveau_Click"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Liste ===== -->
+        <Border Style="{StaticResource Carte}">
+            <StackPanel>
+                <TextBlock Text="Liste des rendez-vous" Style="{StaticResource TitreSection}"/>
+                <DataGrid x:Name="dgRendezVous" Style="{StaticResource GrilleModerne}"
+                          ColumnHeaderStyle="{StaticResource EnteteGrille}"
+                          MouseDoubleClick="dgRendezVous_MouseDoubleClick" Height="320">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="N° RDV" Binding="{Binding NumeroRdv}" Width="90"/>
+                        <DataGridTextColumn Header="Patient" Binding="{Binding PatientNom}" Width="*"/>
+                        <DataGridTextColumn Header="Médecin" Binding="{Binding MedecinNom}" Width="*"/>
+                        <DataGridTextColumn Header="Date &amp; heure" Binding="{Binding DateHeure, StringFormat='dd/MM/yyyy HH:mm'}" Width="150"/>
+                        <DataGridTextColumn Header="Motif" Binding="{Binding Motif}" Width="*"/>
+                        <DataGridTemplateColumn Header="Statut" Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource Badge}" Background="{Binding CouleurStatut}">
+                                        <TextBlock Text="{Binding StatutAffiche}" Foreground="White" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Actions" Width="220">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Reprogrammer" Style="{StaticResource BoutonSecondaire}"
+                                                Margin="0,0,6,0" Click="btnReprogrammer_Click" Tag="{Binding NumeroRdv}"/>
+                                        <Button Content="Annuler" Style="{StaticResource BoutonDanger}"
+                                                Click="btnAnnuler_Click" Tag="{Binding NumeroRdv}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <TextBlock x:Name="txtMessage" Margin="0,10,0,0" FontSize="12"/>
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+</UserControl>
