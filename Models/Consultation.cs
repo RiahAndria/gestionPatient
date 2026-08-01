@@ -1,8 +1,12 @@
-namespace Patients.Models;
-
-public class Consultation
+namespace Patients.Models
 {
-    public string NumeroConsultation { get; set; } = string.Empty; // Clé primaire
-    public string Diagnostique { get; set; } = string.Empty;
-    public string NotesMedicales { get; set; } = string.Empty;
+    public class Consultation
+    {
+        // Clé primaire : NUMEROCONSULTATION (VARCHAR)
+        public string NumeroConsultation { get; set; } = string.Empty;
+        public string Diagnostique { get; set; } = string.Empty;
+        public string NotesMedicales { get; set; } = string.Empty;
+        public Ordonnance? OrdonnanceAssociee { get; set; }
+    }
+
 }
