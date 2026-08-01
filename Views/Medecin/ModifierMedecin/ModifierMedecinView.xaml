@@ -1,6 +1,7 @@
 <Window x:Class="Patients.Views.Medecin.ModifierMedecin.ModifierMedecinView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Height="1000">
     <StackPanel>
         <TextBlock Text="Modification d'un médecin" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
         
