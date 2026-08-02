@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Patients.Helpers;
 using Patients.Models;
 using Patients.Services;
 
@@ -56,7 +57,9 @@ public partial class RendezVousFormView : UserControl
         }
 
         var dateHeure = dpDate.SelectedDate.Value.Date + heure;
-        var numero = $"RDV-{Guid.NewGuid().ToString()[..8].ToUpper()}";
+        // Numero sequentiel global (RDV-000001, ...), pas aleatoire :
+        // voir Helpers/NumeroRdvHelper.cs pour la logique metier.
+        var numero = NumeroRdvHelper.GenererNumero();
         var dateHeureSaisie = dpDate.SelectedDate.Value.Date + heure;
 
         if (dateHeureSaisie < DateTime.Now)
