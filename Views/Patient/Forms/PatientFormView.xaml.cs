@@ -13,7 +13,7 @@ public partial class PatientFormView : UserControl
 
     public PatientFormView()
     {
-        InitializeComponent();
+        InitializeComponent(); // Commentaire
     }
 
     private void btnAjouter_Click(object sender, RoutedEventArgs e)
