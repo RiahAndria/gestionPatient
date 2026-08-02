@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,7 +18,7 @@ public partial class RendezVousListView : UserControl
 
     private void Filtre_Changed(object sender, RoutedEventArgs e) => RafraichirGrille();
 
-    private void RafraichirGrille()
+    public void RafraichirGrille()
     {
         // Les evenements de filtre (SelectionChanged sur cbStatut,
         // notamment) peuvent se declencher pendant le chargement du

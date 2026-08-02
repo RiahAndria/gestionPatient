@@ -96,7 +96,7 @@
                             <StackPanel Margin="0,0,10,0">
                                 <TextBlock Text="Planning &amp; Rendez-vous" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
                                 <Border Style="{StaticResource GlassCardStyle}">
-                                    <rendezvous:RendezVousListView/>
+                                    <rendezvous:RendezVousListView x:Name="VueRendezVous"/>
                                 </Border>
                             </StackPanel>
                         </ScrollViewer>
@@ -107,7 +107,7 @@
                             <StackPanel Margin="0,0,10,0">
                                 <TextBlock Text="Paiements" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
                                 <Border Style="{StaticResource GlassCardStyle}">
-                                    <paiement:PaiementView/>
+                                    <paiement:PaiementView x:Name="VuePaiements"/>
                                 </Border>
                             </StackPanel>
                         </ScrollViewer>

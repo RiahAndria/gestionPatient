@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -11,7 +11,7 @@
   <!-- EF Core (Microsoft.EntityFrameworkCore*, Npgsql.EntityFrameworkCore.PostgreSQL)
        retire : personne ne l'utilise (verifie sur tout le depot), equipe
        alignee sur ADO.NET + Dapper. Data/AppDbContext.cs doit aussi etre
-       supprime (voir instructions). -->
+       supprime  -->
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.79" />
     <PackageReference Include="MaterialDesignThemes" Version="5.3.2" />
