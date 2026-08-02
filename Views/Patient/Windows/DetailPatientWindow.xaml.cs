@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using Patients.Helpers;
 using Patients.Models;
 using Patients.Services;
 
@@ -23,9 +24,11 @@ public partial class DetailPatientWindow : Window
     {
         if (_patient is null) return;
 
-        lblIdentite.Text = $"{_patient.Nom?.ToUpper()} {_patient.Prenom}";
+        lblIdentite.Text = $"{PatientHelper.ObtenirTitrePatient(_patient.Genre, _patient.DateNaissance)} {_patient.Nom?.ToUpper()} {_patient.Prenom}";
         lblMatricule.Text = $"DOSSIER N° {_patient.NumeroDossier}";
         lblContact.Text = $"Tél: {_patient.Telephone}\nEmail: {_patient.Email}\nAdresse: {_patient.Adresse}";
+        lblDateNaissance.Text = $"Date de naissance : {_patient.DateNaissance:dd/MM/yyyy}";
+        lblAgeGenre.Text = PatientHelper.ObtenirDetailPatient(_patient.Genre, _patient.DateNaissance);
         lblAssurance.Text = string.IsNullOrWhiteSpace(_patient.NumeroAssurance)
             ? "Assurance: Non renseignée"
             : $"N° Assurance: {_patient.NumeroAssurance}";
@@ -38,6 +41,16 @@ public partial class DetailPatientWindow : Window
             lblPoids.Text = $"{dossier.Poids} kg";
             lblTaille.Text = $"{dossier.Taille} cm";
             lblGroupe.Text = string.IsNullOrWhiteSpace(dossier.GroupeSanguin) ? "-" : dossier.GroupeSanguin;
+            if (string.IsNullOrWhiteSpace(dossier.NumeroAssurance) && _patient != null)
+            {
+                dossier.NumeroAssurance = _patient.NumeroAssurance;
+            }
+
+            if (!string.IsNullOrWhiteSpace(dossier.NumeroAssurance))
+            {
+                lblAssurance.Text = $"N° Assurance: {dossier.NumeroAssurance}";
+            }
+
             txtTraitements.Text = string.IsNullOrWhiteSpace(dossier.Traitement)
                 ? "Pas de traitement actif."
                 : dossier.Traitement;
@@ -105,6 +118,29 @@ public partial class DetailPatientWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show($"Erreur lors de la suppression : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void BtnHistorique_Click(object sender, RoutedEventArgs e)
+    {
+        if (_patient is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var consultations = _patientService.ObtenirConsultationsParPatient(_patient.Id);
+            var historiqueWindow = new Windows.HistoriqueConsultationsWindow(_patient, consultations)
+            {
+                Owner = this
+            };
+
+            historiqueWindow.ShowDialog();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur lors du chargement de l'historique : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

@@ -62,14 +62,14 @@ public class PatientService
             }
 
             // et maintenant on insère dans la table patient... Je vous ai dit que faire un putain d'héritage était une perte de temps ici
-            string queryPatient = @"
-                INSERT INTO PATIENT (ID, NUMERODOSSIER, NOM, PRENOM, DATEDENAISSANCE, GENRE, ADRESSE, TELEPHONE, MAIL)
-                VALUES (@Id, @NumeroDossier, @Nom, @Prenom, @DateNaissance, @Genre, @Adresse, @Telephone, @Mail);";
-
+           string queryPatient = @"
+                INSERT INTO PATIENT (ID, NUMERODOSSIER, NUMEROASSURANCE, NOM, PRENOM, DATEDENAISSANCE, GENRE, ADRESSE, TELEPHONE, MAIL)
+                VALUES (@Id, @NumeroDossier, @NumeroAssurance, @Nom, @Prenom, @DateNaissance, @Genre, @Adresse, @Telephone, @Mail);";
             using (var cmdPatient = new NpgsqlCommand(queryPatient, conn, transaction))
             {
                 cmdPatient.Parameters.AddWithValue("Id", patient.Id);
                 cmdPatient.Parameters.AddWithValue("NumeroDossier", patient.NumeroDossier);
+                cmdPatient.Parameters.AddWithValue("NumeroAssurance", patient.NumeroAssurance);
                 cmdPatient.Parameters.AddWithValue("Nom", patient.Nom);
                 cmdPatient.Parameters.AddWithValue("Prenom", patient.Prenom);
                 cmdPatient.Parameters.AddWithValue("DateNaissance", patient.DateNaissance);
@@ -97,9 +97,10 @@ public class PatientService
         var liste = new List<Patients.Models.Patient>();
         string query = @"
             SELECT p.ID, p.NOM, p.PRENOM, p.DATEDENAISSANCE, p.GENRE, p.ADRESSE, p.TELEPHONE, p.MAIL, 
-                pa.NUMERODOSSIER
+                pa.NUMERODOSSIER, pa.NUMEROASSURANCE
             FROM PATIENT pa
             INNER JOIN PERSONNE p ON pa.ID = p.ID;";
+
         using var conn = new NpgsqlConnection(_connectionString);
         using var cmd = new NpgsqlCommand(query, conn);
         
@@ -118,7 +119,8 @@ public class PatientService
                 Adresse = reader.GetString(5),
                 Telephone = reader.GetString(6),
                 Email = reader.GetString(7),
-                NumeroDossier = reader.GetString(8)
+                NumeroDossier = reader.GetString(8),
+                NumeroAssurance = reader.IsDBNull(9) ? string.Empty : reader.GetString(9) // <--- AJOUT ICI !
             });
         }
 
@@ -154,16 +156,24 @@ public class PatientService
                 cmdPers.ExecuteNonQuery();
             }
 
-            // Mise à jour de la table PATIENT, pour que la vue patient reflète bien les changements
+            // Mise à jour de la table PATIENT
             string updatePatient = @"
                 UPDATE PATIENT
-                SET NUMERODOSSIER = @NumeroDossier, NOM = @Nom, PRENOM = @Prenom, DATEDENAISSANCE = @DateNaissance,
-                    GENRE = @Genre, ADRESSE = @Adresse, TELEPHONE = @Telephone, MAIL = @Mail
+                SET NUMERODOSSIER = @NumeroDossier, 
+                    NUMEROASSURANCE = @NumeroAssurance,
+                    NOM = @Nom, 
+                    PRENOM = @Prenom, 
+                    DATEDENAISSANCE = @DateNaissance,
+                    GENRE = @Genre, 
+                    ADRESSE = @Adresse, 
+                    TELEPHONE = @Telephone, 
+                    MAIL = @Mail
                 WHERE ID = @Id;";
 
             using (var cmdPat = new NpgsqlCommand(updatePatient, conn, transaction))
             {
                 cmdPat.Parameters.AddWithValue("NumeroDossier", patient.NumeroDossier);
+                cmdPat.Parameters.AddWithValue("NumeroAssurance", patient.NumeroAssurance ?? (object)DBNull.Value); // <--- AJOUT ICI !
                 cmdPat.Parameters.AddWithValue("Nom", patient.Nom);
                 cmdPat.Parameters.AddWithValue("Prenom", patient.Prenom);
                 cmdPat.Parameters.AddWithValue("DateNaissance", patient.DateNaissance);
@@ -182,6 +192,37 @@ public class PatientService
             transaction.Rollback();
             throw;
         }
+    }
+
+    public List<Consultation> ObtenirConsultationsParPatient(string patientId)
+    {
+        var consultations = new List<Consultation>();
+
+        string query = @"
+            SELECT c.NUMEROCONSULTATION, c.DIAGNOSTIQUE, c.NOTESMEDICALES
+            FROM CONSULTATION c
+            INNER JOIN RENDEZ_VOUS r ON c.NUMERORDV = r.NUMERORDV
+            WHERE r.ID = @PatientId
+            ORDER BY c.NUMEROCONSULTATION DESC;";
+
+        using var conn = new NpgsqlConnection(_connectionString);
+        using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@PatientId", patientId);
+
+        conn.Open();
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            consultations.Add(new Consultation
+            {
+                NumeroConsultation = reader.GetString(0),
+                Diagnostique = reader.GetString(1),
+                NotesMedicales = reader.GetString(2)
+            });
+        }
+
+        return consultations;
     }
 
     // supprimer un patient de la base de données
