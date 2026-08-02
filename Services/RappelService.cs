@@ -32,8 +32,6 @@ namespace Patients.Services
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            // Seuls les rendez-vous encore PLANIFIE comptent : pas de
-            // rappel pour un rendez-vous deja annule ou deja termine.
             string queryRdv = @"
                 SELECT r.NUMERORDV, r.DATEHEURERDV, p.NOM, p.PRENOM 
                 FROM RENDEZ_VOUS r
@@ -64,8 +62,8 @@ namespace Patients.Services
                 string message = $"Rappel RDV : M./Mme {rdv.NomComplet} le {rdv.DateHeure:dd/MM/yyyy à HH:mm}.";
 
                 string insertQuery = @"
-                    INSERT INTO NOTIFICATION (NUMERONOTIF, NUMERORDV, TEXTENOTIF)
-                    VALUES (@numNotif, @numRdv, @texte);";
+                    INSERT INTO NOTIFICATION (NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU)
+                    VALUES (@numNotif, @numRdv, @texte, now(), false);";
 
                 using var cmdInsert = new NpgsqlCommand(insertQuery, conn);
                 cmdInsert.Parameters.AddWithValue("@numNotif", idNotif);
@@ -88,7 +86,7 @@ namespace Patients.Services
 
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
-            string query = "SELECT NUMERONOTIF, NUMERORDV, TEXTENOTIF FROM NOTIFICATION ORDER BY NUMERONOTIF DESC;";
+            string query = "SELECT NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU FROM NOTIFICATION ORDER BY DATENOTIF DESC;";
 
             using var cmd = new NpgsqlCommand(query, conn);
             using var reader = cmd.ExecuteReader();
@@ -99,11 +97,38 @@ namespace Patients.Services
                 {
                     NumeroNotif = reader.GetString(0),
                     NumeroRdv = reader.GetString(1),
-                    TexteNotif = reader.GetString(2)
+                    TexteNotif = reader.GetString(2),
+                    DateNotif = reader.GetDateTime(3),
+                    Lu = reader.GetBoolean(4)
                 });
             }
 
             return notifications;
+        }
+
+        public int CompterNonLues()
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+            using var cmd = new NpgsqlCommand("SELECT COUNT(*) FROM NOTIFICATION WHERE LU = false;", conn);
+            return (int)(long)cmd.ExecuteScalar()!;
+        }
+
+        public void MarquerCommeLue(string numeroNotif)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+            using var cmd = new NpgsqlCommand("UPDATE NOTIFICATION SET LU = true WHERE NUMERONOTIF = @id;", conn);
+            cmd.Parameters.AddWithValue("@id", numeroNotif);
+            cmd.ExecuteNonQuery();
+        }
+
+        public void MarquerToutesCommeLues()
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+            using var cmd = new NpgsqlCommand("UPDATE NOTIFICATION SET LU = true WHERE LU = false;", conn);
+            cmd.ExecuteNonQuery();
         }
     }
 }

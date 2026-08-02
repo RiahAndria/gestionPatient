@@ -21,6 +21,12 @@ public partial class MainWindow : Window
     SidebarNav.ConsultationsButton.Checked += (s, e) => MainTabControl.SelectedItem = TabConsultations;
     SidebarNav.RendezVousButton.Checked += (s, e) => { MainTabControl.SelectedItem = TabRendezVous; VueRendezVous.RafraichirGrille(); };
     SidebarNav.PaiementsButton.Checked += (s, e) => { MainTabControl.SelectedItem = TabPaiements; VuePaiements.Rafraichir(); };
+    SidebarNav.NotificationsButton.Checked += (s, e) =>
+    {
+        MainTabControl.SelectedItem = TabNotifications;
+        VueNotifications.Rafraichir();
+        SidebarNav.RafraichirBadgeNotifications();
+    };
 }
     public void RefreshPatientList()
     {

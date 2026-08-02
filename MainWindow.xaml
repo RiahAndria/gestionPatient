@@ -10,6 +10,7 @@
         xmlns:historique="clr-namespace:Patients.Views.Historique"
         xmlns:rendezvous="clr-namespace:Patients.Views.RendezVous"
         xmlns:paiement="clr-namespace:Patients.Views.Paiement"
+        xmlns:notification="clr-namespace:Patients.Views.Notification"
         xmlns:consultation="clr-namespace:Patients.Views.Consultation"
         xmlns:listeMedecin="clr-namespace:Patients.Views.Medecin.ListeMedecin"
         Title="Gestion Médicale" Height="700" Width="1200"
@@ -108,6 +109,17 @@
                                 <TextBlock Text="Paiements" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
                                 <Border Style="{StaticResource GlassCardStyle}">
                                     <paiement:PaiementView x:Name="VuePaiements"/>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem x:Name="TabNotifications">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="Notifications" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
+                                <Border Style="{StaticResource GlassCardStyle}">
+                                    <notification:NotificationView x:Name="VueNotifications"/>
                                 </Border>
                             </StackPanel>
                         </ScrollViewer>
