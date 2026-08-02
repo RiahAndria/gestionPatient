@@ -1,0 +1,114 @@
+<UserControl x:Class="Patients.Views.Medecin.DetailEtDisponibilite.DashboardDispo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="650" Width="1050"
+             Background="#F9FAFB">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock x:Name="txtNomMedecinHeader" 
+                               Text="Chargement..." 
+                               FontSize="20" FontWeight="Bold" Foreground="#1E3A8A"/>
+                    <TextBlock x:Name="txtSpecialiteHeader" 
+                               Text="" 
+                               FontSize="13" Foreground="#4B5563" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="btnSemainePrecedente" Content="◄ Semaine précédente" 
+                            Padding="10,6" Background="#E5E7EB" Foreground="#374151" 
+                            FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Margin="0,0,8,0"
+                            Click="btnSemainePrecedente_Click"/>
+                    
+                    <TextBlock x:Name="txtSemaineCourante" Text="Période" 
+                               FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="8,0"/>
+                    
+                    <Button x:Name="btnSemaineSuivante" Content="Semaine suivante ►" 
+                            Padding="10,6" Background="#E5E7EB" Foreground="#374151" 
+                            FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0"
+                            Click="btnSemaineSuivante_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5,0,0,10">
+            <Border Width="14" Height="14" Background="#DCFCE7" BorderBrush="#16A34A" BorderThickness="1" CornerRadius="3" VerticalAlignment="Center"/>
+            <TextBlock Text="Disponible" FontSize="12" Foreground="#374151" Margin="6,0,20,0" VerticalAlignment="Center"/>
+
+            <Border Width="14" Height="14" Background="#F3F4F6" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="3" VerticalAlignment="Center"/>
+            <TextBlock Text="Non disponible" FontSize="12" Foreground="#9CA3AF" Margin="6,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="gridPlanning" Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110"/> 
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>  
+                    <ColumnDefinition Width="*"/>  
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>   
+                    <RowDefinition Height="Auto"/> 
+                    <RowDefinition Height="85"/>   
+                    <RowDefinition Height="85"/>   
+                    <RowDefinition Height="Auto"/> 
+                    <RowDefinition Height="85"/>  
+                    <RowDefinition Height="85"/>  
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Grid.Column="0" Background="#1E3A8A"><TextBlock Text="Horaires" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="1" Background="#1E3A8A"><TextBlock Text="Lundi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="2" Background="#1E3A8A"><TextBlock Text="Mardi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="3" Background="#1E3A8A"><TextBlock Text="Mercredi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="4" Background="#1E3A8A"><TextBlock Text="Jeudi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="5" Background="#1E3A8A"><TextBlock Text="Vendredi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="6" Background="#1E3A8A"><TextBlock Text="Samedi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+
+                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Background="#EFF6FF" Padding="8,4">
+                    <TextBlock Text="MATIN" FontWeight="Bold" Foreground="#1D4ED8" FontSize="11"/>
+                </Border>
+                <Border Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="7" Background="#FFF7ED" Padding="8,4">
+                    <TextBlock Text="APRÈS-MIDI" FontWeight="Bold" Foreground="#C2410C" FontSize="11"/>
+                </Border>
+
+                <Border Grid.Row="2" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,1">
+                    <TextBlock Text="08h00 - 10h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="3" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,1">
+                    <TextBlock Text="10h00 - 12h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="5" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,1">
+                    <TextBlock Text="14h00 - 16h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="6" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,0">
+                    <TextBlock Text="16h00 - 18h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+            </Grid>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <!-- <Button Content="Fermer" Width="110" Height="34" 
+                    Background="#6B7280" Foreground="White" FontWeight="Bold" Cursor="Hand" 
+                    BorderThickness="0" Click="BtnFermer_Click"/> -->
+        </StackPanel>
+    </Grid>
+</UserControl>

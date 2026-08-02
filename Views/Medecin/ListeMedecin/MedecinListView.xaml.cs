@@ -7,6 +7,7 @@ using System.Security.AccessControl;
 using Patient.Views.Medecin.DetailMedecin;
 using Patients.Views.Medecin.ModifierMedecin;
 using System.IO.Compression;
+using Patients.Views.Medecin.DetailEtDisponibilite;
 
 namespace Patients.Views.Medecin.ListeMedecin
 {
@@ -25,6 +26,21 @@ namespace Patients.Views.Medecin.ListeMedecin
             dgSimple.ItemsSource = instanceServiceMedecin.ObtenirTousLesMedecin();
         }    
 
+        // public void BtnOuvrirFenetre_Click(Object sender, RoutedEventArgs e)
+        // {
+        //     //recuperation du valeur de Tag
+        //     DataGrid? grid = sender as DataGrid;
+            
+        //     if (grid?.SelectedItem is Patients.Models.Medecin medecinSelectionne)
+        //     {  
+        //         //string valeurTag = medecinSelectionne.Id.ToString();
+
+        //         DetailMedecinWindow fenetre = new DetailMedecinWindow(medecinSelectionne);
+        //         fenetre.Owner = Window.GetWindow(this);
+        //         fenetre.ShowDialog();
+        //     }
+        // }
+
         public void BtnOuvrirFenetre_Click(Object sender, RoutedEventArgs e)
         {
             //recuperation du valeur de Tag
@@ -34,7 +50,7 @@ namespace Patients.Views.Medecin.ListeMedecin
             {  
                 //string valeurTag = medecinSelectionne.Id.ToString();
 
-                DetailMedecinWindow fenetre = new DetailMedecinWindow(medecinSelectionne);
+                VuePrincipale fenetre = new VuePrincipale(medecinSelectionne);
                 fenetre.Owner = Window.GetWindow(this);
                 fenetre.ShowDialog();
             }

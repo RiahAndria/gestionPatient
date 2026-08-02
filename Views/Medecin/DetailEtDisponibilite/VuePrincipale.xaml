@@ -1,0 +1,41 @@
+<!-- Patients.Views.Medecin.MainViewModel -->
+
+<Window x:Class="Patients.Views.Medecin.DetailEtDisponibilite.VuePrincipale"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Patients.Views.Medecin.DetailEtDisponibilite"
+    Title="Information medecin"
+    Height="650" Width="1050"
+    WindowStartupLocation="CenterOwner"
+    Background="#F9FAFB">
+
+    <!-- 2. Déclaration des DataTemplates dans la fenêtre -->
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:DetailMedecin}">
+            <local:DetailMedecin/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:DashboardDispo}">
+            <local:DashboardDispo/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <!-- 3. Structure de l'interface -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/> <!-- Menu latéral -->
+            <ColumnDefinition Width="*"/>   <!-- Zone d'affichage dynamique -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Menu latéral -->
+        <StackPanel Grid.Column="0" Background="#F0F0F0">
+            <Button Content="Médecins" Click="BtnMedecin_Click" Margin="10" Height="40"/>
+            <Button Content="Patients" Click="BtnPatient_Click" Margin="10" Height="40"/>
+        </StackPanel>
+
+        <!-- ZONE DYNAMIQUE : Le ContentControl -->
+        <ContentControl Grid.Column="1" 
+                        Content="{Binding CurrentViewModel}" />
+    </Grid>
+
+</Window>

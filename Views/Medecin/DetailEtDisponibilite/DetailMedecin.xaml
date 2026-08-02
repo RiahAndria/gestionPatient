@@ -1,0 +1,101 @@
+<!--  -->
+<UserControl x:Class="Patients.Views.Medecin.DetailEtDisponibilite.DetailMedecin"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="650" Width="1050"
+             Background="#F9FAFB">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid Background="#F9FAFB" Grid.Column="0"> 
+            <StackPanel Margin="20"> 
+                <TextBlock Text="Informations Medecin" FontSize="20" FontWeight="Bold" Foreground="#1E3A8A" Margin="0,0,0,15"/>
+                
+                <Border BorderBrush="#E5E7EB" BorderThickness="1" Background="White" CornerRadius="6" Padding="15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Matricule :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTMatricule" Grid.Row="0" Grid.Column="1" Margin="0,5"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Nom &amp; Prénom :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTIdentite" Grid.Row="1" Grid.Column="1" Margin="0,5"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Date de naissance :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTDateNaissance" Grid.Row="2" Grid.Column="1" Margin="0,5"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Adress :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTAdress" Grid.Row="3" Grid.Column="1" Margin="0,5"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Contact :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTContact" Grid.Row="4" Grid.Column="1" Margin="0,5"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Ordre des Medecins :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTOrdreMedecin" Grid.Row="5" Grid.Column="1" Margin="0,5"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Info :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTInformationProfessionnel" Grid.Row="6" Grid.Column="1" Margin="0,5"/>
+
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Taux horaire :" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock x:Name="TXTTauxMhoraire" Grid.Row="7" Grid.Column="1" Margin="0,5"/>
+                    </Grid>
+                </Border>
+                <!-- <Button Content="Fermer" Width="100" Height="30" Margin="0,20,0,0" HorizontalAlignment="Right" Click="BtnFermer_Click"/> -->
+            </StackPanel>
+        </Grid>
+        <Grid Background="#F9FAFB" Grid.Column="1">
+            <TextBlock Text="Nouvelle disponibilite" FontSize="20" FontWeight="Bold" Foreground="#1E3A8A" Margin="15"/>
+            <StackPanel Margin="20">
+                <Border BorderBrush="#E5E7EB" BorderThickness="1" Background="White" CornerRadius="6" Padding="15">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Date :" FontWeight="Bold" Margin="0,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Heure de disponibilité :" FontWeight="Bold" Margin="0,5"/>
+
+                            <DatePicker Grid.Row="0" Grid.Column="2" x:Name="TXTDateDisponibilite" Height="32"/>
+                            <StackPanel x:Name="pnlOptions" Grid.Row="2" Grid.Column="2">
+                                <CheckBox Content="00h - 04h du matin " Tag="1" Margin="0,3"/>
+                                <CheckBox Content="04h - 08h du matin " Tag="2" Margin="0,3"/>
+                                <CheckBox Content="08h - 12h " Tag="3" Margin="0,3"/>
+                                <CheckBox Content="12h - 16h apres-midi" Tag="4" Margin="0,3"/>
+                                <CheckBox Content="16h - 20h du soir " Tag="5" Margin="0,3"/>
+                                <CheckBox Content="20h - 00h du soir " Tag="6" Margin="0,3"/>
+                            </StackPanel>
+                        </Grid>
+                        <Button Content="Valider la sélection" Click="BtnValiderCreationDispo" Margin="0,15,0,0" Height="30"/>
+                        
+                        <!-- Affichage du résultat -->
+                        <TextBlock x:Name="txtResultat" Margin="0,15,0,0" TextWrapping="Wrap" Foreground="DarkBlue"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

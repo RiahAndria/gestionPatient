@@ -14,6 +14,8 @@ namespace Patients.Services;
 public class DisponibiliteService
 {
     private readonly string _connectionString;
+
+    public string message {set; get; } = string.Empty;
     public DisponibiliteService()
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -24,9 +26,13 @@ public class DisponibiliteService
         _connectionString = configuration.GetConnectionString("DefaultConnection")!;
     }
 
-    public bool CreerDisponibilite(Temps nouveauTempsDisponible, int[] tabNumBloc)
+    public bool CreerDisponibilite(Disponibilite donneMedecin ,List<string> tabNumBloc)
     {
         int i, heure = 0;
+
+        Temps nouveauTempsDisponible = new Temps();
+        nouveauTempsDisponible.id_medecin = donneMedecin.id_medecin;
+        nouveauTempsDisponible.date_disponibilite = donneMedecin.date_disponibilite;
          
         //verifier qu'aucune date de disponibilite a une bloque soit creer
         using var connexion = new NpgsqlConnection(_connectionString);
@@ -36,39 +42,41 @@ public class DisponibiliteService
         try
         {
             //Creation d'un bloc de disponibilite
-            foreach (int block in tabNumBloc)
+            foreach (string block in tabNumBloc)
             {
-                nouveauTempsDisponible.numero_bloc = block;
+                nouveauTempsDisponible.numero_bloc = int.Parse(block);
+                donneMedecin.numero_bloc = int.Parse(block);
 
                 var sql = @"INSERT INTO DISPONIBILITE (ID_MEDECIN, DATE_DISPONIBILITE, NUMERO_BLOC) 
                         VALUES (@id_medecin, @date_disponibilite, @numero_bloc);";
 
-                var rowAffected = connexion.Execute(sql,nouveauTempsDisponible,transaction);
-
+                var rowAffected = connexion.Execute(sql,donneMedecin,transaction);
+                
+                
                 //la table disponibilite est creer on va creer  le
                 switch (block)
                 {
-                    case 1:
+                    case "1":
                         heure = 0;
                         break;
-                    case 2:
+                    case "2":
                         heure = 4;
                         break;
-                    case 3:
+                    case "3":
                         heure = 8;
                         break;
-                    case 4:
+                    case "4":
                         heure = 12;
                         break;
-                    case 5:
+                    case "5":
                         heure = 16;
                         break;
-                    case 6:
+                    case "6":
                         heure = 20;
                         break;
                 }
 
-                var requete = @"INSERT INTO TEMPS (ID_MEDECIN, DATE_DISPONIBILITE, NUMERO_BLOC, HEURE_DEBUT, HEURE_FIN) 
+                var requete = @"INSERT INTO TEMPS (id_medecin, DATE_DISPONIBILITE, NUMERO_BLOC, HEURE_DEBUT, HEURE_FIN) 
                                 VALUES (@id_medecin, @date_disponibilite, @numero_bloc, @heure_debut, @heure_fin )";
                 i= 1;
 
@@ -77,7 +85,6 @@ public class DisponibiliteService
                 nouveauTempsDisponible.heure_debut = heure_debut;
                 nouveauTempsDisponible.heure_fin = heure_fin;
                 connexion.Execute(requete, nouveauTempsDisponible, transaction);
-
 
                 i++;
                 while (i <= 16)
@@ -95,9 +102,13 @@ public class DisponibiliteService
             return true;
 
         } 
-        catch
+        catch (NpgsqlException e)
         {
             transaction.Rollback();
+            if (e.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                message = "Vous etes deja disponible a ce moment de la journee";
+            }
             return false;
         }
     }

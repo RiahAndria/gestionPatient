@@ -1,7 +1,7 @@
 <!-- on affiche la liste des rendez-vous avec possibilité de recherche, filtrage et actions sur les rendez-vous -->
 <UserControl x:Class="Patients.Views.RendezVous.RendezVousListView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <StackPanel Margin="0,0,0,0">
 
