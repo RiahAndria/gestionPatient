@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
@@ -138,6 +137,11 @@ public class RendezVousService
     // creneau est deja pris pour ce medecin.
     public void AjouterRendezVous(RendezVous rdv)
     {
+        if (rdv.DateHeure < DateTime.Now)
+        {
+            throw new InvalidOperationException("Impossible de créer un rendez-vous dans le passé.");
+        }
+        
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
         using var transaction = conn.BeginTransaction();

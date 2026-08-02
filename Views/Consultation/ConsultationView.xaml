@@ -23,19 +23,27 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
+                        <!-- Rendez-vous associe (obligatoire - manquait entierement avant) -->
+                        <TextBlock Text="Rendez-vous :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,5">
+                            <ComboBox x:Name="CbRendezVous" DisplayMemberPath="PatientNom" SelectionChanged="CbRendezVous_SelectionChanged"/>
+                            <TextBlock x:Name="LblDetailRdv" FontSize="11" Foreground="#7F8C8D" Margin="0,4,0,0"/>
+                        </StackPanel>
+
                         <!-- Numéro Consultation -->
-                        <TextBlock Text="N° Consultation :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtNumeroConsultation" Grid.Row="0" Grid.Column="1" Margin="0,5" Padding="5"/>
+                        <TextBlock Text="N° Consultation :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                        <TextBox x:Name="TxtNumeroConsultation" Grid.Row="1" Grid.Column="1" Margin="0,5" Padding="5"/>
 
                         <!-- Diagnostic -->
-                        <TextBlock Text="Diagnostic :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtDiagnostique" Grid.Row="1" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
+                        <TextBlock Text="Diagnostic :" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
+                        <TextBox x:Name="TxtDiagnostique" Grid.Row="2" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
 
                         <!-- Notes Médicales -->
-                        <TextBlock Text="Notes Médicales :" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtNotesMedicales" Grid.Row="2" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
+                        <TextBlock Text="Notes Médicales :" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
+                        <TextBox x:Name="TxtNotesMedicales" Grid.Row="3" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -114,6 +122,8 @@
                     </Grid>
                 </StackPanel>
             </Border>
+
+            <TextBlock x:Name="LblMessage" TextWrapping="Wrap" Margin="0,12,0,0" FontSize="12"/>
 
             <!-- BOUTONS D'ACTION -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">

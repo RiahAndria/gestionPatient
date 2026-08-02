@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -58,6 +57,19 @@ public partial class RendezVousFormView : UserControl
 
         var dateHeure = dpDate.SelectedDate.Value.Date + heure;
         var numero = $"RDV-{Guid.NewGuid().ToString()[..8].ToUpper()}";
+        var dateHeureSaisie = dpDate.SelectedDate.Value.Date + heure;
+
+        if (dateHeureSaisie < DateTime.Now)
+        {
+            AfficherErreur("Impossible de créer un rendez-vous dans le passé.");
+            return;
+        }
+
+        if (heure < TimeSpan.FromHours(8) || heure > TimeSpan.FromHours(18))
+        {
+            AfficherErreur("Les rendez-vous se prennent entre 08:00 et 18:00 (horaires d'ouverture).");
+            return;
+        }
 
         try
         {

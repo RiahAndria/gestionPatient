@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Dapper;
 using Patients.Models;
-using System.Windows.Automation;
 using Patients.Helpers;
 using System.Data.Common;
 using System.Transactions;
@@ -188,6 +186,47 @@ public class MedecinService
         } catch {
             return 0;
         }
+    }
+
+    // Le numero d'ordre des medecins est UNIQUE en base (contrainte
+    // medecin_numero_ordre_key). On le verifie AVANT l'insertion pour
+    // afficher un message clair au lieu d'une erreur SQL generique.
+    public bool NumeroOrdreExiste(string numeroOrdre)
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+        string sql = "SELECT COUNT(*) FROM MEDECIN WHERE NUMERO_ORDRE = @numeroOrdre;";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("numeroOrdre", numeroOrdre);
+
+        return Convert.ToInt64(cmd.ExecuteScalar()!) > 0;
+    }
+
+    // Dernier compteur numerique deja utilise dans les matricules
+    // medicaux (format M-XX-YY-000A) : sert a continuer la numerotation
+    // apres un redemarrage de l'application, sinon le compteur statique
+    // repart de zero et les nouveaux id_medecin entrent en collision
+    // avec des medecins deja enregistres (cle primaire).
+    public int ObtenirDernierCompteurMatricule()
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+        var ids = conn.Query<string>(
+            "SELECT ID_MEDECIN FROM MEDECIN WHERE ID_MEDECIN LIKE 'M-%';").ToList();
+
+        int max = 0;
+        foreach (var id in ids)
+        {
+            var parties = id.Split('-');
+            if (parties.Length == 4 && parties[3].Length >= 3
+                && int.TryParse(parties[3][..3], out int compteur))
+            {
+                max = Math.Max(max, compteur);
+            }
+        }
+        return max;
     }
 
     public bool ModificationMedecin(Medecin donneeMedecinMiseAJour)
