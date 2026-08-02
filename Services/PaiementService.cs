@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
@@ -10,8 +11,8 @@ public class PaiementService
 {
     private readonly string _connectionString;
 
-    // Seuils de la politique de relance/annulation - a valider en equipe,
-    // faciles a ajuster ici en un seul endroit.
+    // Seuils de la politique de relance/annulation, modifiables ici en
+    // un seul endroit.
     private const int NB_RELANCES_MAX = 3;
     private const int DELAI_ANNULATION_JOURS = 7;
 
@@ -25,54 +26,140 @@ public class PaiementService
         _connectionString = configuration.GetConnectionString("DefaultConnection")!;
     }
 
-    // ---------------------------------------------------------------
-    // A appeler par le module Consultation (Sylvia) juste apres avoir
-    // enregistre une CONSULTATION. Cree la "facture" en attente.
-    // Pas de paiement en avance : cette methode exige un
-    // numeroConsultation qui existe deja en base (contrainte FK native
-    // s'en charge, mais on verifie avant pour un message clair).
-    // ---------------------------------------------------------------
-    public void CreerPaiementDu(string numeroConsultation, decimal montant, string modePaiementPropose = "Non précisé")
+    // -----------------------------------------------------------------
+    // PAIEMENT EN AVANCE (acompte)
+    // -----------------------------------------------------------------
+
+    // Rendez-vous encore planifies (pas encore de consultation, donc
+    // pas encore eu lieu) : ce sont les seuls eligibles a un acompte.
+    public List<RendezVousAffichage> ObtenirRendezVousEligiblesAcompte()
+    {
+        var resultat = new List<RendezVousAffichage>();
+
+        string query = @"
+            SELECT r.NUMERORDV, pp.NOM, pp.PRENOM, mp.NOM, mp.PRENOM, r.DATEHEURERDV, r.MOTIFRDV, r.STATUT
+            FROM RENDEZ_VOUS r
+            INNER JOIN PATIENT pa ON r.ID = pa.ID
+            INNER JOIN PERSONNE pp ON pa.ID = pp.ID
+            INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_MEDECIN
+            INNER JOIN PERSONNE mp ON me.ID_MEDECIN = mp.ID
+            WHERE r.STATUT = 'PLANIFIE'
+            ORDER BY r.DATEHEURERDV;";
+
+        using var conn = new NpgsqlConnection(_connectionString);
+        using var cmd = new NpgsqlCommand(query, conn);
+
+        conn.Open();
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            resultat.Add(new RendezVousAffichage
+            {
+                NumeroRdv = reader.GetString(0),
+                PatientNom = $"{reader.GetString(1)} {reader.GetString(2)}",
+                MedecinNom = $"Dr. {reader.GetString(3)} {reader.GetString(4)}",
+                DateHeure = reader.GetDateTime(5),
+                Motif = reader.GetString(6),
+                Statut = reader.GetString(7)
+            });
+        }
+
+        return resultat;
+    }
+
+    // Encaisse un acompte pour un rendez-vous pas encore realise.
+    // Contrairement au paiement "normal", l'acompte est considere payé
+    // immediatement (on l'encaisse au moment ou l'utilisateur le saisit,
+    // pas de facture "en attente" pour un acompte).
+    public void EncaisserAcompte(string numeroRdv, decimal montant, string modePaiement)
+    {
+        string numeroPaiement = $"PAI-{Guid.NewGuid().ToString()[..8].ToUpper()}";
+
+        string query = @"
+            INSERT INTO PAIEMENT (NUMEROPAIEMENT, NUMERORDV, NUMEROCONSULTATION, TYPEPAIEMENT, DATEPAIEMENT, MONTANT, MODEPAIEMENT, STATUT)
+            VALUES (@NumeroPaiement, @NumeroRdv, NULL, 'ACOMPTE', now(), @Montant, @Mode, true);";
+
+        using var conn = new NpgsqlConnection(_connectionString);
+        using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("NumeroPaiement", numeroPaiement);
+        cmd.Parameters.AddWithValue("NumeroRdv", numeroRdv);
+        cmd.Parameters.AddWithValue("Montant", montant);
+        cmd.Parameters.AddWithValue("Mode", modePaiement);
+
+        conn.Open();
+        cmd.ExecuteNonQuery();
+    }
+
+    // Total deja verse en acompte pour un rendez-vous donne (utilise
+    // pour deduire le solde restant au moment de la facture finale).
+    private decimal ObtenirTotalAcomptes(NpgsqlConnection conn, string numeroRdv)
+    {
+        string query = @"
+            SELECT COALESCE(SUM(MONTANT), 0) FROM PAIEMENT
+            WHERE NUMERORDV = @NumeroRdv AND TYPEPAIEMENT = 'ACOMPTE' AND STATUT = true;";
+
+        using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("NumeroRdv", numeroRdv);
+        return (decimal)cmd.ExecuteScalar()!;
+    }
+
+    // -----------------------------------------------------------------
+    // PAIEMENT NORMAL (solde, apres consultation)
+    // -----------------------------------------------------------------
+
+    // A appeler par le module Consultation juste apres l'enregistrement
+    // d'une consultation : cree la facture en attente pour le solde
+    // restant (montant total moins les acomptes deja verses pour ce
+    // rendez-vous).
+    public void CreerPaiementDu(string numeroConsultation, decimal montantTotal, string modePaiementPropose = "Non précisé")
     {
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
 
-        string queryVerif = "SELECT COUNT(*) FROM CONSULTATION WHERE NUMEROCONSULTATION = @NumeroConsultation;";
-        using (var cmdVerif = new NpgsqlCommand(queryVerif, conn))
+        string queryRdv = "SELECT NUMERORDV FROM CONSULTATION WHERE NUMEROCONSULTATION = @NumeroConsultation;";
+        string numeroRdv;
+        using (var cmdRdv = new NpgsqlCommand(queryRdv, conn))
         {
-            cmdVerif.Parameters.AddWithValue("NumeroConsultation", numeroConsultation);
-            var existe = (long)cmdVerif.ExecuteScalar()! > 0;
-            if (!existe)
+            cmdRdv.Parameters.AddWithValue("NumeroConsultation", numeroConsultation);
+            var resultat = cmdRdv.ExecuteScalar();
+            if (resultat is null)
                 throw new InvalidOperationException("Impossible de créer un paiement : la consultation n'existe pas encore (pas de paiement en avance).");
+            numeroRdv = (string)resultat;
         }
+
+        decimal acomptesDejaVerses = ObtenirTotalAcomptes(conn, numeroRdv);
+        decimal solde = Math.Max(0, montantTotal - acomptesDejaVerses);
 
         string numeroPaiement = $"PAI-{Guid.NewGuid().ToString()[..8].ToUpper()}";
 
         string query = @"
-            INSERT INTO PAIEMENT (NUMEROPAIEMENT, NUMEROCONSULTATION, DATEPAIEMENT, MONTANT, MODEPAIEMENT, STATUT)
-            VALUES (@NumeroPaiement, @NumeroConsultation, now(), @Montant, @Mode, false);";
+            INSERT INTO PAIEMENT (NUMEROPAIEMENT, NUMERORDV, NUMEROCONSULTATION, TYPEPAIEMENT, DATEPAIEMENT, MONTANT, MODEPAIEMENT, STATUT)
+            VALUES (@NumeroPaiement, @NumeroRdv, @NumeroConsultation, 'NORMAL', now(), @Montant, @Mode, false);";
 
         using var cmd = new NpgsqlCommand(query, conn);
         cmd.Parameters.AddWithValue("NumeroPaiement", numeroPaiement);
+        cmd.Parameters.AddWithValue("NumeroRdv", numeroRdv);
         cmd.Parameters.AddWithValue("NumeroConsultation", numeroConsultation);
-        cmd.Parameters.AddWithValue("Montant", montant);
+        cmd.Parameters.AddWithValue("Montant", solde);
         cmd.Parameters.AddWithValue("Mode", modePaiementPropose);
         cmd.ExecuteNonQuery();
     }
 
-    // Montant suggere = taux horaire du medecin qui a tenu la consultation
-    // (hypothese simplificatrice : tarif forfaitaire par consultation,
-    // faute d'une duree stockee quelque part dans le schema actuel).
+    // Montant total suggere = taux horaire du medecin qui a tenu la
+    // consultation (tarif forfaitaire par consultation, faute d'une
+    // duree stockee dans le schema). C'est le montant AVANT deduction
+    // des acomptes - CreerPaiementDu se charge de la deduction.
     public decimal CalculerMontantSuggere(string numeroConsultation)
     {
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
 
         string query = @"
-            SELECT me.TAUXHORAIRE
+            SELECT me.TAUX_HORAIRE
             FROM CONSULTATION c
             INNER JOIN RENDEZ_VOUS r ON c.NUMERORDV = r.NUMERORDV
-            INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_HER_2
+            INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_MEDECIN
             WHERE c.NUMEROCONSULTATION = @NumeroConsultation;";
 
         using var cmd = new NpgsqlCommand(query, conn);
@@ -81,22 +168,20 @@ public class PaiementService
         return resultat is decimal montant ? montant : 0m;
     }
 
-    // ---------------------------------------------------------------
-    // Liste des factures en attente, avec patient + nombre de relances
-    // deja envoyees (compte le nombre de NOTIFICATION liees au RDV
-    // d'origine de la consultation).
-    // ---------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // LECTURE (factures en attente, historique, detail par RDV)
+    // -----------------------------------------------------------------
+
     public List<PaiementAffichage> ObtenirEnAttente()
     {
         var resultat = new List<PaiementAffichage>();
 
         string query = @"
-            SELECT pa.NUMEROPAIEMENT, pa.NUMEROCONSULTATION, r.NUMERORDV,
+            SELECT pa.NUMEROPAIEMENT, pa.NUMEROCONSULTATION, r.NUMERORDV, pa.TYPEPAIEMENT,
                    pp.NOM, pp.PRENOM, pa.DATEPAIEMENT, pa.MONTANT, pa.MODEPAIEMENT,
                    (SELECT COUNT(*) FROM NOTIFICATION n WHERE n.NUMERORDV = r.NUMERORDV) AS NBRELANCES
             FROM PAIEMENT pa
-            INNER JOIN CONSULTATION c ON pa.NUMEROCONSULTATION = c.NUMEROCONSULTATION
-            INNER JOIN RENDEZ_VOUS r ON c.NUMERORDV = r.NUMERORDV
+            INNER JOIN RENDEZ_VOUS r ON pa.NUMERORDV = r.NUMERORDV
             INNER JOIN PATIENT pat ON r.ID = pat.ID
             INNER JOIN PERSONNE pp ON pat.ID = pp.ID
             WHERE pa.STATUT = false
@@ -113,31 +198,30 @@ public class PaiementService
             resultat.Add(new PaiementAffichage
             {
                 NumeroPaiement = reader.GetString(0),
-                NumeroConsultation = reader.GetString(1),
+                NumeroConsultation = reader.IsDBNull(1) ? "" : reader.GetString(1),
                 NumeroRdv = reader.GetString(2),
-                PatientNom = $"{reader.GetString(3)} {reader.GetString(4)}",
-                DateFacture = reader.GetDateTime(5),
-                Montant = reader.GetDecimal(6),
-                ModePaiement = reader.GetString(7),
+                TypePaiement = reader.GetString(3),
+                PatientNom = $"{reader.GetString(4)} {reader.GetString(5)}",
+                DateFacture = reader.GetDateTime(6),
+                Montant = reader.GetDecimal(7),
+                ModePaiement = reader.GetString(8),
                 EstPaye = false,
-                NombreRelances = (int)reader.GetInt64(8)
+                NombreRelances = (int)reader.GetInt64(9)
             });
         }
 
         return resultat;
     }
 
-    // Historique des paiements deja regles.
     public List<PaiementAffichage> ObtenirHistoriquePayes()
     {
         var resultat = new List<PaiementAffichage>();
 
         string query = @"
-            SELECT pa.NUMEROPAIEMENT, pa.NUMEROCONSULTATION, r.NUMERORDV,
+            SELECT pa.NUMEROPAIEMENT, pa.NUMEROCONSULTATION, r.NUMERORDV, pa.TYPEPAIEMENT,
                    pp.NOM, pp.PRENOM, pa.DATEPAIEMENT, pa.MONTANT, pa.MODEPAIEMENT
             FROM PAIEMENT pa
-            INNER JOIN CONSULTATION c ON pa.NUMEROCONSULTATION = c.NUMEROCONSULTATION
-            INNER JOIN RENDEZ_VOUS r ON c.NUMERORDV = r.NUMERORDV
+            INNER JOIN RENDEZ_VOUS r ON pa.NUMERORDV = r.NUMERORDV
             INNER JOIN PATIENT pat ON r.ID = pat.ID
             INNER JOIN PERSONNE pp ON pat.ID = pp.ID
             WHERE pa.STATUT = true
@@ -154,12 +238,13 @@ public class PaiementService
             resultat.Add(new PaiementAffichage
             {
                 NumeroPaiement = reader.GetString(0),
-                NumeroConsultation = reader.GetString(1),
+                NumeroConsultation = reader.IsDBNull(1) ? "" : reader.GetString(1),
                 NumeroRdv = reader.GetString(2),
-                PatientNom = $"{reader.GetString(3)} {reader.GetString(4)}",
-                DateFacture = reader.GetDateTime(5),
-                Montant = reader.GetDecimal(6),
-                ModePaiement = reader.GetString(7),
+                TypePaiement = reader.GetString(3),
+                PatientNom = $"{reader.GetString(4)} {reader.GetString(5)}",
+                DateFacture = reader.GetDateTime(6),
+                Montant = reader.GetDecimal(7),
+                ModePaiement = reader.GetString(8),
                 EstPaye = true
             });
         }
@@ -167,9 +252,41 @@ public class PaiementService
         return resultat;
     }
 
-    // ---------------------------------------------------------------
-    // Confirme qu'un paiement a bien ete recu.
-    // ---------------------------------------------------------------
+    // Tous les paiements (acomptes + normal, payes ou non) lies a un
+    // rendez-vous precis - utilise par la fenetre de detail du RDV.
+    public List<PaiementAffichage> ObtenirParRendezVous(string numeroRdv)
+    {
+        var resultat = new List<PaiementAffichage>();
+
+        string query = @"
+            SELECT NUMEROPAIEMENT, TYPEPAIEMENT, DATEPAIEMENT, MONTANT, MODEPAIEMENT, STATUT
+            FROM PAIEMENT
+            WHERE NUMERORDV = @NumeroRdv
+            ORDER BY DATEPAIEMENT;";
+
+        using var conn = new NpgsqlConnection(_connectionString);
+        using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("NumeroRdv", numeroRdv);
+
+        conn.Open();
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            resultat.Add(new PaiementAffichage
+            {
+                NumeroPaiement = reader.GetString(0),
+                TypePaiement = reader.GetString(1),
+                DateFacture = reader.GetDateTime(2),
+                Montant = reader.GetDecimal(3),
+                ModePaiement = reader.GetString(4),
+                EstPaye = reader.GetBoolean(5)
+            });
+        }
+
+        return resultat;
+    }
+
     public void ConfirmerPaiement(string numeroPaiement, string modePaiement)
     {
         using var conn = new NpgsqlConnection(_connectionString);
@@ -186,22 +303,14 @@ public class PaiementService
         cmd.ExecuteNonQuery();
     }
 
-    // ---------------------------------------------------------------
-    // Envoie une relance de paiement (ecrit une NOTIFICATION liee au
-    // RDV d'origine). Retourne le nombre total de relances envoyees
-    // pour ce paiement, relances comprises.
-    // ---------------------------------------------------------------
+    // Envoie une relance (ecrit une NOTIFICATION liee au rendez-vous
+    // d'origine) et retourne le nombre total de relances envoyees.
     public int EnvoyerRelance(string numeroPaiement)
     {
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
 
-        string queryRdv = @"
-            SELECT r.NUMERORDV FROM PAIEMENT pa
-            INNER JOIN CONSULTATION c ON pa.NUMEROCONSULTATION = c.NUMEROCONSULTATION
-            INNER JOIN RENDEZ_VOUS r ON c.NUMERORDV = r.NUMERORDV
-            WHERE pa.NUMEROPAIEMENT = @NumeroPaiement;";
-
+        string queryRdv = "SELECT NUMERORDV FROM PAIEMENT WHERE NUMEROPAIEMENT = @NumeroPaiement;";
         string numeroRdv;
         using (var cmdRdv = new NpgsqlCommand(queryRdv, conn))
         {
@@ -229,17 +338,13 @@ public class PaiementService
         return prochainNumero;
     }
 
-    // ---------------------------------------------------------------
-    // A lancer manuellement (bouton "Traiter les impayes") : pour
-    // chaque facture en attente depuis plus de DELAI_ANNULATION_JOURS
-    // jours ET ayant deja recu au moins NB_RELANCES_MAX relances,
-    // annule tout rendez-vous FUTUR encore planifie pour ce patient
-    // (le medecin redevient disponible sur ce creneau).
-    // Ne touche jamais au rendez-vous deja passe (celui qui a genere
-    // la consultation impayee) : seuls les rendez-vous a venir sont
-    // annules, conformement a la regle "un patient endette ne garde
-    // pas ses rendez-vous futurs tant qu'il n'a pas regularise".
-    // ---------------------------------------------------------------
+    // A lancer manuellement (bouton "Traiter les impayes"). Pour chaque
+    // facture NORMALE en attente depuis plus de DELAI_ANNULATION_JOURS
+    // jours ET ayant recu au moins NB_RELANCES_MAX relances, annule tout
+    // rendez-vous FUTUR encore planifie pour ce patient - SAUF si ce
+    // rendez-vous futur a deja un acompte verse (dans ce cas le patient
+    // s'est deja engage financierement dessus : on signale plutot une
+    // verification manuelle au lieu d'annuler automatiquement).
     public List<string> TraiterImpayes()
     {
         var actions = new List<string>();
@@ -255,11 +360,9 @@ public class PaiementService
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            // Retrouve le patient concerne par cette facture.
             string queryPatient = @"
                 SELECT r.ID FROM PAIEMENT pa
-                INNER JOIN CONSULTATION c ON pa.NUMEROCONSULTATION = c.NUMEROCONSULTATION
-                INNER JOIN RENDEZ_VOUS r ON c.NUMERORDV = r.NUMERORDV
+                INNER JOIN RENDEZ_VOUS r ON pa.NUMERORDV = r.NUMERORDV
                 WHERE pa.NUMEROPAIEMENT = @NumeroPaiement;";
 
             string patientId;
@@ -269,25 +372,31 @@ public class PaiementService
                 patientId = (string)cmdPatient.ExecuteScalar()!;
             }
 
-            // Rendez-vous futurs encore planifies pour ce patient.
             string queryFuturs = @"
                 SELECT NUMERORDV FROM RENDEZ_VOUS
                 WHERE ID = @PatientId AND STATUT = 'PLANIFIE' AND DATEHEURERDV > now();";
 
-            var rdvAAnnuler = new List<string>();
+            var rdvFuturs = new List<string>();
             using (var cmdFuturs = new NpgsqlCommand(queryFuturs, conn))
             {
                 cmdFuturs.Parameters.AddWithValue("PatientId", patientId);
                 using var reader = cmdFuturs.ExecuteReader();
-                while (reader.Read()) rdvAAnnuler.Add(reader.GetString(0));
+                while (reader.Read()) rdvFuturs.Add(reader.GetString(0));
             }
 
-            foreach (var numeroRdv in rdvAAnnuler)
+            foreach (var numeroRdv in rdvFuturs)
             {
+                bool aUnAcompte = ObtenirTotalAcomptes(conn, numeroRdv) > 0;
+
+                if (aUnAcompte)
+                {
+                    actions.Add($"Rendez-vous {numeroRdv} ({facture.PatientNom}) NON annulé automatiquement : un acompte a déjà été versé dessus — vérification manuelle recommandée.");
+                    continue;
+                }
+
                 string queryAnnuler = @"
                     UPDATE RENDEZ_VOUS
-                    SET STATUT = 'ANNULE',
-                        MOTIFANNULATION = @Motif
+                    SET STATUT = 'ANNULE', MOTIFANNULATION = @Motif
                     WHERE NUMERORDV = @NumeroRdv;";
 
                 using var cmdAnnuler = new NpgsqlCommand(queryAnnuler, conn);
@@ -298,7 +407,7 @@ public class PaiementService
                 actions.Add($"Rendez-vous {numeroRdv} ({facture.PatientNom}) annulé automatiquement pour impayé.");
             }
 
-            if (rdvAAnnuler.Count == 0)
+            if (rdvFuturs.Count == 0)
             {
                 actions.Add($"Facture {facture.NumeroPaiement} ({facture.PatientNom}) toujours impayée après délai — aucun rendez-vous futur à annuler pour ce patient.");
             }

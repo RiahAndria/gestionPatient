@@ -1,30 +1,30 @@
-//on crée un rendez-vous pour un patient avec un médecin à une date et heure précises
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using Patients.Models;
 using Patients.Services;
 
 namespace Patients.Views.RendezVous;
-//création de la vue pour le formulaire de rendez-vous
+
 public partial class RendezVousFormView : UserControl
 {
     private readonly RendezVousService _rendezVousService = new();
     private readonly PatientLookupService _patients = new();
     private readonly MedecinLookupService _medecins = new();
-// Constructeur de la vue
+
     public RendezVousFormView()
     {
         InitializeComponent();
         cbPatient.ItemsSource = _patients.Rechercher("");
         cbMedecin.ItemsSource = _medecins.ObtenirDisponibles();
     }
-// Méthode pour gérer le changement de texte dans la zone de recherche du patient
+
     private void txtRecherchePatient_TextChanged(object sender, TextChangedEventArgs e)
     {
         cbPatient.ItemsSource = _patients.Rechercher(txtRecherchePatient.Text);
         if (cbPatient.Items.Count > 0) cbPatient.SelectedIndex = 0;
     }
-// Méthode pour gérer le clic sur le bouton "Créer"
+
     private void btnCreer_Click(object sender, RoutedEventArgs e)
     {
         if (cbPatient.SelectedItem is not PatientOption patient)
@@ -48,6 +48,11 @@ public partial class RendezVousFormView : UserControl
 
         try
         {
+            // Le type est precise en entier (Patients.Models.RendezVous)
+            // car ce fichier est lui-meme dans le namespace
+            // Patients.Views.RendezVous : sans cette precision, le
+            // compilateur confond la classe RendezVous avec le
+            // namespace du meme nom.
             _rendezVousService.AjouterRendezVous(new Patients.Models.RendezVous
             {
                 NumRendezVous = numero,
@@ -64,7 +69,7 @@ public partial class RendezVousFormView : UserControl
         }
         catch (InvalidOperationException ex)
         {
-        // Gérer les exceptions spécifiques à l'ajout de rendez-vous
+            // Erreur metier attendue (ex: creneau deja pris) : message clair.
             AfficherErreur(ex.Message);
         }
         catch (Exception ex)
@@ -72,7 +77,7 @@ public partial class RendezVousFormView : UserControl
             AfficherErreur($"Erreur inattendue : {ex.Message}");
         }
     }
-    // Méthode pour afficher les messages d'erreur
+
     private void AfficherErreur(string message)
     {
         txtMessage.Foreground = System.Windows.Media.Brushes.Red;
