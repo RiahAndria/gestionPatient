@@ -11,8 +11,8 @@ namespace Patients.Services
             conn.Open();
 
             const string query = @"
-                SELECT c.NUMEROCONSULTATION, c.DIAGNOSTIQUE, c.NOTESMEDICALES,
-                       o.NUMEROPRESCRIPTION, o.TRAITEMENT, o.DUREE
+                SELECT c.NUMEROCONSULTATION, c.NUMERORDV, c.DIAGNOSTIQUE, c.NOTESMEDICALES,
+                       o.NUMEROPRESCRITPTION, o.TRAITEMENT, o.DUREE
                 FROM CONSULTATION c
                 LEFT JOIN ORDONANCE o ON c.NUMEROCONSULTATION = o.NUMEROCONSULTATION
                 WHERE c.NUMEROCONSULTATION = @id;";
@@ -26,18 +26,19 @@ namespace Patients.Services
             var consultation = new Consultation
             {
                 NumeroConsultation = reader.GetString(0),
-                Diagnostique = reader.GetString(1),
-                NotesMedicales = reader.GetString(2)
+                NumeroRdv = reader.GetString(1),
+                Diagnostique = reader.GetString(2),
+                NotesMedicales = reader.GetString(3)
             };
 
-            if (!reader.IsDBNull(3))
+            if (!reader.IsDBNull(4))
             {
                 consultation.OrdonnanceAssociee = new Ordonnance
                 {
-                    NumeroPrescritption = reader.GetString(3),
+                    NumeroPrescritption = reader.GetString(4),
                     NumeroConsultation = consultation.NumeroConsultation,
-                    Traitement = reader.GetString(4),
-                    Duree = reader.GetString(5),
+                    Traitement = reader.GetString(5),
+                    Duree = reader.GetString(6),
                     Diagnostique = consultation.Diagnostique
                 };
             }
