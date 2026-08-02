@@ -46,8 +46,26 @@ public partial class PaiementView : UserControl
 
         try
         {
-            _paiementService.EncaisserAcompte(rdv.NumeroRdv, montant, mode);
-            AfficherMessage($"Acompte de {montant:N0} Ar encaissé pour {rdv.PatientNom}.", succes: true);
+            var resultat = _paiementService.EncaisserAcompte(rdv.NumeroRdv, montant, mode);
+
+            if (!resultat.Succes)
+            {
+                // Cas 1 : le montant depasse le tarif du medecin - refuse.
+                AfficherMessage(resultat.MessageErreur ?? "Montant invalide.", succes: false);
+                return;
+            }
+
+            if (resultat.PaiementComplet)
+            {
+                // Cas 2 : le total verse atteint exactement le tarif - regle en entier.
+                AfficherMessage($"Paiement complet enregistré pour {rdv.PatientNom} ({montant:N0} Ar). Ce rendez-vous est intégralement réglé.", succes: true);
+            }
+            else
+            {
+                // Cas 3 : le total verse est encore inferieur au tarif - acompte partiel.
+                AfficherMessage($"Acompte de {montant:N0} Ar encaissé pour {rdv.PatientNom}. Reste à payer : {resultat.MontantRestant:N0} Ar (facturé automatiquement après la consultation).", succes: true);
+            }
+
             txtMontantAcompte.Clear();
         }
         catch (Exception ex)
