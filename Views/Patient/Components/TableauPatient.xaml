@@ -23,7 +23,7 @@
                     <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*"/>
                     <DataGridTextColumn Header="Prénom" Binding="{Binding Prenom}" Width="*"/>
                     <DataGridTextColumn Header="Genre" Binding="{Binding Genre}" Width="150"/>
-                    <DataGridTextColumn Header="Âge" Binding="{Binding DateNaissance}" Width="150"/>
+                    <DataGridTextColumn Header="Âge" Binding="{Binding AgeAffiche}" Width="150"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

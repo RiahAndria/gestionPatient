@@ -30,14 +30,24 @@
             </Image>
 
             <DockPanel Margin="20">
-                <!-- En-tête -->
-                <Border DockPanel.Dock="Top" Height="60" Margin="0,0,0,10">
+                <!-- En-tête : MODIFIÉ POUR S'ADAPTER AUTOMATIQUEMENT À LA TAILLE -->
+                <Border DockPanel.Dock="Top" Margin="0,0,0,10">
                     <Grid>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="lblIdentite" FontSize="24" FontWeight="Bold" Foreground="#1E293B"/>
-                            <TextBlock x:Name="lblMatricule" FontSize="14" Foreground="#2563EB" FontWeight="SemiBold"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/> <!-- Colonne pour le nom (prend tout l'espace) -->
+                            <ColumnDefinition Width="Auto"/> <!-- Colonne pour le bouton fermer -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Infos Patient (Gauche) -->
+                        <StackPanel Grid.Column="0" VerticalAlignment="Top" Margin="0,5,10,5">
+                            <TextBlock x:Name="lblIdentite" FontSize="24" FontWeight="Bold" Foreground="#1E293B" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="lblMatricule" FontSize="14" Foreground="#2563EB" FontWeight="SemiBold" Margin="0,2,0,0"/>
+                            <TextBlock x:Name="lblDateNaissance" FontSize="13" Foreground="#475569" Margin="0,4,0,0"/>
+                            <TextBlock x:Name="lblAgeGenre" FontSize="13" Foreground="#475569"/>
                         </StackPanel>
-                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="BtnFermer_Click" Cursor="Hand">
+
+                        <!-- Bouton fermer (Droite, aligné en haut) -->
+                        <Button Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="BtnFermer_Click" Cursor="Hand" Margin="0,5,0,0">
                             <materialDesign:PackIcon Kind="CloseCircle" Foreground="#64748B" Width="24" Height="24"/>
                         </Button>
                     </Grid>
@@ -48,7 +58,8 @@
                     <Grid>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                             <Button Content="Modifier le patient" Click="BtnOuvrirModification_Click" Height="38" Width="170" Margin="0,0,10,0" Background="#2563EB" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
-                            <Button Content="Supprimer" Click="BtnSupprimer_Click" Height="38" Width="130" Background="#DC2626" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                            <Button Content="Supprimer" Click="BtnSupprimer_Click" Height="38" Width="130" Margin="0,0,10,0" Background="#DC2626" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                            <Button x:Name="btnHistorique" Content="Afficher l'historique" Click="BtnHistorique_Click" Height="38" Width="170" Background="#0F766E" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
                         </StackPanel>
 
                         <Button Content="Fermer" Click="BtnFermer_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Height="38" Width="100" Background="#64748B" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
@@ -95,20 +106,6 @@
                             <StackPanel>
                                 <TextBlock Text="Allergies &amp; Alertes" FontWeight="Bold" Margin="0,0,0,10" Foreground="#DC2626"/>
                                 <TextBlock x:Name="txtAllergies" TextWrapping="Wrap" FontSize="14" Foreground="#991B1B"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource GlassSection}">
-                            <StackPanel>
-                                <TextBlock Text="Historique des Consultations" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
-                                
-                                <!-- Liste/DataGrid résumé des consultations passées du patient -->
-                                <DataGrid x:Name="dgHistoriqueConsultations" AutoGenerateColumns="False" IsReadOnly="True" Height="150" Background="Transparent" BorderThickness="0">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Date" Binding="{Binding DateConsultation, StringFormat=dd/MM/yyyy}" Width="90"/>
-                                        <DataGridTextColumn Header="N°" Binding="{Binding NumeroConsultation}" Width="80"/>
-                                        <DataGridTextColumn Header="Diagnostic" Binding="{Binding Diagnostique}" Width="*"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
                             </StackPanel>
                         </Border>
                     </StackPanel>
