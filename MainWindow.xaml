@@ -6,8 +6,6 @@
         xmlns:patientForm="clr-namespace:Patients.Views.Patient.Forms"
         xmlns:components="clr-namespace:Patients.Views.Patient.Components"
         xmlns:medecin="clr-namespace:Patients.Views.Medecin"
-        xmlns:dossier="clr-namespace:Patients.Views.DossierMedical"
-        xmlns:historique="clr-namespace:Patients.Views.Historique"
         xmlns:rendezvous="clr-namespace:Patients.Views.RendezVous"
         xmlns:paiement="clr-namespace:Patients.Views.Paiement"
         xmlns:notification="clr-namespace:Patients.Views.Notification"
