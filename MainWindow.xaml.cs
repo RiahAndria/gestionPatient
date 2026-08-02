@@ -20,8 +20,7 @@ public partial class MainWindow : Window
         // Relie les RadioButtons du composant SidebarView aux onglets du TabControl
         SidebarNav.PatientsButton.Checked += (s, e) => MainTabControl.SelectedItem = TabPatients;
         SidebarNav.MedecinsButton.Checked += (s, e) => MainTabControl.SelectedItem = TabMedecins;
-        SidebarNav.DossiersButton.Checked += (s, e) => MainTabControl.SelectedItem = TabDossiers;
-        SidebarNav.HistoriqueButton.Checked += (s, e) => MainTabControl.SelectedItem = TabHistorique;
+        SidebarNav.ConsultationsButton.Checked += (s, e) => MainTabControl.SelectedItem = TabConsultations;
         SidebarNav.RendezVousButton.Checked += (s, e) => MainTabControl.SelectedItem = TabRendezVous;
         SidebarNav.PaiementsButton.Checked += (s, e) => MainTabControl.SelectedItem = TabPaiements;
     }
@@ -30,4 +29,5 @@ public partial class MainWindow : Window
     {
         PatientList?.ChargerDonnees();
     }
+
 }

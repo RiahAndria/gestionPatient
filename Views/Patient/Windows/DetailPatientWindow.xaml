@@ -24,28 +24,45 @@
     <Border CornerRadius="25" Background="#F0F4F8" BorderBrush="#2563EB" BorderThickness="1">
         <Grid>
             <Image Source="/Assets/bg.jpg" Stretch="UniformToFill" Opacity="0.1">
-                <Image.Effect><BlurEffect Radius="20"/></Image.Effect>
+                <Image.Effect>
+                    <BlurEffect Radius="20"/>
+                </Image.Effect>
             </Image>
 
             <DockPanel Margin="20">
-                <Border DockPanel.Dock="Top" Height="80" Margin="0,0,0,10">
+                <!-- En-tête -->
+                <Border DockPanel.Dock="Top" Height="60" Margin="0,0,0,10">
                     <Grid>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock x:Name="lblIdentite" FontSize="24" FontWeight="Bold" Foreground="#1E293B"/>
                             <TextBlock x:Name="lblMatricule" FontSize="14" Foreground="#2563EB" FontWeight="SemiBold"/>
                         </StackPanel>
-                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="BtnFermer_Click">
-                             <materialDesign:PackIcon Kind="CloseCircle" Foreground="#64748B" Width="24" Height="24"/>
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="BtnFermer_Click" Cursor="Hand">
+                            <materialDesign:PackIcon Kind="CloseCircle" Foreground="#64748B" Width="24" Height="24"/>
                         </Button>
                     </Grid>
                 </Border>
 
+                <!-- Barre d'actions en bas -->
+                <Border DockPanel.Dock="Bottom" Height="60" Margin="0,10,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Content="Modifier le patient" Click="BtnOuvrirModification_Click" Height="38" Width="170" Margin="0,0,10,0" Background="#2563EB" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                            <Button Content="Supprimer" Click="BtnSupprimer_Click" Height="38" Width="130" Background="#DC2626" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                        </StackPanel>
+
+                        <Button Content="Fermer" Click="BtnFermer_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Height="38" Width="100" Background="#64748B" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                    </Grid>
+                </Border>
+
+                <!-- Contenu principal organisé en 2 colonnes équilibrées -->
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.5*"/>
+                        <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Colonne de gauche : Infos Médicales -->
                     <StackPanel Grid.Column="0">
                         <Border Style="{StaticResource GlassSection}">
                             <StackPanel>
@@ -74,28 +91,44 @@
                             </StackPanel>
                         </Border>
 
-                        <Border Style="{StaticResource GlassSection}" Height="150">
+                        <Border Style="{StaticResource GlassSection}">
                             <StackPanel>
                                 <TextBlock Text="Allergies &amp; Alertes" FontWeight="Bold" Margin="0,0,0,10" Foreground="#DC2626"/>
                                 <TextBlock x:Name="txtAllergies" TextWrapping="Wrap" FontSize="14" Foreground="#991B1B"/>
                             </StackPanel>
                         </Border>
+                        <Border Style="{StaticResource GlassSection}">
+                            <StackPanel>
+                                <TextBlock Text="Historique des Consultations" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
+                                
+                                <!-- Liste/DataGrid résumé des consultations passées du patient -->
+                                <DataGrid x:Name="dgHistoriqueConsultations" AutoGenerateColumns="False" IsReadOnly="True" Height="150" Background="Transparent" BorderThickness="0">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Date" Binding="{Binding DateConsultation, StringFormat=dd/MM/yyyy}" Width="90"/>
+                                        <DataGridTextColumn Header="N°" Binding="{Binding NumeroConsultation}" Width="80"/>
+                                        <DataGridTextColumn Header="Diagnostic" Binding="{Binding Diagnostique}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
+                    
 
+                    <!-- Colonne de droite : Coordonnées et Historique -->
                     <StackPanel Grid.Column="1">
                         <Border Style="{StaticResource GlassSection}">
                             <StackPanel>
                                 <TextBlock Text="Contact &amp; Assurance" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
-                                <TextBlock x:Name="lblContact" Margin="0,0,0,5" FontSize="13"/>
-                                <Separator Background="#E2E8F0" Margin="0,5"/>
+                                <TextBlock x:Name="lblContact" Margin="0,0,0,5" FontSize="13" TextWrapping="Wrap"/>
+                                <Separator Background="#E2E8F0" Margin="0,8"/>
                                 <TextBlock x:Name="lblAssurance" FontSize="13" FontWeight="Medium"/>
                             </StackPanel>
                         </Border>
 
-                        <Border Style="{StaticResource GlassSection}" VerticalAlignment="Stretch">
+                        <Border Style="{StaticResource GlassSection}">
                             <StackPanel>
-                                <TextBlock Text="Antécédents" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
-                                <TextBlock x:Name="txtAntecedents" TextWrapping="Wrap" FontSize="13" Height="200"/>
+                                <TextBlock Text="Antécédents Médicaux" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
+                                <TextBlock x:Name="txtAntecedents" TextWrapping="Wrap" FontSize="13" MinHeight="150"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
