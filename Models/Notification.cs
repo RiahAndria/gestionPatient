@@ -10,4 +10,7 @@ public class Notification
 
     // Le texte du rappel
     public string TexteNotif { get; set; } = string.Empty;
+
+    public DateTime DateNotif { get; set; }
+    public bool Lu { get; set; }
 }
