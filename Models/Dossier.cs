@@ -4,6 +4,7 @@ public class Dossier
 {
    public string NumeroDossier { get; set; } = string.Empty;
    public string PatientID { get; set; } = string.Empty;
+   public string NumeroAssurance { get; set; } = string.Empty;
    public decimal Poids { get; set; }
    public decimal Taille { get; set; }
    public string GroupeSanguin { get; set; } = string.Empty; // Pas obligatoire

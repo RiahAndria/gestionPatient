@@ -10,4 +10,25 @@ public class Personne
     public string Adresse { get; set; } = string.Empty;
     public string Telephone { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
+
+    public string AgeAffiche
+    {
+        get
+        {
+            if (DateNaissance == default)
+            {
+                return "-";
+            }
+
+            var aujourdHui = DateTime.Today;
+            var age = aujourdHui.Year - DateNaissance.Year;
+
+            if (DateNaissance.Date > aujourdHui.AddYears(-age))
+            {
+                age--;
+            }
+
+            return age >= 0 ? $"{age} ans" : "-";
+        }
+    }
 }

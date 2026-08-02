@@ -23,11 +23,7 @@ public static class MatriculeHelper
             }
 
             string prefixe = "P";
-
-            // Code Genre : 01 Homme, 02 Femme, 00 Autre
             string codeGenre = genre == "Homme" ? "01" : (genre == "Femme" ? "02" : "00");
-
-            // Code Assurance : 10 Assuré, 00 Non assuré
             string codeAssurance = estAssure ? "10" : "00";
 
             string codeUnique;
@@ -36,7 +32,7 @@ public static class MatriculeHelper
                 codeUnique = $"{_compteurNumerique:D3}{_lettreCourante}";
                 IncrementeCompteur();
             }
-            while (ExisteDeja(codeUnique, codeGenre, codeAssurance));
+            while (ExisteDeja(codeUnique));
 
             return $"{prefixe}-{codeGenre}-{codeAssurance}-{codeUnique}";
         }
@@ -137,7 +133,7 @@ public static class MatriculeHelper
         return lettre >= 'A' && lettre <= 'Z';
     }
 
-    private static bool ExisteDeja(string codeUnique, string codeGenre, string codeAssurance)
+    private static bool ExisteDeja(string codeUnique)
     {
         if (string.IsNullOrWhiteSpace(_connectionString))
         {
@@ -149,9 +145,10 @@ public static class MatriculeHelper
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            const string query = "SELECT COUNT(*) FROM PATIENT WHERE NUMERODOSSIER = @matricule;";
+            const string query = "SELECT COUNT(*) FROM PATIENT WHERE NUMERODOSSIER LIKE @suffixe;";
             using var cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@matricule", $"P-{codeGenre}-{codeAssurance}-{codeUnique}");
+            cmd.Parameters.AddWithValue("@suffixe", $"%-{codeUnique}");
+            
             return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
         }
         catch
