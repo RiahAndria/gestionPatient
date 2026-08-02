@@ -7,11 +7,13 @@ using Patients.Models;
 using Patients.Helpers;
 using System.Data.Common;
 using System.Transactions;
+using System.Windows;
 
 namespace Medecins.Services;
 
 public class MedecinService
 {
+    public string message {get; set; } = string.Empty;
     private readonly string _connectionString;
 
     public MedecinService()
@@ -47,9 +49,13 @@ public class MedecinService
                 return true;
 
         } 
-        catch (NpgsqlException)
+        catch (PostgresException e)
         {
             transaction.Rollback();
+            if (e.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                message = "Ce numero d'orde appartient deja a une autre personne!";
+            }
             return false;
         }
     }
@@ -82,6 +88,46 @@ public class MedecinService
     }
 
 
+    // public Medecin ObtenirDonnePersonnelMedecin(string id_medecin)
+    // {
+    //     using var connexion = new NpgsqlConnection(_connectionString);
+    //     connexion.Open();
+    //     using var transaction = connexion.BeginTransaction();
+
+    //     try
+    //     {
+    //         var sql = @"SELECT 
+    //                     p.ID AS Id ,
+    //                     p.NOM AS Nom , 
+    //                     p.PRENOM AS Prenom, 
+    //                     p.DATEDENAISSANCE AS DateNaissance, 
+    //                     p.GENRE AS Genre, 
+    //                     p.ADRESSE AS Adresse, 
+    //                     p.TELEPHONE AS Telephone, 
+    //                     p.MAIL AS Email, 
+    //                     m.NUMERO_ORDRE AS numero_ordre, 
+    //                     m.STATUT AS statut, 
+    //                     f.NOM_FONCTION AS nom_fonction, 
+    //                     f.CODE_FONCTION AS code_fonction , 
+    //                     m.TAUX_HORAIRE AS taux_horaire
+    //                 FROM MEDECIN m 	
+    //                 INNER JOIN PERSONNE p ON p.ID = m.ID_MEDECIN
+    //                 INNER JOIN FONCTION f ON f.CODE_FONCTION = m.CODE_FONCTION
+    //                 WHERE P.ID = @id_medecin;";
+    //                 //WHERE P.ID = 'M-02-1-000A';";
+    //         var donnees = connexion.QueryFirstOrDefault<Medecin>(sql, new {id_medecin});
+    //         var valeur = (donnees == null ) ? new Medecin() : donnees;
+
+    //         Console.Write(valeur.DateNaissance);
+    //         return valeur;               
+
+    //     } 
+    //     catch
+    //     {
+    //         return new Medecin();
+    //     }
+    // }
+
     public Medecin ObtenirDonnePersonnelMedecin(string id_medecin)
     {
         using var connexion = new NpgsqlConnection(_connectionString);
@@ -91,26 +137,27 @@ public class MedecinService
         try
         {
             var sql = @"SELECT 
-                        p.ID AS Id ,
-                        p.NOM AS Nom , 
-                        p.PRENOM AS Prenom, 
-                        p.DATEDENAISSANCE AS DateNaissance, 
-                        p.GENRE AS Genre, 
-                        p.ADRESSE AS Adresse, 
-                        p.TELEPHONE AS Telephone, 
-                        p.MAIL AS Email, 
-                        m.NUMERO_ORDRE AS numero_ordre, 
-                        m.STATUT AS statut, 
-                        f.NOM_FONCTION AS nom_fonction, 
-                        f.CODE_FONCTION AS code_fonction , 
-                        m.TAUX_HORAIRE AS taux_horaire
+                        p.id AS Id ,
+                        p.nom AS Nom , 
+                        p.prenom AS Prenom, 
+                        p.datedenaissance::timestamp AS DateNaissance, 
+                        p.genre AS Genre, 
+                        p.adresse AS Adresse, 
+                        p.telephone AS Telephone, 
+                        p.mail AS Email, 
+                        m.numero_ordre AS numero_ordre, 
+                        m.statut AS statut, 
+                        f.nom_fonction AS nom_fonction, 
+                        f.code_fonction AS code_fonction , 
+                        m.taux_horaire AS taux_horaire
                     FROM MEDECIN m 	
-                    INNER JOIN PERSONNE p ON p.ID = m.ID_MEDECIN
-                    INNER JOIN FONCTION f ON f.CODE_FONCTION = m.CODE_FONCTION
+                    INNER JOIN PERSONNE p ON p.id = m.ID_MEDECIN
+                    INNER JOIN FONCTION f ON f.code_fonction = m.CODE_FONCTION
                     WHERE P.ID = @id_medecin;";
                     //WHERE P.ID = 'M-02-1-000A';";
             var donnees = connexion.QueryFirstOrDefault<Medecin>(sql, new {id_medecin});
             var valeur = (donnees == null ) ? new Medecin() : donnees;
+
             Console.Write(valeur.DateNaissance);
             return valeur;               
 
