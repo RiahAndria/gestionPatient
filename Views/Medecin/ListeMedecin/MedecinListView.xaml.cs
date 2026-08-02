@@ -42,13 +42,18 @@ namespace Patients.Views.Medecin.ListeMedecin
 
         public void BtnOuvrirFenetre_Modification(Object sender, RoutedEventArgs e)
         {
-            //recuperation du valeur de Tag 
-
+            //recuperation du valeur de Tag
+            Button? btn = sender as Button;
+            if (btn?.Tag is string valTag && !string.IsNullOrEmpty(valTag))
+            {
+                var donneAModifier = instanceServiceMedecin.ObtenirDonnePersonnelMedecin(valTag);
+                ModifierMedecinView fenetre = new ModifierMedecinView(donneAModifier);
+                fenetre.Owner = Window.GetWindow(this);
+                fenetre.ShowDialog();
+            } 
+            
 
             //appel de foncion qui creer la fenetre
-            ModifierMedecinView fenetre = new ModifierMedecinView();
-            fenetre.Owner = Window.GetWindow(this);
-            fenetre.ShowDialog();
         }
 
         public void btnSupprimerMedecin(object sender, RoutedEventArgs e)

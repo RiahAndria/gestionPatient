@@ -1,22 +1,23 @@
 <UserControl x:Class="Patients.Views.Medecin.MedecinFormView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             <!-- xmlns:services="clr-namespace:Patients.Services" -->
     <Border Background="White" CornerRadius="8" Padding="20">
         <StackPanel>
             <TextBlock Text="Ajouter un médecin" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-            
+
             <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Nom" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
                     <TextBox x:Name="txtNomMedecin" Height="32" Padding="6" VerticalContentAlignment="Center"/>
                 </StackPanel>
-                
+
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Prénom" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
                     <TextBox x:Name="txtPrenomMedecin" Height="32" Padding="6" VerticalContentAlignment="Center"/>
@@ -43,7 +44,6 @@
                         <ComboBoxItem Content="Autre" IsSelected="True"/>
                     </ComboBox>
                 </StackPanel>
-                
             </Grid>
             <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
@@ -67,6 +67,10 @@
                 </StackPanel>
             </Grid>
 
+            <!-- <UserControl.DataContext>
+                <services:FonctionService/>
+            </UserControl.DataContext> -->
+
             <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -81,10 +85,16 @@
 
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Fonction" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4"/>
-                    <ComboBox x:Name="txtFonctionMedecin" Height="32" VerticalContentAlignment="Center">
-                        <ComboBoxItem Content="Medecin generaliste" IsSelected="True"/>
-                        <ComboBoxItem Content="Chirurgie generale" />
-                    </ComboBox>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox x:Name="CboFonction"
+                            ItemsSource="{Binding ListeDesFonctions}"
+                            DisplayMemberPath="nom_fonction"
+                            SelectedValuePath="code_fonction"
+                            SelectedValue="{Binding TXTCodeFonction}"
+                            Width="250" 
+                            Height="32"/>
+                        <Button Content="  + Fonction  " Click="AjoutFOnction" Height="32" Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
 

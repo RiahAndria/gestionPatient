@@ -5,7 +5,11 @@ using System.Text.RegularExpressions;
 using Medecins.Services;
 using Patients.Models;
 using Patients.Helpers;
+using Patients.Services;
 using Patients.Views.Medecin.ListeMedecin;
+using System.Windows.Documents;
+using Microsoft.VisualBasic;
+using Patients.Views.Medecin.AjoutFonction;
 
 
 namespace Patients.Views.Medecin;
@@ -13,10 +17,21 @@ namespace Patients.Views.Medecin;
 public partial class MedecinFormView : UserControl
 {
     private readonly MedecinService _medecinService = new MedecinService();
+    private readonly FonctionService _fonctionService = new FonctionService();
+
+    public int TXTCodeFonction { get; set; }
+    public List<Fonction> ListeDesFonctions { get; set; } = new List<Fonction>();
 
     public MedecinFormView()
     {
         InitializeComponent();
+
+        // 1. Appeler le service pour récupérer la liste
+        FonctionService service = new FonctionService();
+        ListeDesFonctions = service.recupererLeListeDesFonctions();
+
+        //Définir le DataContext sur la vue elle-même pour autoriser le Binding
+        this.DataContext = this;
     }
 
 
@@ -121,12 +136,18 @@ public partial class MedecinFormView : UserControl
             txtMessageMedecin.Text = "Veuillez entrer le statut du médecin.";
             return;
         }
+//cette partie a ete modifier
+        // if (string.IsNullOrWhiteSpace( TXTCodeFonction))
+        // {
+        //     txtMessageMedecin.Text = "Veuillez entrer la fonction du médecin.";
+        //     return;
+        // }
 
-        if (string.IsNullOrWhiteSpace(txtFonctionMedecin.Text))
-        {
-            txtMessageMedecin.Text = "Veuillez entrer la fonction du médecin.";
-            return;
-        }
+        // if (TXTCodeFonction == null)
+        // {
+        //     txtMessageMedecin.Text = "Veuillez entrer la fonction du médecin.";
+        //     return;
+        // }
 
         if (!int.TryParse(txtTauxHoraireMedecin.Text, out int tauxHoraire) || tauxHoraire < 0)
         {
@@ -144,11 +165,11 @@ public partial class MedecinFormView : UserControl
         }
 
         //generer matricule
-        string matricule = MatriculeHelperMedecin.GenererMatricule(cbGenreMedecin.Text , txtFonctionMedecin.Text);
+        string matricule = MatriculeHelperMedecin.GenererMatricule(cbGenreMedecin.Text , TXTCodeFonction);
         
         //recuperer le code_focntion
-        // MedecinService serviceMed = new MedecinService();
-        int code_fonc = _medecinService.RecupererCodeFonction(txtFonctionMedecin.Text);
+        //int code_fonc = _medecinService.RecupererCodeFonction(txtFonctionMedecin.Text);
+        int code_fonc = TXTCodeFonction;
 
         // ici on appel le service enregistrerMedecin même si elle est encore vide 
         try
@@ -166,27 +187,51 @@ public partial class MedecinFormView : UserControl
                 statut = txtStatutMedecin.Text,
                 numero_ordre = numeroOrdreMedecin.Text,
                 code_fonction = code_fonc,
-                nom_fonction = txtFonctionMedecin.Text,
+                //cette partie aussi est modifier
+                nom_fonction = "vary be menaka ny laoka",
                 taux_horaire = tauxHoraire,
             };
-
+            
             bool estEnregistre = _medecinService.AjouterMedecin(nouveauMedecin);
 
             if (estEnregistre)
             {
                 MaPage MedecinFormV = new MaPage();
                 MedecinFormV.RechargerListeMedecin();
+                ViderFormulaire();
                 txtMessageMedecin.Text = "Médecin ajouté avec succès !";
                 // _medecinService.ObtenirTousLesMedecin();
             }
             else
             {
-                txtMessageMedecin.Text = "Une erreur est survenue lors de l'enregistrement dans le service.";
+                txtMessageMedecin.Text = _medecinService.message;
             }
         } 
-        catch
+        catch (Exception ex)
         {
-            txtMessageMedecin.Text = "Erreur de connexion.";   
+            // Affiche le vrai message d'erreur pour faciliter le débogage
+                txtMessageMedecin.Text = $"Erreur : {ex.Message}";
+                Console.WriteLine($"[ERREUR DÉTAILLÉE] {ex}");  
         }
     }
+
+    private void ViderFormulaire()
+    {
+        txtNomMedecin.Clear();
+        txtPrenomMedecin.Clear();
+        dpDateNaissanceMedecin.SelectedDate = null;
+        txtAdresseMedecin.Clear();
+        txtTelephoneMedecin.Clear();
+        txtEmailMedecin.Clear();
+        txtStatutMedecin.Clear();
+        numeroOrdreMedecin.Clear();
+    }
+
+    public void AjoutFOnction(object sender, RoutedEventArgs e)
+    {
+        AjoutFonctionView fenetre = new AjoutFonctionView();
+        fenetre.Owner = Window.GetWindow(this);
+        fenetre.ShowDialog();
+    }
+
 }
