@@ -1,4 +1,5 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Patients.Models;
@@ -12,11 +13,22 @@ public partial class RendezVousFormView : UserControl
     private readonly PatientLookupService _patients = new();
     private readonly MedecinLookupService _medecins = new();
 
-    public RendezVousFormView()
+    public RendezVousFormView(string? patientId = null)
     {
         InitializeComponent();
-        cbPatient.ItemsSource = _patients.Rechercher("");
+        var patientOptions = _patients.Rechercher("");
+        cbPatient.ItemsSource = patientOptions;
         cbMedecin.ItemsSource = _medecins.ObtenirDisponibles();
+
+        if (!string.IsNullOrWhiteSpace(patientId) && patientOptions.Any())
+        {
+            cbPatient.SelectedItem = patientOptions.FirstOrDefault(p => p.Id == patientId);
+        }
+
+        if (cbPatient.SelectedItem == null && cbPatient.Items.Count > 0)
+        {
+            cbPatient.SelectedIndex = 0;
+        }
     }
 
     private void txtRecherchePatient_TextChanged(object sender, TextChangedEventArgs e)
@@ -45,6 +57,19 @@ public partial class RendezVousFormView : UserControl
 
         var dateHeure = dpDate.SelectedDate.Value.Date + heure;
         var numero = $"RDV-{Guid.NewGuid().ToString()[..8].ToUpper()}";
+        var dateHeureSaisie = dpDate.SelectedDate.Value.Date + heure;
+
+        if (dateHeureSaisie < DateTime.Now)
+        {
+            AfficherErreur("Impossible de créer un rendez-vous dans le passé.");
+            return;
+        }
+
+        if (heure < TimeSpan.FromHours(8) || heure > TimeSpan.FromHours(18))
+        {
+            AfficherErreur("Les rendez-vous se prennent entre 08:00 et 18:00 (horaires d'ouverture).");
+            return;
+        }
 
         try
         {

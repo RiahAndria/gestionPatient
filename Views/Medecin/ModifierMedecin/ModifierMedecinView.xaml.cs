@@ -13,9 +13,10 @@ public partial class ModifierMedecinView : Window
 {
     // public ModifierMedecinView(Patients.Models.Medecin medecinAmodifier)
     private MedecinService _medecinService = new MedecinService();
-    public ModifierMedecinView()
+    public ModifierMedecinView(Patients.Models.Medecin donneAModifier)
     {
         InitializeComponent();
+        remplirChampParLesDonneesMedecin(donneAModifier);
     }
 
     private void BtnFermerModif_Click(object sender, RoutedEventArgs e)
@@ -129,7 +130,7 @@ public partial class ModifierMedecinView : Window
                 return;
             }
 
-            if (!int.TryParse(TauxHoraireMedecinModif.Text, out int tauxHoraire) || tauxHoraire < 0)
+            if (!Decimal.TryParse(TauxHoraireMedecinModif.Text, out Decimal tauxHoraire) || tauxHoraire < 0)
             {
                 // txtMessageMedecin.Text = "Veuillez entrer un taux horaire valide (nombre entier positif).";
                 txtMessageMedecin.Text = $"Veuillez entrer un taux horaire valide (nombre entier positif).";
@@ -154,6 +155,7 @@ public partial class ModifierMedecinView : Window
                 Nom = NomModif.Text,
                 Prenom = PrenomModif.Text,
                 DateNaissance = DateDeNaissanceModif.SelectedDate.Value,
+                //DateNaissance = DateOnly.Parse(DateDeNaissanceModif.Text),
                 Genre = GenreModif.Text,
                 Adresse = AdresseMedecinModif.Text,
                 Telephone = TelephoneMedecinModif.Text,
@@ -171,7 +173,7 @@ public partial class ModifierMedecinView : Window
             {
                 txtMessageMedecin.Text = "Modification efféctué avec succès !";
                 //je sais pas comment recharger la liste apres l'ajout et modification zut 
-                // BtnFermerModif_Click();
+                this.Close();
                 // .RechargerListeMedecin();
             }
             else
@@ -183,6 +185,22 @@ public partial class ModifierMedecinView : Window
         {
             txtMessageMedecin.Text = "Erreur de connexion.";
         }
+    }
+
+    public void remplirChampParLesDonneesMedecin(Patients.Models.Medecin donneMedecin)
+    {
+        IdMedecinModif.Text = donneMedecin.Id;
+        NomModif.Text = donneMedecin.Nom;
+        PrenomModif.Text = donneMedecin.Prenom;
+        DateDeNaissanceModif.Text = donneMedecin.DateNaissance.ToString();
+        GenreModif.Text = donneMedecin.Genre;
+        AdresseMedecinModif.Text = donneMedecin.Adresse;
+        TelephoneMedecinModif.Text = donneMedecin.Telephone;
+        EmailMedecinModif.Text = donneMedecin.Email;
+        StatutMedecinModif.Text = donneMedecin.statut;
+        numeroOrdreMedecinModif.Text = donneMedecin.numero_ordre;
+        FonctionMedecinModif.Text = donneMedecin.nom_fonction;
+        TauxHoraireMedecinModif.Text = donneMedecin.taux_horaire.ToString();
     }
 }
     

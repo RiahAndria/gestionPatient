@@ -1,19 +1,19 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Dapper;
 using Patients.Models;
-using System.Windows.Automation;
 using Patients.Helpers;
 using System.Data.Common;
 using System.Transactions;
+using System.Windows;
 
 namespace Medecins.Services;
 
 public class MedecinService
 {
+    public string message {get; set; } = string.Empty;
     private readonly string _connectionString;
 
     public MedecinService()
@@ -49,9 +49,13 @@ public class MedecinService
                 return true;
 
         } 
-        catch (NpgsqlException)
+        catch (PostgresException e)
         {
             transaction.Rollback();
+            if (e.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                message = "Ce numero d'orde appartient deja a une autre personne!";
+            }
             return false;
         }
     }
@@ -84,6 +88,46 @@ public class MedecinService
     }
 
 
+    // public Medecin ObtenirDonnePersonnelMedecin(string id_medecin)
+    // {
+    //     using var connexion = new NpgsqlConnection(_connectionString);
+    //     connexion.Open();
+    //     using var transaction = connexion.BeginTransaction();
+
+    //     try
+    //     {
+    //         var sql = @"SELECT 
+    //                     p.ID AS Id ,
+    //                     p.NOM AS Nom , 
+    //                     p.PRENOM AS Prenom, 
+    //                     p.DATEDENAISSANCE AS DateNaissance, 
+    //                     p.GENRE AS Genre, 
+    //                     p.ADRESSE AS Adresse, 
+    //                     p.TELEPHONE AS Telephone, 
+    //                     p.MAIL AS Email, 
+    //                     m.NUMERO_ORDRE AS numero_ordre, 
+    //                     m.STATUT AS statut, 
+    //                     f.NOM_FONCTION AS nom_fonction, 
+    //                     f.CODE_FONCTION AS code_fonction , 
+    //                     m.TAUX_HORAIRE AS taux_horaire
+    //                 FROM MEDECIN m 	
+    //                 INNER JOIN PERSONNE p ON p.ID = m.ID_MEDECIN
+    //                 INNER JOIN FONCTION f ON f.CODE_FONCTION = m.CODE_FONCTION
+    //                 WHERE P.ID = @id_medecin;";
+    //                 //WHERE P.ID = 'M-02-1-000A';";
+    //         var donnees = connexion.QueryFirstOrDefault<Medecin>(sql, new {id_medecin});
+    //         var valeur = (donnees == null ) ? new Medecin() : donnees;
+
+    //         Console.Write(valeur.DateNaissance);
+    //         return valeur;               
+
+    //     } 
+    //     catch
+    //     {
+    //         return new Medecin();
+    //     }
+    // }
+
     public Medecin ObtenirDonnePersonnelMedecin(string id_medecin)
     {
         using var connexion = new NpgsqlConnection(_connectionString);
@@ -93,26 +137,27 @@ public class MedecinService
         try
         {
             var sql = @"SELECT 
-                        p.ID AS Id ,
-                        p.NOM AS Nom , 
-                        p.PRENOM AS Prenom, 
-                        p.DATEDENAISSANCE AS DateNaissance, 
-                        p.GENRE AS Genre, 
-                        p.ADRESSE AS Adresse, 
-                        p.TELEPHONE AS Telephone, 
-                        p.MAIL AS Email, 
-                        m.NUMERO_ORDRE AS numero_ordre, 
-                        m.STATUT AS statut, 
-                        f.NOM_FONCTION AS nom_fonction, 
-                        f.CODE_FONCTION AS code_fonction , 
-                        m.TAUX_HORAIRE AS taux_horaire
+                        p.id AS Id ,
+                        p.nom AS Nom , 
+                        p.prenom AS Prenom, 
+                        p.datedenaissance::timestamp AS DateNaissance, 
+                        p.genre AS Genre, 
+                        p.adresse AS Adresse, 
+                        p.telephone AS Telephone, 
+                        p.mail AS Email, 
+                        m.numero_ordre AS numero_ordre, 
+                        m.statut AS statut, 
+                        f.nom_fonction AS nom_fonction, 
+                        f.code_fonction AS code_fonction , 
+                        m.taux_horaire AS taux_horaire
                     FROM MEDECIN m 	
-                    INNER JOIN PERSONNE p ON p.ID = m.ID_MEDECIN
-                    INNER JOIN FONCTION f ON f.CODE_FONCTION = m.CODE_FONCTION
+                    INNER JOIN PERSONNE p ON p.id = m.ID_MEDECIN
+                    INNER JOIN FONCTION f ON f.code_fonction = m.CODE_FONCTION
                     WHERE P.ID = @id_medecin;";
                     //WHERE P.ID = 'M-02-1-000A';";
             var donnees = connexion.QueryFirstOrDefault<Medecin>(sql, new {id_medecin});
             var valeur = (donnees == null ) ? new Medecin() : donnees;
+
             Console.Write(valeur.DateNaissance);
             return valeur;               
 
@@ -141,6 +186,47 @@ public class MedecinService
         } catch {
             return 0;
         }
+    }
+
+    // Le numero d'ordre des medecins est UNIQUE en base (contrainte
+    // medecin_numero_ordre_key). On le verifie AVANT l'insertion pour
+    // afficher un message clair au lieu d'une erreur SQL generique.
+    public bool NumeroOrdreExiste(string numeroOrdre)
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+        string sql = "SELECT COUNT(*) FROM MEDECIN WHERE NUMERO_ORDRE = @numeroOrdre;";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("numeroOrdre", numeroOrdre);
+
+        return Convert.ToInt64(cmd.ExecuteScalar()!) > 0;
+    }
+
+    // Dernier compteur numerique deja utilise dans les matricules
+    // medicaux (format M-XX-YY-000A) : sert a continuer la numerotation
+    // apres un redemarrage de l'application, sinon le compteur statique
+    // repart de zero et les nouveaux id_medecin entrent en collision
+    // avec des medecins deja enregistres (cle primaire).
+    public int ObtenirDernierCompteurMatricule()
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+        var ids = conn.Query<string>(
+            "SELECT ID_MEDECIN FROM MEDECIN WHERE ID_MEDECIN LIKE 'M-%';").ToList();
+
+        int max = 0;
+        foreach (var id in ids)
+        {
+            var parties = id.Split('-');
+            if (parties.Length == 4 && parties[3].Length >= 3
+                && int.TryParse(parties[3][..3], out int compteur))
+            {
+                max = Math.Max(max, compteur);
+            }
+        }
+        return max;
     }
 
     public bool ModificationMedecin(Medecin donneeMedecinMiseAJour)

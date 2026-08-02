@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using Patients.Models;
@@ -30,13 +31,27 @@ namespace Patients.Views.Consultation
                 return;
             }
 
-            // ... Création de l'objet Consultation
             var consultation = new Models.Consultation
             {
                 NumeroConsultation = TxtNumeroConsultation.Text.Trim(),
+                NumeroDossier = TxtNumeroDossier.Text.Trim(),
                 Diagnostique = TxtDiagnostique.Text.Trim(),
-                NotesMedicales = TxtNotesMedicales.Text.Trim()
+                NotesMedicales = TxtNotesMedicales.Text.Trim(),
+                GroupeSanguin = TxtGroupeSanguin.Text.Trim(),
+                Allergies = TxtAllergies.Text.Trim(),
+                Traitement = TxtTraitementDossier.Text.Trim(),
+                Antecedents = TxtAntecedents.Text.Trim()
             };
+
+            if (decimal.TryParse(TxtPoids.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var poids))
+            {
+                consultation.Poids = poids;
+            }
+
+            if (decimal.TryParse(TxtTaille.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var taille))
+            {
+                consultation.Taille = taille;
+            }
 
             // ... Création de l'Ordonnance [uniquement si les champs sont remplis]
             Ordonnance? ordonnance = null;
@@ -44,7 +59,7 @@ namespace Patients.Views.Consultation
             {
                 ordonnance = new Ordonnance
                 {
-                    NumeroPrescription = TxtNumeroPrescription.Text.Trim(),
+                    NumeroPrescritption = TxtNumeroPrescription.Text.Trim(),
                     NumeroConsultation = consultation.NumeroConsultation,
                     Traitement = TxtTraitement.Text.Trim(),
                     Duree = TxtDuree.Text.Trim(),
@@ -57,7 +72,7 @@ namespace Patients.Views.Consultation
 
             if (succes)
             {
-                MessageBox.Show("La consultation et la prescription ont été enregistrées avec succès !", 
+                MessageBox.Show("La consultation a été enregistrée et le dossier médical a été synchronisé avec succès !", 
                                 "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
                 ReinitialiserChamps();
             }
@@ -81,8 +96,15 @@ namespace Patients.Views.Consultation
         private void ReinitialiserChamps()
         {
             TxtNumeroConsultation.Clear();
+            TxtNumeroDossier.Clear();
             TxtDiagnostique.Clear();
             TxtNotesMedicales.Clear();
+            TxtPoids.Clear();
+            TxtTaille.Clear();
+            TxtGroupeSanguin.Clear();
+            TxtAllergies.Clear();
+            TxtTraitementDossier.Clear();
+            TxtAntecedents.Clear();
             TxtNumeroPrescription.Clear();
             TxtTraitement.Clear();
             TxtDuree.Clear();

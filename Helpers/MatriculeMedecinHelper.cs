@@ -3,10 +3,10 @@ namespace Patients.Helpers;
 
 public static class MatriculeHelperMedecin
 {
-    private static int _compteurNumerique = 0;
+    private static int _compteurNumerique = 5;
     private static char _lettreCourante = 'A';
 
-    public static string GenererMatricule(string genre, string nom_fonction)
+    public static string GenererMatricule(string genre, int code_fonction)
     {
         string prefixe = "M";
         MedecinService MS = new MedecinService();
@@ -15,7 +15,7 @@ public static class MatriculeHelperMedecin
         string codeGenre = genre == "Homme" ? "01" : (genre == "Femme" ? "02" : "00");
         
         // Code Assurance : 10 Assuré, 00 Non assuré
-        int code_fonction = MS.RecupererCodeFonction("Medecin generaliste");
+        // int code_fonction = MS.RecupererCodeFonction("Medecin generaliste");
 
         // Gestion du compteur alphanumérique (000A à 999Z)
         //  je compte trouver un moyen pour passer de 999Z à 000AA mlus tard mais bon... 
