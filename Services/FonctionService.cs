@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 
 
 using System;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Dapper;
 using Patients.Models;
-using System.Windows.Automation;
 using Patients.Helpers;
 using System.Data.Common;
 using System.Transactions;
@@ -18,7 +16,7 @@ using System.Configuration;
 using System.Collections.ObjectModel;
 
 namespace Patients.Services;
-
+// Service pour la gestion des fonctions des medecins
 public class FonctionService
 {
     public string message {get; set; } = string.Empty;

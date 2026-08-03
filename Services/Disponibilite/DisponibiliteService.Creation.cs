@@ -1,33 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Dapper;
-using System.DirectoryServices;
 using Patients.Models;
-
-// using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Patients.Services;
 
-public class DisponibiliteService
+public partial class DisponibiliteService
 {
-    private readonly string _connectionString;
-    public DisponibiliteService()
-    {
-        IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
-
-        _connectionString = configuration.GetConnectionString("DefaultConnection")!;
-    }
-
     public bool CreerDisponibilite(Temps nouveauTempsDisponible, int[] tabNumBloc)
     {
         int i, heure = 0;
-         
+
         //verifier qu'aucune date de disponibilite a une bloque soit creer
         using var connexion = new NpgsqlConnection(_connectionString);
         connexion.Open();
@@ -101,28 +83,4 @@ public class DisponibiliteService
             return false;
         }
     }
-
-    public async Task<List<Temps>> obtenirLesTempsMedecin(DateOnly date, string id_medecin)
-    {
-        using var connextion = new NpgsqlConnection();
-        connextion.Open();
-        using var transaction = connextion.BeginTransaction();
-
-        try
-        {
-            var sql = @"SELECT * FROM TEMPS 
-                    WHERE date_disponibilite = @date AND id_medecin = @id_medecin;";
-            var resultat =( await connextion.QueryAsync<Temps>(sql,new {date, id_medecin}, transaction)).ToList();
-            
-            transaction.Commit();
-            return resultat;
-        }
-        catch (NpgsqlException e)
-        {
-            transaction.Rollback();
-            Console.WriteLine("Erreur :" + e.Message);
-            return new List<Temps>();
-        }
-    }
 }
-
