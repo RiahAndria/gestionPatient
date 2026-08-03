@@ -88,45 +88,6 @@ public class MedecinService
     }
 
 
-    // public Medecin ObtenirDonnePersonnelMedecin(string id_medecin)
-    // {
-    //     using var connexion = new NpgsqlConnection(_connectionString);
-    //     connexion.Open();
-    //     using var transaction = connexion.BeginTransaction();
-
-    //     try
-    //     {
-    //         var sql = @"SELECT 
-    //                     p.ID AS Id ,
-    //                     p.NOM AS Nom , 
-    //                     p.PRENOM AS Prenom, 
-    //                     p.DATEDENAISSANCE AS DateNaissance, 
-    //                     p.GENRE AS Genre, 
-    //                     p.ADRESSE AS Adresse, 
-    //                     p.TELEPHONE AS Telephone, 
-    //                     p.MAIL AS Email, 
-    //                     m.NUMERO_ORDRE AS numero_ordre, 
-    //                     m.STATUT AS statut, 
-    //                     f.NOM_FONCTION AS nom_fonction, 
-    //                     f.CODE_FONCTION AS code_fonction , 
-    //                     m.TAUX_HORAIRE AS taux_horaire
-    //                 FROM MEDECIN m 	
-    //                 INNER JOIN PERSONNE p ON p.ID = m.ID_MEDECIN
-    //                 INNER JOIN FONCTION f ON f.CODE_FONCTION = m.CODE_FONCTION
-    //                 WHERE P.ID = @id_medecin;";
-    //                 //WHERE P.ID = 'M-02-1-000A';";
-    //         var donnees = connexion.QueryFirstOrDefault<Medecin>(sql, new {id_medecin});
-    //         var valeur = (donnees == null ) ? new Medecin() : donnees;
-
-    //         Console.Write(valeur.DateNaissance);
-    //         return valeur;               
-
-    //     } 
-    //     catch
-    //     {
-    //         return new Medecin();
-    //     }
-    // }
 
     public Medecin ObtenirDonnePersonnelMedecin(string id_medecin)
     {
@@ -295,6 +256,5 @@ public class MedecinService
             Console.WriteLine("Erreur de suppression de Medecin" + e.Message);
             return false;
         }
-        
     }
 }
