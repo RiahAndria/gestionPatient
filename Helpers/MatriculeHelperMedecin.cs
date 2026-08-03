@@ -1,18 +1,24 @@
-using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 
-namespace Patients.Models;
-public static class MatriculeHelper
+namespace Patients.Helpers;
+
+public static class MatriculeHelperMedecin
 {
+    // Meme principe que MatriculeHelper.cs (patients) : plus de
+    // compteur fige en memoire qui repart de zero a chaque
+    // redemarrage. On relit l'etat reel depuis la base au premier
+    // appel de la session, et on verifie l'unicite avant de renvoyer
+    // un matricule - important ici car ce matricule devient
+    // directement ID_MEDECIN, la cle primaire de la table MEDECIN.
     private static readonly object _lock = new();
     private static int _compteurNumerique = 0;
     private static char _lettreCourante = 'A';
     private static bool _etatCharge = false;
     private static string? _connectionString;
 
-    public static string GenererMatricule(string genre, bool estAssure)
+    public static string GenererMatricule(string genre, int code_fonction)
     {
         lock (_lock)
         {
@@ -22,9 +28,8 @@ public static class MatriculeHelper
                 _etatCharge = true;
             }
 
-            string prefixe = "P";
+            string prefixe = "M";
             string codeGenre = genre == "Homme" ? "01" : (genre == "Femme" ? "02" : "00");
-            string codeAssurance = estAssure ? "10" : "00";
 
             string codeUnique;
             do
@@ -34,7 +39,7 @@ public static class MatriculeHelper
             }
             while (ExisteDeja(codeUnique));
 
-            return $"{prefixe}-{codeGenre}-{codeAssurance}-{codeUnique}";
+            return $"{prefixe}-{codeGenre}-{code_fonction}-{codeUnique}";
         }
     }
 
@@ -57,7 +62,9 @@ public static class MatriculeHelper
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            const string query = "SELECT NUMERODOSSIER FROM PATIENT WHERE NUMERODOSSIER IS NOT NULL;";
+            // ID_MEDECIN suit exactement le meme format que le matricule
+            // genere (M-XX-X-XXXA), c'est directement lui qu'on relit.
+            const string query = "SELECT ID_MEDECIN FROM MEDECIN WHERE ID_MEDECIN IS NOT NULL;";
             using var cmd = new NpgsqlCommand(query, conn);
             using var reader = cmd.ExecuteReader();
 
@@ -145,10 +152,10 @@ public static class MatriculeHelper
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            const string query = "SELECT COUNT(*) FROM PATIENT WHERE NUMERODOSSIER LIKE @suffixe;";
+            const string query = "SELECT COUNT(*) FROM MEDECIN WHERE ID_MEDECIN LIKE @suffixe;";
             using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@suffixe", $"%-{codeUnique}");
-            
+
             return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
         }
         catch

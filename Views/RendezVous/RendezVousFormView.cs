@@ -1,30 +1,43 @@
-//on crée un rendez-vous pour un patient avec un médecin à une date et heure précises
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Patients.Helpers;
 using Patients.Models;
 using Patients.Services;
 
 namespace Patients.Views.RendezVous;
-//création de la vue pour le formulaire de rendez-vous
+
 public partial class RendezVousFormView : UserControl
 {
     private readonly RendezVousService _rendezVousService = new();
     private readonly PatientLookupService _patients = new();
     private readonly MedecinLookupService _medecins = new();
-// Constructeur de la vue
-    public RendezVousFormView()
+
+    public RendezVousFormView(string? patientId = null)
     {
         InitializeComponent();
-        cbPatient.ItemsSource = _patients.Rechercher("");
+        var patientOptions = _patients.Rechercher("");
+        cbPatient.ItemsSource = patientOptions;
         cbMedecin.ItemsSource = _medecins.ObtenirDisponibles();
+
+        if (!string.IsNullOrWhiteSpace(patientId) && patientOptions.Any())
+        {
+            cbPatient.SelectedItem = patientOptions.FirstOrDefault(p => p.Id == patientId);
+        }
+
+        if (cbPatient.SelectedItem == null && cbPatient.Items.Count > 0)
+        {
+            cbPatient.SelectedIndex = 0;
+        }
     }
-// Méthode pour gérer le changement de texte dans la zone de recherche du patient
+
     private void txtRecherchePatient_TextChanged(object sender, TextChangedEventArgs e)
     {
         cbPatient.ItemsSource = _patients.Rechercher(txtRecherchePatient.Text);
         if (cbPatient.Items.Count > 0) cbPatient.SelectedIndex = 0;
     }
-// Méthode pour gérer le clic sur le bouton "Créer"
+
     private void btnCreer_Click(object sender, RoutedEventArgs e)
     {
         if (cbPatient.SelectedItem is not PatientOption patient)
@@ -44,10 +57,30 @@ public partial class RendezVousFormView : UserControl
         }
 
         var dateHeure = dpDate.SelectedDate.Value.Date + heure;
-        var numero = $"RDV-{Guid.NewGuid().ToString()[..8].ToUpper()}";
+        // Numero sequentiel global (RDV-000001, ...), pas aleatoire :
+        // voir Helpers/NumeroRdvHelper.cs pour la logique metier.
+        var numero = NumeroRdvHelper.GenererNumero();
+        var dateHeureSaisie = dpDate.SelectedDate.Value.Date + heure;
+
+        if (dateHeureSaisie < DateTime.Now)
+        {
+            AfficherErreur("Impossible de créer un rendez-vous dans le passé.");
+            return;
+        }
+
+        if (heure < TimeSpan.FromHours(8) || heure > TimeSpan.FromHours(18))
+        {
+            AfficherErreur("Les rendez-vous se prennent entre 08:00 et 18:00 (horaires d'ouverture).");
+            return;
+        }
 
         try
         {
+            // Le type est precise en entier (Patients.Models.RendezVous)
+            // car ce fichier est lui-meme dans le namespace
+            // Patients.Views.RendezVous : sans cette precision, le
+            // compilateur confond la classe RendezVous avec le
+            // namespace du meme nom.
             _rendezVousService.AjouterRendezVous(new Patients.Models.RendezVous
             {
                 NumRendezVous = numero,
@@ -64,7 +97,7 @@ public partial class RendezVousFormView : UserControl
         }
         catch (InvalidOperationException ex)
         {
-        // Gérer les exceptions spécifiques à l'ajout de rendez-vous
+            // Erreur metier attendue (ex: creneau deja pris) : message clair.
             AfficherErreur(ex.Message);
         }
         catch (Exception ex)
@@ -72,7 +105,7 @@ public partial class RendezVousFormView : UserControl
             AfficherErreur($"Erreur inattendue : {ex.Message}");
         }
     }
-    // Méthode pour afficher les messages d'erreur
+
     private void AfficherErreur(string message)
     {
         txtMessage.Foreground = System.Windows.Media.Brushes.Red;

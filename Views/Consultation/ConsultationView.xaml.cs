@@ -1,0 +1,113 @@
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Controls;
+using Patients.Models;
+using Patients.Services;
+
+namespace Patients.Views.Consultation
+{
+    public partial class ConsultationView : UserControl
+    {
+        // --- Instanciation des services
+        private readonly ConsultationService _consultationService;
+        private readonly RappelService _rappelService;
+
+        public ConsultationView()
+        {
+            InitializeComponent();
+            _consultationService = new ConsultationService();
+            _rappelService = new RappelService();
+        }
+
+        // --- Action lors du clic sur "Enregistrer la Consultation"
+        private void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
+        {
+            // ... Validation basique des champs obligatoires
+            if (string.IsNullOrWhiteSpace(TxtNumeroConsultation.Text) || string.IsNullOrWhiteSpace(TxtDiagnostique.Text))
+            {
+                MessageBox.Show("Veuillez remplir au moins le numéro de consultation et le diagnostic.", 
+                                "Champs manquants", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var consultation = new Models.Consultation
+            {
+                NumeroConsultation = TxtNumeroConsultation.Text.Trim(),
+                NumeroDossier = TxtNumeroDossier.Text.Trim(),
+                Diagnostique = TxtDiagnostique.Text.Trim(),
+                NotesMedicales = TxtNotesMedicales.Text.Trim(),
+                GroupeSanguin = TxtGroupeSanguin.Text.Trim(),
+                Allergies = TxtAllergies.Text.Trim(),
+                Traitement = TxtTraitementDossier.Text.Trim(),
+                Antecedents = TxtAntecedents.Text.Trim()
+            };
+
+            if (decimal.TryParse(TxtPoids.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var poids))
+            {
+                consultation.Poids = poids;
+            }
+
+            if (decimal.TryParse(TxtTaille.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var taille))
+            {
+                consultation.Taille = taille;
+            }
+
+            // ... Création de l'Ordonnance [uniquement si les champs sont remplis]
+            Ordonnance? ordonnance = null;
+            if (!string.IsNullOrWhiteSpace(TxtNumeroPrescription.Text) && !string.IsNullOrWhiteSpace(TxtTraitement.Text))
+            {
+                ordonnance = new Ordonnance
+                {
+                    NumeroPrescritption = TxtNumeroPrescription.Text.Trim(),
+                    NumeroConsultation = consultation.NumeroConsultation,
+                    Traitement = TxtTraitement.Text.Trim(),
+                    Duree = TxtDuree.Text.Trim(),
+                    Diagnostique = consultation.Diagnostique
+                };
+            }
+
+            // ... Appel du service Back-End (Correction du nom de la méthode)
+            bool succes = _consultationService.EnregistrerConsultation(consultation, ordonnance);
+
+            if (succes)
+            {
+                MessageBox.Show("La consultation a été enregistrée et le dossier médical a été synchronisé avec succès !", 
+                                "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                ReinitialiserChamps();
+            }
+            else
+            {
+                MessageBox.Show("Une erreur est survenue lors de l'enregistrement en base de données.", 
+                                "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        //--- Action lors du clic sur "Générer Rappels RDV"
+        private void BtnRappels_Click(object sender, RoutedEventArgs e)
+        {
+            int nbRappels = _rappelService.GenererRappels24h();
+            
+            MessageBox.Show($"{nbRappels} notification(s) de rappel de rendez-vous générée(s) pour les prochaines 24h.", 
+                            "Rappels RDV", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        //--- Méthode utilitaire pour vider le formulaire après enregistrement
+        private void ReinitialiserChamps()
+        {
+            TxtNumeroConsultation.Clear();
+            TxtNumeroDossier.Clear();
+            TxtDiagnostique.Clear();
+            TxtNotesMedicales.Clear();
+            TxtPoids.Clear();
+            TxtTaille.Clear();
+            TxtGroupeSanguin.Clear();
+            TxtAllergies.Clear();
+            TxtTraitementDossier.Clear();
+            TxtAntecedents.Clear();
+            TxtNumeroPrescription.Clear();
+            TxtTraitement.Clear();
+            TxtDuree.Clear();
+        }
+    }
+}

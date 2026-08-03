@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using Patients.Helpers;
 using Patients.Models;
 using Patients.Services;
 
@@ -12,16 +13,43 @@ public partial class PatientFormView : UserControl
 
     public PatientFormView()
     {
-        InitializeComponent();
+        InitializeComponent(); // Commentaire
     }
 
     private void btnAjouter_Click(object sender, RoutedEventArgs e)
     {
-        // Validation des champs obligatoires
         if (string.IsNullOrWhiteSpace(txtNom.Text) || string.IsNullOrWhiteSpace(txtPrenom.Text) || dpDateNaissance.SelectedDate == null)
         {
             txtMessage.Foreground = System.Windows.Media.Brushes.Red;
             txtMessage.Text = "Veuillez remplir les champs obligatoires (Nom, Prénom, Date de naissance).";
+            return;
+        }
+
+        if (!PatientHelper.EstNomValide(txtNom.Text) || !PatientHelper.EstNomValide(txtPrenom.Text))
+        {
+            txtMessage.Foreground = System.Windows.Media.Brushes.Red;
+            txtMessage.Text = "Le nom et le prénom ne doivent contenir que des lettres, espaces, apostrophes ou tirets.";
+            return;
+        }
+
+        if (!PatientHelper.EstDateNaissanceValide(dpDateNaissance.SelectedDate))
+        {
+            txtMessage.Foreground = System.Windows.Media.Brushes.Red;
+            txtMessage.Text = "La date de naissance doit être valide, non future et inférieure à 100 ans.";
+            return;
+        }
+
+        if (!PatientHelper.EstEmailValide(txtEmailPatient.Text))
+        {
+            txtMessage.Foreground = System.Windows.Media.Brushes.Red;
+            txtMessage.Text = "L'adresse e-mail doit respecter le format texte@texte.texte.";
+            return;
+        }
+
+        if (!PatientHelper.EstTelephoneValide(txtTelephonePatient.Text))
+        {
+            txtMessage.Foreground = System.Windows.Media.Brushes.Red;
+            txtMessage.Text = "Le numéro de téléphone doit contenir exactement 10 chiffres.";
             return;
         }
 

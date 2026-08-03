@@ -6,9 +6,10 @@
         xmlns:patientForm="clr-namespace:Patients.Views.Patient.Forms"
         xmlns:components="clr-namespace:Patients.Views.Patient.Components"
         xmlns:medecin="clr-namespace:Patients.Views.Medecin"
-        xmlns:dossier="clr-namespace:Patients.Views.DossierMedical"
-        xmlns:historique="clr-namespace:Patients.Views.Historique"
         xmlns:rendezvous="clr-namespace:Patients.Views.RendezVous"
+        xmlns:paiement="clr-namespace:Patients.Views.Paiement"
+        xmlns:notification="clr-namespace:Patients.Views.Notification"
+        xmlns:consultation="clr-namespace:Patients.Views.Consultation"
         xmlns:listeMedecin="clr-namespace:Patients.Views.Medecin.ListeMedecin"
         Title="Gestion Médicale" Height="700" Width="1200"
         WindowStartupLocation="CenterScreen">
@@ -78,23 +79,12 @@
                         </ScrollViewer>
                     </TabItem>
 
-                    <TabItem x:Name="TabDossiers">
+                    <TabItem x:Name="TabConsultations">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <StackPanel Margin="0,0,10,0">
-                                <TextBlock Text="Dossiers Médicaux" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
+                                <TextBlock Text="Consultations" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
                                 <Border Style="{StaticResource GlassCardStyle}">
-                                    <dossier:DossierView/>
-                                </Border>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </TabItem>
-
-                    <TabItem x:Name="TabHistorique">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="0,0,10,0">
-                                <TextBlock Text="Historique" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
-                                <Border Style="{StaticResource GlassCardStyle}">
-                                    <historique:HistoriqueView/>
+                                    <consultation:ConsultationView/>
                                 </Border>
                             </StackPanel>
                         </ScrollViewer>
@@ -105,7 +95,29 @@
                             <StackPanel Margin="0,0,10,0">
                                 <TextBlock Text="Planning &amp; Rendez-vous" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
                                 <Border Style="{StaticResource GlassCardStyle}">
-                                    <rendezvous:RendezVousModuleView/>
+                                    <rendezvous:RendezVousListView x:Name="VueRendezVous"/>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem x:Name="TabPaiements">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="Paiements" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
+                                <Border Style="{StaticResource GlassCardStyle}">
+                                    <paiement:PaiementView x:Name="VuePaiements"/>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem x:Name="TabNotifications">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Text="Notifications" FontSize="26" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
+                                <Border Style="{StaticResource GlassCardStyle}">
+                                    <notification:NotificationView x:Name="VueNotifications"/>
                                 </Border>
                             </StackPanel>
                         </ScrollViewer>

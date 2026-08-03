@@ -1,22 +1,45 @@
-<UserControl x:Class="Patients.Views.Patient.Forms.PatientFormView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
-    <Border Style="{StaticResource Carte}" Padding="24">
-        <StackPanel>
-            <!-- En-tête du formulaire -->
+<Window x:Class="Patients.Views.Patient.Windows.EditPatientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Modifier le patient" 
+        Height="Auto" Width="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        SizeToContent="Height"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowStyle="None">
+
+    <!-- Ombre et fond blanc arrondi pour l'effet Popup moderne -->
+    <Border Background="White" CornerRadius="12" Margin="15">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.15" BlurRadius="20" ShadowDepth="4"/>
+        </Border.Effect>
+
+        <StackPanel Margin="24">
+
+            <!-- En-tête avec titre et bouton Fermer -->
             <DockPanel Margin="0,0,0,20">
-                <StackPanel DockPanel.Dock="Left">
-                    <TextBlock Text="Nouveau Patient" Style="{StaticResource TitreSection}" Margin="0"/>
-                    <TextBlock Text="Ajouter un nouveau patient" Style="{StaticResource Libelle}" FontSize="12"/>
+                <Button Content="✕" Click="btnAnnuler_Click" DockPanel.Dock="Right" 
+                        Background="Transparent" Foreground="#6B7280" FontSize="16" FontWeight="Bold"
+                        BorderThickness="0" Cursor="Hand" Width="30" Height="30"/>
+                
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Modifier le dossier patient" Style="{StaticResource TitreSection}" Margin="0,0,0,2"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Matricule : " Style="{StaticResource Libelle}" FontSize="12"/>
+                        <TextBlock x:Name="txtMatriculeDisplay" Text="PAT-000" FontWeight="Bold" Foreground="{StaticResource BrushPrimary}" FontSize="12"/>
+                    </StackPanel>
                 </StackPanel>
             </DockPanel>
 
-            <!-- Ligne 1 : Nom / Prénom -->
-            <Grid Margin="0,0,0,14">
+            <Separator Background="{StaticResource BrushBorder}" Margin="0,0,0,16"/>
+
+            <!-- Formulaire de modification -->
+            <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="14"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
@@ -31,11 +54,10 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Ligne 2 : Date de naissance / Genre -->
-            <Grid Margin="0,0,0,14">
+            <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="14"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
@@ -49,16 +71,15 @@
                     <ComboBox x:Name="cbGenre" Style="{StaticResource ComboSaisie}">
                         <ComboBoxItem Content="Homme"/>
                         <ComboBoxItem Content="Femme"/>
-                        <ComboBoxItem Content="Autre" IsSelected="True"/>
+                        <ComboBoxItem Content="Autre"/>
                     </ComboBox>
                 </StackPanel>
             </Grid>
 
-            <!-- Ligne 3 : Adresse / Email -->
-            <Grid Margin="0,0,0,14">
+            <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="14"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
@@ -73,11 +94,10 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Ligne 4 : Téléphone / N° Assurance -->
             <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="14"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
@@ -87,16 +107,26 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="2">
-                    <TextBlock Text="N° Sécurité Sociale / Assurance" Style="{StaticResource Libelle}"/>
+                    <TextBlock Text="N° Assurance" Style="{StaticResource Libelle}"/>
                     <TextBox x:Name="txtNumAssurancePatient" Style="{StaticResource ChampSaisie}"/>
                 </StackPanel>
             </Grid>
 
-            <!-- Bouton d'action -->
-            <Button Content="+ Ajouter le patient" Click="btnAjouter_Click" Style="{StaticResource BoutonPrimaire}" Height="38"/>
+            <!-- Message d'erreur/succès -->
+            <TextBlock x:Name="txtMessage" Text="" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,12"/>
 
-            <!-- Message d'état -->
-            <TextBlock x:Name="txtMessage" Text="" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+            <!-- Boutons d'actions (Annuler / Enregistrer) -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Annuler" Click="btnAnnuler_Click" Style="{StaticResource BoutonSecondaire}"/>
+                <Button Grid.Column="2" Content="Enregistrer" Click="btnEnregistrer_Click" Style="{StaticResource BoutonPrimaire}"/>
+            </Grid>
+
         </StackPanel>
     </Border>
-</UserControl>
+</Window>

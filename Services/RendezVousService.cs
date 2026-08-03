@@ -1,14 +1,15 @@
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Patients.Models;
 
 namespace Patients.Services;
-// Service pour gérer les rendez-vous
+
 public class RendezVousService
 {
     private readonly string _connectionString;
-// Constructeur de la classe qui initialise la chaîne de connexion à la base de données
+
     public RendezVousService()
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -18,11 +19,14 @@ public class RendezVousService
 
         _connectionString = configuration.GetConnectionString("DefaultConnection")!;
     }
-// Méthode pour rechercher les rendez-vous en fonction de différents critères
+
+    // Liste des rendez-vous, avec les noms de patient/medecin deja
+    // joints. Chaque parametre de filtre est optionnel : une chaine
+    // vide ou une date nulle signifie "pas de filtre sur ce critere".
     public List<RendezVousAffichage> Rechercher(string? terme, DateTime? date, string? statut)
     {
         var resultat = new List<RendezVousAffichage>();
-// Requête SQL pour récupérer les rendez-vous avec les informations du patient et du médecin
+
         string query = @"
             SELECT r.NUMERORDV, 
                    pp.NOM, pp.PRENOM,
@@ -31,23 +35,23 @@ public class RendezVousService
             FROM RENDEZ_VOUS r
             INNER JOIN PATIENT pa ON r.ID = pa.ID
             INNER JOIN PERSONNE pp ON pa.ID = pp.ID
-            INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_HER_2
-            INNER JOIN PERSONNE mp ON me.ID_HER_2 = mp.ID
+            INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_MEDECIN
+            INNER JOIN PERSONNE mp ON me.ID_MEDECIN = mp.ID
             WHERE (@Terme = '' OR pp.NOM ILIKE '%' || @Terme || '%' OR pp.PRENOM ILIKE '%' || @Terme || '%'
                                 OR mp.NOM ILIKE '%' || @Terme || '%' OR mp.PRENOM ILIKE '%' || @Terme || '%')
               AND (@DateFiltre::date IS NULL OR r.DATEHEURERDV::date = @DateFiltre::date)
               AND (@Statut = '' OR r.STATUT = @Statut)
             ORDER BY r.DATEHEURERDV;";
-// On exécute la requête et on lit les résultats pour les ajouter à la liste des rendez-vous
+
         using var conn = new NpgsqlConnection(_connectionString);
         using var cmd = new NpgsqlCommand(query, conn);
         cmd.Parameters.AddWithValue("Terme", terme ?? "");
         cmd.Parameters.AddWithValue("DateFiltre", (object?)date ?? DBNull.Value);
         cmd.Parameters.AddWithValue("Statut", statut ?? "");
-// On ouvre la connexion et on exécute la commande
+
         conn.Open();
         using var reader = cmd.ExecuteReader();
-// On lit chaque ligne du résultat et on crée un objet RendezVousAffichage pour l'ajouter à la liste
+
         while (reader.Read())
         {
             resultat.Add(new RendezVousAffichage
@@ -63,13 +67,56 @@ public class RendezVousService
 
         return resultat;
     }
-// Méthode pour obtenir tous les rendez-vous sans filtrage
+
     public List<RendezVousAffichage> ObtenirTous() => Rechercher(terme: "", date: null, statut: "");
 
-    // Verifie si un medecin a deja un RDV planifie sur le meme creneau
+    // Toutes les informations d'un rendez-vous pour la fenetre de detail
+    // (ouverte par double-clic) : patient, medecin et leurs coordonnees.
+    public RendezVousDetail? ObtenirDetail(string numeroRdv)
+    {
+        string query = @"
+            SELECT r.NUMERORDV, r.DATEHEURERDV, r.MOTIFRDV, r.STATUT, r.MOTIFANNULATION,
+                   pp.ID, pp.NOM, pp.PRENOM, pp.TELEPHONE, pp.MAIL, pa.NUMERODOSSIER,
+                   mp.NOM, mp.PRENOM, f.NOM_FONCTION, me.TAUX_HORAIRE
+            FROM RENDEZ_VOUS r
+            INNER JOIN PATIENT pa ON r.ID = pa.ID
+            INNER JOIN PERSONNE pp ON pa.ID = pp.ID
+            INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_MEDECIN
+            INNER JOIN PERSONNE mp ON me.ID_MEDECIN = mp.ID
+            INNER JOIN FONCTION f ON me.CODE_FONCTION = f.CODE_FONCTION
+            WHERE r.NUMERORDV = @NumeroRdv;";
+
+        using var conn = new NpgsqlConnection(_connectionString);
+        using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("NumeroRdv", numeroRdv);
+
+        conn.Open();
+        using var reader = cmd.ExecuteReader();
+        if (!reader.Read()) return null;
+
+        return new RendezVousDetail
+        {
+            NumeroRdv = reader.GetString(0),
+            DateHeure = reader.GetDateTime(1),
+            Motif = reader.GetString(2),
+            Statut = reader.GetString(3),
+            MotifAnnulation = reader.IsDBNull(4) ? null : reader.GetString(4),
+            PatientId = reader.GetString(5),
+            PatientNom = $"{reader.GetString(6)} {reader.GetString(7)}",
+            PatientTelephone = reader.GetString(8),
+            PatientEmail = reader.GetString(9),
+            PatientMatricule = reader.GetString(10),
+            MedecinNom = $"Dr. {reader.GetString(11)} {reader.GetString(12)}",
+            MedecinFonction = reader.GetString(13),
+            MedecinTauxHoraire = reader.GetDecimal(14)
+        };
+    }
+
+    // Regle metier : un medecin ne peut pas avoir deux rendez-vous
+    // planifies au meme instant. exclureNumeroRdv sert lors d'une
+    // reprogrammation, pour ne pas comparer le rendez-vous a lui-meme.
     private bool CreneauDejaPris(NpgsqlConnection conn, NpgsqlTransaction tx, string medecinId, DateTime dateHeure, string? exclureNumeroRdv)
     {
-        // On verifie si le medecin a deja un RDV planifie sur le meme creneau. On exclut le RDV en cours si on reprogramme.
         string query = @"
             SELECT COUNT(*) FROM RENDEZ_VOUS
             WHERE ID_HER_2 = @MedecinId
@@ -86,11 +133,15 @@ public class RendezVousService
         return count > 0;
     }
 
-    // Creation d'un rendez-vous. Leve une InvalidOperationException si
-    // le creneau est deja pris pour ce medecin (a attraper cote UI pour
-    // afficher un message clair, plutot qu'une erreur SQL brute).
+    // Cree un rendez-vous. Leve une InvalidOperationException si le
+    // creneau est deja pris pour ce medecin.
     public void AjouterRendezVous(RendezVous rdv)
     {
+        if (rdv.DateHeure < DateTime.Now)
+        {
+            throw new InvalidOperationException("Impossible de créer un rendez-vous dans le passé.");
+        }
+        
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
         using var transaction = conn.BeginTransaction();
@@ -123,8 +174,8 @@ public class RendezVousService
         }
     }
 
-    // Annulation : on ne supprime JAMAIS la ligne (garde l'historique),
-    // on passe juste le statut a ANNULE avec le motif.
+    // La ligne n'est jamais supprimee (on garde l'historique) : on
+    // passe simplement le statut a ANNULE avec le motif fourni.
     public void AnnulerRendezVous(string numeroRdv, string motif)
     {
         using var conn = new NpgsqlConnection(_connectionString);
@@ -141,6 +192,10 @@ public class RendezVousService
         cmd.ExecuteNonQuery();
     }
 
+    // Change la date/heure d'un rendez-vous, en revalidant qu'aucun
+    // conflit de creneau n'est cree. Refuse si une consultation est deja
+    // rattachee (contrainte UNIQUE CONSULTATION.NUMERORDV) : il faut
+    // alors annuler puis creer un nouveau rendez-vous.
     public void ReprogrammerRendezVous(string numeroRdv, DateTime nouvelleDateHeure)
     {
         using var conn = new NpgsqlConnection(_connectionString);
@@ -149,8 +204,7 @@ public class RendezVousService
 
         try
         {
-            string queryVerifConsultation = @"
-                SELECT COUNT(*) FROM CONSULTATION WHERE NUMERORDV = @NumeroRdv;";
+            string queryVerifConsultation = "SELECT COUNT(*) FROM CONSULTATION WHERE NUMERORDV = @NumeroRdv;";
             using (var cmdVerif = new NpgsqlCommand(queryVerifConsultation, conn, transaction))
             {
                 cmdVerif.Parameters.AddWithValue("NumeroRdv", numeroRdv);

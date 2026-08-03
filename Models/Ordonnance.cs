@@ -1,6 +1,6 @@
 namespace Patients.Models;
 
-public class Ordonance
+public class Ordonnance
 {
     public string NumeroPrescritption { get; set; } = string.Empty; // Clé primaire
     public string NumeroConsultation { get; set; } = string.Empty; // FK vers Consultation

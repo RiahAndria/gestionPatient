@@ -63,7 +63,6 @@ BenchmarkDotNet.Artifacts/
 # .NET
 project.lock.json
 project.fragment.lock.json
-appsettings.json
 artifacts/
 
 # Tye
@@ -481,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+# Ignorer la config contenant potentiellement des mots de passe/clés API
+appsettings.json
+appsettings.Development.json

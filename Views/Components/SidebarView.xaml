@@ -80,17 +80,10 @@
                     </StackPanel>
                 </RadioButton>
 
-                <RadioButton x:Name="NavDossiers" Style="{StaticResource GlassNavButton}">
+                <RadioButton x:Name="NavConsultations" Style="{StaticResource GlassNavButton}">
                     <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="FolderOutline" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Dossiers" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </RadioButton>
-
-                <RadioButton x:Name="NavHistorique" Style="{StaticResource GlassNavButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="History" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Historique" VerticalAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="ClipboardTextOutline" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Consultations" VerticalAlignment="Center"/>
                     </StackPanel>
                 </RadioButton>
 
@@ -99,6 +92,27 @@
                         <materialDesign:PackIcon Kind="CalendarClockOutline" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Rendez-vous" VerticalAlignment="Center"/>
                     </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="NavPaiements" Style="{StaticResource GlassNavButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CashMultiple" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Paiements" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="NavNotifications" Style="{StaticResource GlassNavButton}">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="BellOutline" Width="20" Height="20" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Notifications" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Border x:Name="BadgeNotif" Background="#DC2626" CornerRadius="9" Width="18" Height="18"
+                                HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="Collapsed">
+                            <TextBlock x:Name="TxtBadgeNotif" FontSize="10" FontWeight="Bold" Foreground="White"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
                 </RadioButton>
             </StackPanel>
         </DockPanel>
