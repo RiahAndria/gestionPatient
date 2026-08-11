@@ -1,7 +1,7 @@
 <Window x:Class="Patients.Views.Medecin.ModifierMedecin.ModifierMedecinView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Height="1000">
+    WindowStartupLocation="CenterScreen" Height="1000">
     <StackPanel>
         <TextBlock Text="Modification d'un médecin" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
         
@@ -83,10 +83,16 @@
 
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Fonction" FontSize="12" Foreground="#4B5563" Margin="0,0,0,4" FontWeight="Bold"/>
-                    <ComboBox x:Name="FonctionMedecinModif" Height="32" VerticalContentAlignment="Center">
-                        <ComboBoxItem Content="Medecin generaliste" IsSelected="True"/>
-                        <ComboBoxItem Content="Chirurgie generale"/>
-                    </ComboBox>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox x:Name="ComboBoxFonction"
+                            ItemsSource="{Binding CboListeFonction}"
+                            DisplayMemberPath="nom_fonction"
+                            SelectedValuePath="code_fonction"
+                            SelectedValue="{Binding TXTCodeFonction}"
+                            Width="250" 
+                            Height="32"/>
+                        <Button Content="  + Fonction  " Click="AjoutFOnction" Height="32" Background="#2563EB" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
 

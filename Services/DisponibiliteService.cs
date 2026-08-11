@@ -10,7 +10,7 @@ using Patients.Models;
 // using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Patients.Services;
-
+//Patients.Services.DisponibiliteService
 public class DisponibiliteService
 {
     private readonly string _connectionString;
@@ -113,7 +113,30 @@ public class DisponibiliteService
         }
     }
 
-    public async Task<List<Temps>> obtenirLesTempsMedecin(DateOnly date, string id_medecin)
+    // public async Task<List<Temps>> obtenirLesTempsMedecin(DateOnly date, string id_medecin)
+    // {
+    //     using var connextion = new NpgsqlConnection();
+    //     connextion.Open();
+    //     using var transaction = connextion.BeginTransaction();
+
+    //     try
+    //     {
+    //         var sql = @"SELECT * FROM TEMPS 
+    //                 WHERE date_disponibilite = @date AND id_medecin = @id_medecin;";
+    //         var resultat =( await connextion.QueryAsync<Temps>(sql,new {date, id_medecin}, transaction)).ToList();
+            
+    //         transaction.Commit();
+    //         return resultat;
+    //     }
+    //     catch (NpgsqlException e)
+    //     {
+    //         transaction.Rollback();
+    //         Console.WriteLine("Erreur :" + e.Message);
+    //         return new List<Temps>();
+    //     }
+    // }
+
+    public List<Disponibilite> obtenir_Block_de_temps_disponible_un_jour(DateOnly date, string id_medecin)
     {
         using var connextion = new NpgsqlConnection();
         connextion.Open();
@@ -123,7 +146,7 @@ public class DisponibiliteService
         {
             var sql = @"SELECT * FROM TEMPS 
                     WHERE date_disponibilite = @date AND id_medecin = @id_medecin;";
-            var resultat =( await connextion.QueryAsync<Temps>(sql,new {date, id_medecin}, transaction)).ToList();
+            var resultat =( connextion.Query<Disponibilite>(sql,new {date, id_medecin}, transaction)).ToList();
             
             transaction.Commit();
             return resultat;
@@ -132,8 +155,84 @@ public class DisponibiliteService
         {
             transaction.Rollback();
             Console.WriteLine("Erreur :" + e.Message);
+            return new List<Disponibilite>();
+        }
+    }
+
+    public List<Temps> obtenir_etat_de_chaque_15(DateOnly date, string id_medecin, int numero_bloc)
+    {
+        using var connection =  new NpgsqlConnection(_connectionString);
+        connection.Open();
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            var sql = @"SELECT * FROM temps 
+                        WHERE numero_bloc =:numero_bloc
+                        id_medecin =:id_medecin
+                        date_disponibilite =:date ";
+            var Etat_Chaque_bloc = connection.Query<Temps>(sql, new {numero_bloc, id_medecin, date}).ToList();
+            return Etat_Chaque_bloc;
+
+        } catch (NpgsqlException e)
+        {
+            message = "Erreur lors du obtenir_etat_de_chaque_15" + e.Message;
             return new List<Temps>();
         }
+    }
+
+    /**
+        Maintenant je vais creer une fonction qui a pour role 
+        de tra    */
+    public async Task<AgendaJournee> ObtenirAgendaJourneeAsync(string id_medecin, DateTime date)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var sql = @"SELECT 
+                    id_temps, 
+                    id_medecin, 
+                    date_disponibilite::timestamp AS date_disponibilite,
+                    numero_bloc,
+                    heure_debut,
+                    heure_fin,
+                    est_disponible,
+                    est_reserve 
+                    FROM temps
+                    WHERE id_medecin =:id_medecin 
+                    AND date_disponibilite =:date
+                    ORDER BY numero_bloc, heure_debut;
+                ";
+        try
+        {
+            var resultat = (await connection.QueryAsync<Temps>(sql, new {id_medecin, date.Date }));
+            return new AgendaJournee {
+                Date = date,
+                Id_medecin = id_medecin,
+                Creneaux15Min = resultat.ToList()            
+            };
+
+        } 
+        catch (NpgsqlException e)
+        {
+            message = "message lors de l'appel de ObtenirAgendaJourneeAsync : " + e.Message;
+            return new AgendaJournee();
+        }
+    }
+
+    public async Task<List<AgendaJournee>> ObtenirAgendaUneSemaine(string id_medecin, DateTime date)
+    {
+        var AgendaSemaine = new List<AgendaJournee>();
+
+        DateTime dateDebut = date.Date;
+        for (int i = 0; i < 6; i++)
+        {
+            DateTime DateCourant = dateDebut.AddDays(i);
+            var Agenda_journee = await ObtenirAgendaJourneeAsync(id_medecin, DateCourant);
+            AgendaSemaine.Add(Agenda_journee);
+            
+        }
+        return AgendaSemaine;
     }
 }
 

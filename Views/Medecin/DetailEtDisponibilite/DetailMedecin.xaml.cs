@@ -31,18 +31,20 @@ public partial class DetailMedecin : UserControl
 
     public void BtnValiderCreationDispo(Object sender, RoutedEventArgs e)
         {
-            // 1. Liste pour stocker les codes (Tag) des options cochées
+            // Liste pour stocker les codes (Tag) des options cochées
             List<String> tagCoches = new List<string>();
 
-            // 3. Parcours de toutes les CheckBox dans le panneau 'pnlOptions'
+            // Parcours de toutes les CheckBox dans le panneau 'pnlOptions'
             foreach (CheckBox chk in pnlOptions.Children.OfType<CheckBox>())
             {
                 // On vérifie si la case est cochée
                 if (chk.IsChecked == true)
                 {
                     // Récupération de la valeur du Tag (code interne)
-                    string code = chk.Tag?.ToString();
-                    tagCoches.Add(code);
+                    if (chk?.Tag?.ToString() is string code)
+                    {
+                        tagCoches.Add(code);
+                    }
                 }
             }
 
@@ -59,11 +61,6 @@ public partial class DetailMedecin : UserControl
                 return;
             }
             
-            // Exemple : combiner les résultats pour agles afficher
-            //string messageCodes = string.Join(", ", tagCoches);
-            //string messageNoms = string.Join(", ", tagCoches);
-            //CreerDisponibilite(Disponibilite donneMedecin ,List<string> tabNumB
-
             DateTime datePicker = TXTDateDisponibilite.SelectedDate.Value;
             DateTime dateAujourdhui = DateTime.Now;
 

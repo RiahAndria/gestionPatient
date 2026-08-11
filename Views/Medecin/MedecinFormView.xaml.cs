@@ -18,6 +18,7 @@ public partial class MedecinFormView : UserControl
 {
     private readonly MedecinService _medecinService = new MedecinService();
     private readonly FonctionService _fonctionService = new FonctionService();
+    public FonctionService service = new FonctionService();
 
     public int TXTCodeFonction { get; set; }
     public List<Fonction> ListeDesFonctions { get; set; } = new List<Fonction>();
@@ -25,10 +26,9 @@ public partial class MedecinFormView : UserControl
     public MedecinFormView()
     {
         InitializeComponent();
-
+        
         // 1. Appeler le service pour récupérer la liste
-        FonctionService service = new FonctionService();
-        ListeDesFonctions = service.recupererLeListeDesFonctions();
+        RechargerListeFonction();
 
         //Définir le DataContext sur la vue elle-même pour autoriser le Binding
         this.DataContext = this;
@@ -136,18 +136,6 @@ public partial class MedecinFormView : UserControl
             txtMessageMedecin.Text = "Veuillez entrer le statut du médecin.";
             return;
         }
-//cette partie a ete modifier
-        // if (string.IsNullOrWhiteSpace( TXTCodeFonction))
-        // {
-        //     txtMessageMedecin.Text = "Veuillez entrer la fonction du médecin.";
-        //     return;
-        // }
-
-        // if (TXTCodeFonction == null)
-        // {
-        //     txtMessageMedecin.Text = "Veuillez entrer la fonction du médecin.";
-        //     return;
-        // }
 
         if (!int.TryParse(txtTauxHoraireMedecin.Text, out int tauxHoraire) || tauxHoraire < 0)
         {
@@ -168,7 +156,6 @@ public partial class MedecinFormView : UserControl
         string matricule = MatriculeHelperMedecin.GenererMatricule(cbGenreMedecin.Text , TXTCodeFonction);
         
         //recuperer le code_focntion
-        //int code_fonc = _medecinService.RecupererCodeFonction(txtFonctionMedecin.Text);
         int code_fonc = TXTCodeFonction;
 
         // ici on appel le service enregistrerMedecin même si elle est encore vide 
@@ -231,7 +218,17 @@ public partial class MedecinFormView : UserControl
     {
         AjoutFonctionView fenetre = new AjoutFonctionView();
         fenetre.Owner = Window.GetWindow(this);
-        fenetre.ShowDialog();
+        bool? estFermer = fenetre.ShowDialog();
+        
+        if (estFermer == true)
+        {
+            RechargerListeFonction();
+        }
     }
-
+    
+    public void RechargerListeFonction()
+    {
+        //ListeDesFonctions.ItemsSource = null;
+        ListeDesFonctions = service.recupererLeListeDesFonctions();
+    }
 }

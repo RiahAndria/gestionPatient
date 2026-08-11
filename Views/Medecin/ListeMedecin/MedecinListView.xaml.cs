@@ -23,6 +23,7 @@ namespace Patients.Views.Medecin.ListeMedecin
 
         public void RechargerListeMedecin()
         {
+            dgSimple.ItemsSource = null;
             dgSimple.ItemsSource = instanceServiceMedecin.ObtenirTousLesMedecin();
         }    
 
@@ -65,9 +66,14 @@ namespace Patients.Views.Medecin.ListeMedecin
                 var donneAModifier = instanceServiceMedecin.ObtenirDonnePersonnelMedecin(valTag);
                 ModifierMedecinView fenetre = new ModifierMedecinView(donneAModifier);
                 fenetre.Owner = Window.GetWindow(this);
-                fenetre.ShowDialog();
+                
+                Boolean? estFermer = fenetre.ShowDialog();
+
+                if (estFermer == true)
+                {
+                    RechargerListeMedecin();
+                }
             } 
-            
 
             //appel de foncion qui creer la fenetre
         }
