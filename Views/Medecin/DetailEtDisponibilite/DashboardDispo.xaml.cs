@@ -13,7 +13,7 @@ namespace Patients.Views.Medecin.DetailEtDisponibilite
     public partial class DashboardDispo : UserControl
     {
         private DateTime _dateDebutSemaine;
-        private List<AgendaJournee> _agendaSemaine;
+        private List<AgendaJournee> _agendaSemaine = new List<AgendaJournee>();
         private DisponibiliteService _disponibiliteService = new DisponibiliteService();
         private Patients.Models.Medecin _donneMedecin = new Patients.Models.Medecin();
 
@@ -53,7 +53,9 @@ namespace Patients.Views.Medecin.DetailEtDisponibilite
 
         private async Task SemaineCourant(DateTime LundiDeLaSemaine)
         {  
-
+            //Changer la date afficher en haut
+            modifierDateAfficher(LundiDeLaSemaine);
+  
             // Récupération des données du service
             _agendaSemaine = await _disponibiliteService.ObtenirAgendaUneSemaine(_donneMedecin.Id , LundiDeLaSemaine);
             
@@ -100,14 +102,14 @@ namespace Patients.Views.Medecin.DetailEtDisponibilite
                 if (estReserver)
                 {
                     // Rouge pour occupé
-                    borderTrouve.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"));
+                    borderTrouve.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F46969"));
                     borderTrouve.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"));
                 }
                 else
                 {
                     // Vert pour libre
-                    borderTrouve.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"));
-                    borderTrouve.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"));
+                    borderTrouve.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ca880"));
+                    borderTrouve.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#006d46"));
                 }
             }
             else
@@ -130,6 +132,7 @@ namespace Patients.Views.Medecin.DetailEtDisponibilite
         public async void btnSemainePrecedente_Click(object sender, RoutedEventArgs e)
         {
             _dateDebutSemaine = _dateDebutSemaine.AddDays(-7);
+            effacerAffichageDeLaSemaineAfficher();
             await SemaineCourant(_dateDebutSemaine);
         }
 
@@ -139,7 +142,54 @@ namespace Patients.Views.Medecin.DetailEtDisponibilite
         public async void btnSemaineSuivante_Click(object sender, RoutedEventArgs e)
         {
             _dateDebutSemaine = _dateDebutSemaine.AddDays(7);
+            effacerAffichageDeLaSemaineAfficher();
             await SemaineCourant(_dateDebutSemaine);
+        }
+
+        /// <summary>
+        /// effacer le tableau quand changer semaine afficher 
+        /// </summary>    
+        private void effacerCouleurCrenaux(DateTime date, DateTime dateHeurDebut, DateTime dateHeureFin)
+        {
+            //les couleur su table au paravant => Background="#ebedf2" BorderBrush="#E5E7EB"
+            string nomJour = date.ToString("ddd", CultureInfo.GetCultureInfo("fr-FR"))
+                                .Replace(".","")
+                                .Substring(0,3)
+                                .ToLower();
+            string heure_debut = dateHeurDebut.ToString("HHmm");
+            string heure_fin = dateHeureFin.ToString("HHmm");
+
+            string nomBorder = $"{nomJour}_{heure_debut}_{heure_fin}";
+
+            Border? borderTrouve = (this.FindName(nomBorder) as Border) 
+                                ?? (LogicalTreeHelper.FindLogicalNode(this, nomBorder) as Border);
+
+            if (borderTrouve != null)
+            {
+                // Rouge pour occupé
+                borderTrouve.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ebedf2"));
+                borderTrouve.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E5E7EB"));
+                
+            }
+
+        }
+
+        private void effacerAffichageDeLaSemaineAfficher()
+        {
+            foreach (AgendaJournee agendaJournee in _agendaSemaine)
+            {
+                foreach (Temps temps in agendaJournee.Creneaux15Min)
+                {
+                    effacerCouleurCrenaux(temps.date_disponibilite , temps.heure_debut, temps.heure_fin);
+                }
+            }
+        }
+
+        private void modifierDateAfficher(DateTime dateDebutSemaine)
+        {
+            string dateDebut = dateDebutSemaine.ToString("dd/mm/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
+            string dateFin = dateDebutSemaine.AddDays(6).ToString("dd/mm/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
+             txtSemaineCourante.Text = $"Semaine du {dateDebut} au {dateFin}";
         }
     }
 }

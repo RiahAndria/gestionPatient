@@ -1,6 +1,7 @@
 using System.Windows.Controls;
 using Patients.Models;
 using System.Windows;
+using System.Globalization;
 
 namespace Patients.Views.Medecin.DetailEtDisponibilite;
 public partial class DetailMedecin : UserControl
@@ -54,7 +55,7 @@ public partial class DetailMedecin : UserControl
                 return;
             } 
 
-            //si la date est deja passe
+            //si la date est vide
             if (!TXTDateDisponibilite.SelectedDate.HasValue)
             {
                 txtResultat.Text = "Aucune Date n'a été choisie !";
@@ -64,16 +65,24 @@ public partial class DetailMedecin : UserControl
             DateTime datePicker = TXTDateDisponibilite.SelectedDate.Value;
             DateTime dateAujourdhui = DateTime.Now;
 
-            if (datePicker < dateAujourdhui)
+            if (datePicker <= dateAujourdhui)
             {
-                txtResultat.Text = "La date sélectionnée est dans le passé ! ";
+                txtResultat.Text = "La date sélectionnée est innaccessible ! ";
+                return;
+            }
+            
+            //verifier le jours choisi
+            string jourChoisi = datePicker.ToString("dddd", CultureInfo.GetCultureInfo("fr-Fr")).ToLower();
+            if (jourChoisi == "dimanche")
+            {
+                txtResultat.Text = "On ne travaille pas le dimanche ! ";
                 return;
             }
 
             _disponibiliteDeMedecin.id_medecin = _donneMedecin.Id;
             _disponibiliteDeMedecin.date_disponibilite = datePicker;
 
-            bool estAjouter = _DisponibiliteService.CreerDisponibilite( _disponibiliteDeMedecin ,tagCoches);
+            bool estAjouter = _DisponibiliteService.CreerDisponibiliteNew( _disponibiliteDeMedecin ,tagCoches, datePicker);
 
             if (estAjouter)
             {

@@ -11,41 +11,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock x:Name="txtNomMedecinHeader" 
-                               Text="Chargement..." 
-                               FontSize="20" FontWeight="Bold" Foreground="#1E3A8A"/>
-                    <TextBlock x:Name="txtSpecialiteHeader" 
-                               Text="" 
-                               FontSize="13" Foreground="#4B5563" Margin="0,2,0,0"/>
-                    <TextBlock Text="OK" x:Name="txtTest"/>
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button x:Name="btnSemainePrecedente" Content="◄ Semaine précédente" 
-                            Padding="10,6" Background="#E5E7EB" Foreground="#374151" 
-                            FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Margin="0,0,8,0"
-                            />
-                    
-                    <TextBlock x:Name="txtSemaineCourante" Text="Période" 
-                               FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="8,0"/>
-                    
-                    <Button x:Name="btnSemaineSuivante" Content="Semaine suivante ►" 
-                            Padding="10,6" Background="#E5E7EB" Foreground="#374151" 
-                            FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0"
-                            />
-                            
-                </StackPanel>
-            </Grid>
-        </Border> -->
-
         
         <!-- EN-TÊTE -->
         <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">

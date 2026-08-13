@@ -240,5 +240,10 @@ public partial class ModifierMedecinView : Window
             CboListeFonction.Add(chaqueFonc);
         }
     }
+
+    public void btnAnnulerModifier_Click(object sender, RoutedEventArgs e)
+    {
+        this.Close();
+    }
 }
     
