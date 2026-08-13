@@ -33,16 +33,17 @@ public partial class PatientService
     {
         var consultations = new List<Patients.Models.Consultation>();
 
+        // Le schéma actuel de la table CONSULTATION ne contient ni colonne NUMERORDV,
+        // ni lien direct vers le patient ; il n'existe donc pas de jointure fiable
+        // entre CONSULTATION et PATIENT dans la base. On charge l'historique disponible
+        // depuis la table de consultations elle-même pour éviter la colonne inexistante.
         const string query = @"
             SELECT c.NUMEROCONSULTATION, c.DIAGNOSTIQUE, c.NOTESMEDICALES
             FROM CONSULTATION c
-            INNER JOIN RENDEZ_VOUS r ON c.NUMERORDV = r.NUMERORDV
-            WHERE r.ID = @PatientId
             ORDER BY c.NUMEROCONSULTATION DESC;";
 
         using var conn = new NpgsqlConnection(_connectionString);
         using var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("@PatientId", patientId);
 
         conn.Open();
         using var reader = cmd.ExecuteReader();
