@@ -1,0 +1,21 @@
+<Window x:Class="Patients.Views.RendezVous.ChangerStatutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Changer le statut" Height="260" Width="340"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="White">
+
+    <StackPanel Margin="20">
+        <TextBlock Text="Nouveau statut du rendez-vous" FontSize="14" FontWeight="SemiBold" Foreground="#1E293B" Margin="0,0,0,14"/>
+
+        <RadioButton x:Name="RadioPlanifie" Content="Planifié" GroupName="Statut" Margin="0,0,0,10" FontSize="13"/>
+        <RadioButton x:Name="RadioTermine" Content="Terminé" GroupName="Statut" Margin="0,0,0,10" FontSize="13"/>
+        <RadioButton x:Name="RadioAnnule" Content="Annulé" GroupName="Statut" Margin="0,0,0,20" FontSize="13"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Annuler" Width="90" Height="34" Margin="0,0,10,0" Background="#F1F5F9" Foreground="#334155"
+                    BorderThickness="0" Cursor="Hand" Click="BtnAnnuler_Click"/>
+            <Button Content="Confirmer" Width="100" Height="34" Background="#D97706" Foreground="White"
+                    FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Click="BtnConfirmer_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

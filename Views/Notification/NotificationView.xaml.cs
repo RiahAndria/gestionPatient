@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using Patients.Models;
 using Patients.Services;
 using Patients.Views.RendezVous;
@@ -28,28 +29,51 @@ public partial class NotificationView : UserControl
     private readonly RappelService _rappelService = new();
     private readonly RendezVousService _rendezVousService = new();
 
+    // Onglet actif : "RESERVATION" ou "PAIEMENT".
+    private string _typeActif = "RESERVATION";
+
+    private static readonly SolidColorBrush _brushOngletActif = new(Color.FromRgb(0x25, 0x63, 0xEB));
+    private static readonly SolidColorBrush _brushOngletInactif = new(Color.FromRgb(0xF1, 0xF5, 0xF9));
+
     public NotificationView()
     {
         InitializeComponent();
+        MettreAJourOnglets();
         Rafraichir();
+    }
+
+    private void BtnOngletReservations_Click(object sender, RoutedEventArgs e)
+    {
+        _typeActif = "RESERVATION";
+        MettreAJourOnglets();
+        Rafraichir();
+    }
+
+    private void BtnOngletPaiements_Click(object sender, RoutedEventArgs e)
+    {
+        _typeActif = "PAIEMENT";
+        MettreAJourOnglets();
+        Rafraichir();
+    }
+
+    private void MettreAJourOnglets()
+    {
+        bool reservationsActif = _typeActif == "RESERVATION";
+        BtnOngletReservations.Background = reservationsActif ? _brushOngletActif : _brushOngletInactif;
+        BtnOngletReservations.Foreground = reservationsActif ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x33, 0x41, 0x55));
+        BtnOngletPaiements.Background = !reservationsActif ? _brushOngletActif : _brushOngletInactif;
+        BtnOngletPaiements.Foreground = !reservationsActif ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x33, 0x41, 0x55));
     }
 
     public void Rafraichir()
     {
-        var notifications = _rappelService.ObtenirToutesLesNotifications();
+        var notifications = _rappelService.ObtenirNotifications(_typeActif);
         ListeNotifications.ItemsSource = notifications;
         TxtAucune.Visibility = notifications.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
         int nbNonLues = notifications.Count(n => !n.Lu);
-        TxtTitre.Text = nbNonLues > 0 ? $"Notifications ({nbNonLues} non lue(s))" : "Notifications";
-    }
-
-    private void BtnGenererRappels_Click(object sender, RoutedEventArgs e)
-    {
-        int nb = _rappelService.GenererRappels24h();
-        MessageBox.Show($"{nb} nouvelle(s) notification(s) générée(s) pour les rendez-vous des prochaines 24h.",
-                        "Rappels RDV", MessageBoxButton.OK, MessageBoxImage.Information);
-        Rafraichir();
+        string libelleOnglet = _typeActif == "RESERVATION" ? "Réservations" : "Paiements";
+        TxtTitre.Text = nbNonLues > 0 ? $"Notifications — {libelleOnglet} ({nbNonLues} non lue(s))" : $"Notifications — {libelleOnglet}";
     }
 
     private void BtnMarquerLue_Click(object sender, RoutedEventArgs e)
@@ -65,9 +89,10 @@ public partial class NotificationView : UserControl
         Rafraichir();
     }
 
-    // Double-clic (ou simple clic, ici) sur une notification : ouvre le
-    // detail du rendez-vous concerne, comme partout ailleurs dans
-    // l'application, et marque la notification comme lue au passage.
+    // Ouvre le detail du rendez-vous concerne (les 2 types de
+    // notification y renvoient : la section Paiement de cette fenetre
+    // couvre aussi les infos de paiement) et marque la notification
+    // comme lue au passage.
     private void Notification_Click(object sender, MouseButtonEventArgs e)
     {
         if ((sender as FrameworkElement)?.Tag is not Models.Notification notif) return;

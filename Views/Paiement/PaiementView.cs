@@ -1,13 +1,28 @@
+using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
+using Patients.Models;
 using Patients.Services;
 
 namespace Patients.Views.Paiement;
 
+// Utilise pour cacher le bouton "Facturer" une fois EstFacture = true.
+public class BoolInverseToVisibilityConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => (value is bool b && b) ? Visibility.Collapsed : Visibility.Visible;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
 public partial class PaiementView : UserControl
 {
     private readonly PaiementService _paiementService = new();
+    private readonly RappelService _rappelService = new();
 
     public PaiementView()
     {
@@ -19,8 +34,7 @@ public partial class PaiementView : UserControl
     {
         try
         {
-            cbRdvAcompte.ItemsSource = _paiementService.ObtenirRendezVousEligiblesAcompte();
-            dgEnAttente.ItemsSource = _paiementService.ObtenirEnAttente();
+            dgIncomplets.ItemsSource = _paiementService.ObtenirPaiementsIncomplets();
             dgHistorique.ItemsSource = _paiementService.ObtenirHistoriquePayes();
         }
         catch (Exception ex)
@@ -29,99 +43,62 @@ public partial class PaiementView : UserControl
         }
     }
 
-    private void btnEncaisserAcompte_Click(object sender, RoutedEventArgs e)
+    private void btnAlertePaiement_Click(object sender, RoutedEventArgs e)
     {
-        if (cbRdvAcompte.SelectedItem is not Models.RendezVousAffichage rdv)
-        {
-            AfficherMessage("Sélectionne un rendez-vous.", succes: false);
-            return;
-        }
-        if (!decimal.TryParse(txtMontantAcompte.Text, out var montant) || montant <= 0)
-        {
-            AfficherMessage("Renseigne un montant d'acompte valide.", succes: false);
-            return;
-        }
-
-        var mode = (cbModeAcompte.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Espèces";
+        if ((sender as Button)?.Tag is not string numeroRdv) return;
 
         try
         {
-            var resultat = _paiementService.EncaisserAcompte(rdv.NumeroRdv, montant, mode);
-
-            if (!resultat.Succes)
-            {
-                // Cas 1 : le montant depasse le tarif du medecin - refuse.
-                AfficherMessage(resultat.MessageErreur ?? "Montant invalide.", succes: false);
-                return;
-            }
-
-            if (resultat.PaiementComplet)
-            {
-                // Cas 2 : le total verse atteint exactement le tarif - regle en entier.
-                AfficherMessage($"Paiement complet enregistré pour {rdv.PatientNom} ({montant:N0} Ar). Ce rendez-vous est intégralement réglé.", succes: true);
-            }
-            else
-            {
-                // Cas 3 : le total verse est encore inferieur au tarif - acompte partiel.
-                AfficherMessage($"Acompte de {montant:N0} Ar encaissé pour {rdv.PatientNom}. Reste à payer : {resultat.MontantRestant:N0} Ar (facturé automatiquement après la consultation).", succes: true);
-            }
-
-            txtMontantAcompte.Clear();
+            _rappelService.CreerAlertePaiement(numeroRdv);
+            AfficherMessage($"Alerte de paiement envoyée pour le rendez-vous {numeroRdv}.", succes: true);
         }
         catch (Exception ex)
         {
-            AfficherMessage($"Impossible d'encaisser l'acompte : {ex.Message}", succes: false);
+            AfficherMessage($"Impossible de créer l'alerte : {ex.Message}", succes: false);
         }
 
         Rafraichir();
     }
 
-    private void btnConfirmer_Click(object sender, RoutedEventArgs e)
+    private void btnRegler_Click(object sender, RoutedEventArgs e)
+    {
+        if ((sender as Button)?.Tag is not PaiementIncomplet ligne) return;
+
+        var fenetre = new ReglerSoldeWindow(ligne) { Owner = Window.GetWindow(this) };
+        if (fenetre.ShowDialog() == true)
+        {
+            AfficherMessage($"Paiement réglé pour {ligne.PatientNom}.", succes: true);
+        }
+
+        Rafraichir();
+    }
+
+    private void btnRejeter_Click(object sender, RoutedEventArgs e)
+    {
+        if ((sender as Button)?.Tag is not PaiementIncomplet ligne) return;
+
+        var fenetre = new RejeterPaiementWindow(ligne) { Owner = Window.GetWindow(this) };
+        if (fenetre.ShowDialog() == true)
+        {
+            AfficherMessage($"Paiement rejeté pour {ligne.PatientNom}.", succes: true);
+        }
+
+        Rafraichir();
+    }
+
+    private void btnFacturer_Click(object sender, RoutedEventArgs e)
     {
         if ((sender as Button)?.Tag is not string numeroPaiement) return;
 
-        try
+        var detail = _paiementService.ObtenirDetailFacture(numeroPaiement);
+        if (detail is null)
         {
-            _paiementService.ConfirmerPaiement(numeroPaiement, "Espèces");
-            AfficherMessage($"Paiement {numeroPaiement} confirmé.", succes: true);
-        }
-        catch (Exception ex)
-        {
-            AfficherMessage($"Impossible de confirmer : {ex.Message}", succes: false);
+            AfficherMessage("Impossible de charger les détails de ce paiement.", succes: false);
+            return;
         }
 
-        Rafraichir();
-    }
-
-    private void btnRelancer_Click(object sender, RoutedEventArgs e)
-    {
-        if ((sender as Button)?.Tag is not string numeroPaiement) return;
-
-        try
-        {
-            var numeroRelance = _paiementService.EnvoyerRelance(numeroPaiement);
-            AfficherMessage($"Relance n°{numeroRelance} envoyée pour {numeroPaiement}.", succes: true);
-        }
-        catch (Exception ex)
-        {
-            AfficherMessage($"Impossible d'envoyer la relance : {ex.Message}", succes: false);
-        }
-
-        Rafraichir();
-    }
-
-    private void btnTraiterImpayes_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var actions = _paiementService.TraiterImpayes();
-            AfficherMessage(string.Join("\n", actions), succes: true);
-        }
-        catch (Exception ex)
-        {
-            AfficherMessage($"Erreur lors du traitement des impayés : {ex.Message}", succes: false);
-        }
-
+        var fenetre = new FactureWindow(detail) { Owner = Window.GetWindow(this) };
+        fenetre.ShowDialog();
         Rafraichir();
     }
 

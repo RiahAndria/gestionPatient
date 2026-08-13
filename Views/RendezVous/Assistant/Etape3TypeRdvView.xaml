@@ -1,0 +1,42 @@
+<UserControl x:Class="Patients.Views.RendezVous.Assistant.Etape3TypeRdvView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Quand souhaitez-vous le rendez-vous ?" Style="{StaticResource TitreSection}"/>
+
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Border x:Name="CarteAujourdHui" Width="180" Height="70" CornerRadius="8" BorderThickness="1"
+                        BorderBrush="{StaticResource BrushBorder}" Background="{StaticResource BrushSurface}"
+                        Margin="0,0,16,0" Cursor="Hand" MouseLeftButtonUp="CarteAujourdHui_Click">
+                    <TextBlock Text="Aujourd'hui" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border x:Name="CartePlanifier" Width="180" Height="70" CornerRadius="8" BorderThickness="1"
+                        BorderBrush="{StaticResource BrushBorder}" Background="{StaticResource BrushSurface}"
+                        Cursor="Hand" MouseLeftButtonUp="CartePlanifier_Click">
+                    <TextBlock Text="Planifier" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+            </StackPanel>
+
+            <TextBlock x:Name="TxtInfoDelai" FontSize="12" Foreground="{StaticResource BrushWarning}"
+                       TextWrapping="Wrap" TextAlignment="Center" MaxWidth="380" Margin="0,14,0,0" HorizontalAlignment="Center"/>
+
+            <DatePicker x:Name="DpDate" Width="220" Height="34" Margin="0,16,0,0"
+                        Visibility="Collapsed" SelectedDateChanged="DpDate_SelectedDateChanged"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <TextBlock x:Name="TxtErreur" Foreground="{StaticResource BrushDanger}" FontSize="12"
+                       VerticalAlignment="Center" Margin="0,0,12,0"/>
+            <Button Content="← Précédent" Style="{StaticResource BoutonSecondaire}" Width="110" Margin="0,0,10,0" Click="BtnPrecedent_Click"/>
+            <Button x:Name="BtnSuivant" Content="Suivant →" Style="{StaticResource BoutonPrimaire}" Width="120" IsEnabled="False" Click="BtnSuivant_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

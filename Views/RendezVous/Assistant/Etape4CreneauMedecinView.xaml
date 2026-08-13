@@ -1,0 +1,73 @@
+<UserControl x:Class="Patients.Views.RendezVous.Assistant.Etape4CreneauMedecinView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" x:Name="TxtSousTitre" Text="Choisissez un créneau" Style="{StaticResource TitreSection}"/>
+
+        <WrapPanel Grid.Row="1" x:Name="PanelCreneaux" Orientation="Horizontal" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="2" x:Name="TxtSousTitreMedecin" Text="Médecins disponibles" Style="{StaticResource TitreSection}"
+                   Visibility="Collapsed" Margin="0,10,0,10"/>
+
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ListBox x:Name="ListeMedecins" BorderThickness="0" Background="Transparent"
+                     SelectionChanged="ListeMedecins_SelectionChanged">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="0,0,0,8"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border x:Name="fond" BorderThickness="1" CornerRadius="8" Padding="14,10"
+                                            BorderBrush="{StaticResource BrushBorder}" Background="{StaticResource BrushSurface}">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="fond" Property="BorderBrush" Value="{StaticResource BrushPrimary}"/>
+                                            <Setter TargetName="fond" Property="Background" Value="#EFF6FF"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding NomComplet}" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Text="{Binding Fonction}" FontSize="11" Foreground="{StaticResource BrushTextSecondary}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="{Binding TauxHoraire, StringFormat='{}{0:N0} Ar/h'}"
+                                       FontSize="12" VerticalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <TextBlock x:Name="TxtErreur" Foreground="{StaticResource BrushDanger}" FontSize="12"
+                       VerticalAlignment="Center" Margin="0,0,12,0"/>
+            <Button Content="← Précédent" Style="{StaticResource BoutonSecondaire}" Width="110" Margin="0,0,10,0" Click="BtnPrecedent_Click"/>
+            <Button x:Name="BtnSuivant" Content="Suivant →" Style="{StaticResource BoutonPrimaire}" Width="120" IsEnabled="False" Click="BtnSuivant_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

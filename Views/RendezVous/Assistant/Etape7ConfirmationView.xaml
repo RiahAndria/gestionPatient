@@ -1,0 +1,33 @@
+<UserControl x:Class="Patients.Views.RendezVous.Assistant.Etape7ConfirmationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="420">
+            <Border Width="64" Height="64" CornerRadius="32" Background="{StaticResource BrushSuccess}" HorizontalAlignment="Center">
+                <TextBlock Text="✓" FontSize="30" FontWeight="Bold" Foreground="White"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+
+            <TextBlock Text="Rendez-vous confirmé !" FontSize="18" FontWeight="Bold" Margin="0,16,0,4"
+                       HorizontalAlignment="Center" Foreground="{StaticResource BrushTextPrimary}"/>
+            <TextBlock x:Name="TxtSousTitre" FontSize="12" Foreground="{StaticResource BrushTextSecondary}"
+                       HorizontalAlignment="Center" Margin="0,0,0,16"/>
+
+            <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="10"
+                    Background="#F8FAFC" Padding="16">
+                <StackPanel>
+                    <TextBlock x:Name="TxtNumero" FontSize="13" Margin="0,0,0,6"/>
+                    <TextBlock x:Name="TxtPatient" FontSize="13" Margin="0,0,0,6"/>
+                    <TextBlock x:Name="TxtMedecin" FontSize="13" Margin="0,0,0,6"/>
+                    <TextBlock x:Name="TxtDateHeure" FontSize="13" Margin="0,0,0,6"/>
+                    <Separator Margin="0,4,0,8"/>
+                    <TextBlock x:Name="TxtStatutPaiement" FontSize="13" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+
+            <Button Content="Retour à la liste des rendez-vous" Style="{StaticResource BoutonPrimaire}"
+                    Width="260" Margin="0,20,0,0" Click="BtnRetour_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

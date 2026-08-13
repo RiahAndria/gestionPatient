@@ -5,21 +5,26 @@ namespace Patients.Services;
 
 public partial class RappelService
 {
-    /// <summary>
-    /// Recupere toutes les notifications existantes, les plus
-    /// recentes en premier, pour affichage a l'ecran.
-    /// </summary>
-    public List<Notification> ObtenirToutesLesNotifications()
+    // Toutes les notifications, les plus recentes en premier. Filtre
+    // optionnel par TYPE_NOTIF ('RESERVATION' ou 'PAIEMENT') pour les
+    // onglets de la page Notifications ; null ou vide = tout afficher.
+    public List<Notification> ObtenirNotifications(string? typeNotif = null)
     {
         var notifications = new List<Notification>();
 
         using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
-        string query = "SELECT NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU FROM NOTIFICATION ORDER BY DATENOTIF DESC;";
+
+        string query = @"
+            SELECT NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU, TYPE_NOTIF
+            FROM NOTIFICATION
+            WHERE (@Type = '' OR TYPE_NOTIF = @Type)
+            ORDER BY DATENOTIF DESC;";
 
         using var cmd = new NpgsqlCommand(query, conn);
-        using var reader = cmd.ExecuteReader();
+        cmd.Parameters.AddWithValue("Type", typeNotif ?? "");
 
+        using var reader = cmd.ExecuteReader();
         while (reader.Read())
         {
             notifications.Add(new Notification
@@ -28,12 +33,16 @@ public partial class RappelService
                 NumeroRdv = reader.GetString(1),
                 TexteNotif = reader.GetString(2),
                 DateNotif = reader.GetDateTime(3),
-                Lu = reader.GetBoolean(4)
+                Lu = reader.GetBoolean(4),
+                TypeNotif = reader.GetString(5)
             });
         }
 
         return notifications;
     }
+
+    // Conserve pour compatibilite (equivaut a ObtenirNotifications(null)).
+    public List<Notification> ObtenirToutesLesNotifications() => ObtenirNotifications(null);
 
     public int CompterNonLues()
     {

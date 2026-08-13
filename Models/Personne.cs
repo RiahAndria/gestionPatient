@@ -31,4 +31,9 @@ public class Personne
             return age >= 0 ? $"{age} ans" : "-";
         }
     }
+
+    // Nom + prenom affichables ensemble (ex: liste des patients de
+    // l'etape 1 de l'assistant de rendez-vous), sur le meme principe
+    // que AgeAffiche ci-dessus.
+    public string NomComplet => $"{Nom} {Prenom}".Trim();
 }
