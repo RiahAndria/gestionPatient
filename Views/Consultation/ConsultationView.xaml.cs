@@ -1,7 +1,9 @@
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Patients.Models;
 using Patients.Services;
 
@@ -9,7 +11,6 @@ namespace Patients.Views.Consultation
 {
     public partial class ConsultationView : UserControl
     {
-        // --- Instanciation des services
         private readonly ConsultationService _consultationService;
         private readonly RappelService _rappelService;
         private readonly RendezVousService _rendezVousService;
@@ -21,131 +22,163 @@ namespace Patients.Views.Consultation
             _rappelService = new RappelService();
             _rendezVousService = new RendezVousService();
 
-            ChargerRendezVousDisponibles();
+            CbGroupeSanguin.ItemsSource = new string[] { "Inconnu", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+            CbGroupeSanguin.SelectedIndex = 0;
+            ChargerRdv();
         }
 
-        // Seuls les rendez-vous encore "Planifie" peuvent recevoir une
-        // consultation (un rendez-vous deja Termine ou Annule ne doit
-        // plus apparaitre ici).
-        private void ChargerRendezVousDisponibles()
+        private void ChargerRdv()
         {
-            CbRendezVous.ItemsSource = _rendezVousService.Rechercher(terme: "", date: null, statut: "PLANIFIE");
+            CbRendezVous.ItemsSource = _rendezVousService.Rechercher("", null, "PLANIFIE");
         }
 
         private void CbRendezVous_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CbRendezVous.SelectedItem is not RendezVousAffichage rdv)
             {
-                LblDetailRdv.Text = "";
+                LblDetailRdv.Text = "👤 Aucun patient sélectionné";
+                TxtNumeroDossier.Text = "Aucun dossier affecté";
+                TxtNumeroConsultation.Text = "Aucun numéro affecté";
+                TxtNumeroPrescription.Text = "Aucune ordonnance affectée";
                 return;
             }
 
-            LblDetailRdv.Text = $"{rdv.MedecinNom} — {rdv.DateHeure:dd/MM/yyyy HH:mm} — {rdv.Motif}";
+            // En-tête Patient explicite
+            LblDetailRdv.Text = $"👤 PATIENT : {rdv.PatientNom.ToUpper()} | 👨‍⚕️ Dr. {rdv.MedecinNom} | 📅 {rdv.DateHeure:dd/MM/yyyy à HH:mm}";
+
+            // Auto-génération stricte des numéros
+            TxtNumeroDossier.Text = $"DOS-{rdv.NumeroRdv}";
+            TxtNumeroConsultation.Text = $"CS-{DateTime.Now:yyyyMMdd}-{rdv.NumeroRdv}";
+            TxtNumeroPrescription.Text = $"ORD-{DateTime.Now:yyyyMMdd}-{rdv.NumeroRdv}";
         }
 
-        // --- Action lors du clic sur "Enregistrer la Consultation"
+        // Restreint la saisie aux nombres décimaux (ex: Poids, Taille, Température)
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex(@"^[0-9]+([.,][0-9]*)?$");
+            string proposedText = (sender is TextBox tb) ? tb.Text.Insert(tb.CaretIndex, e.Text) : e.Text;
+            e.Handled = !regex.IsMatch(proposedText);
+        }
+
+        // Restreint la saisie aux entiers stricts (ex: Pouls, Durée en jours)
+        private void IntegerValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex(@"^[0-9]+$");
+            e.Handled = !regex.IsMatch(e.Text);
+        }
+
+        private void List_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb && string.IsNullOrWhiteSpace(tb.Text))
+            {
+                tb.Text = "- ";
+                tb.CaretIndex = 2;
+            }
+        }
+
+        private void List_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && sender is TextBox tb)
+            {
+                int idx = tb.CaretIndex;
+                tb.Text = tb.Text.Insert(idx, "\n- ");
+                tb.CaretIndex = idx + 3;
+                e.Handled = true;
+            }
+        }
+
         private void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            if (CbRendezVous.SelectedItem is not RendezVousAffichage rdvSelectionne)
+            if (CbRendezVous.SelectedItem is not RendezVousAffichage rdv)
             {
-                MessageBox.Show("Sélectionne le rendez-vous concerné par cette consultation.",
-                                "Champ manquant", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Warn("Veuillez sélectionner un rendez-vous avant d'enregistrer.");
                 return;
             }
 
-            // ... Validation basique des champs obligatoires
-            if (string.IsNullOrWhiteSpace(TxtNumeroConsultation.Text) || string.IsNullOrWhiteSpace(TxtDiagnostique.Text))
+            if (string.IsNullOrWhiteSpace(TxtDiagnostique.Text))
             {
-                MessageBox.Show("Veuillez remplir au moins le numéro de consultation et le diagnostic.",
-                                "Champs manquants", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Warn("Le diagnostic est obligatoire.");
                 return;
             }
 
-            var consultation = new Models.Consultation
+            var consultation = new Patients.Models.Consultation
             {
                 NumeroConsultation = TxtNumeroConsultation.Text.Trim(),
-                NumeroRdv = rdvSelectionne.NumeroRdv,
+                NumeroRdv = rdv.NumeroRdv,
                 NumeroDossier = TxtNumeroDossier.Text.Trim(),
                 Diagnostique = TxtDiagnostique.Text.Trim(),
                 NotesMedicales = TxtNotesMedicales.Text.Trim(),
-                GroupeSanguin = TxtGroupeSanguin.Text.Trim(),
+                GroupeSanguin = CbGroupeSanguin.SelectedItem?.ToString() ?? "Inconnu",
                 Allergies = TxtAllergies.Text.Trim(),
                 Traitement = TxtTraitementDossier.Text.Trim(),
                 Antecedents = TxtAntecedents.Text.Trim()
             };
 
-            if (decimal.TryParse(TxtPoids.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var poids))
-            {
-                consultation.Poids = poids;
-            }
+            if (decimal.TryParse(TxtPoids.Text.Trim().Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out decimal p))
+                consultation.Poids = p;
 
-            if (decimal.TryParse(TxtTaille.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var taille))
-            {
-                consultation.Taille = taille;
-            }
+            if (decimal.TryParse(TxtTaille.Text.Trim().Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out decimal t))
+                consultation.Taille = t;
 
-            // ... Création de l'Ordonnance [uniquement si les champs sont remplis]
-            Ordonnance? ordonnance = null;
-            if (!string.IsNullOrWhiteSpace(TxtNumeroPrescription.Text) && !string.IsNullOrWhiteSpace(TxtTraitement.Text))
+            Patients.Models.Ordonnance? ord = null;
+            if (!string.IsNullOrWhiteSpace(TxtTraitement.Text))
             {
-                ordonnance = new Ordonnance
+                string dureeTexte = string.IsNullOrWhiteSpace(TxtDuree.Text) ? "" : $"{TxtDuree.Text.Trim()} jours";
+                ord = new Patients.Models.Ordonnance
                 {
                     NumeroPrescritption = TxtNumeroPrescription.Text.Trim(),
                     NumeroConsultation = consultation.NumeroConsultation,
                     Traitement = TxtTraitement.Text.Trim(),
-                    Duree = TxtDuree.Text.Trim(),
+                    Duree = dureeTexte,
                     Diagnostique = consultation.Diagnostique
                 };
             }
 
-            var resultat = _consultationService.EnregistrerConsultation(consultation, ordonnance);
-
-            if (!resultat.Succes)
+            var res = _consultationService.EnregistrerConsultation(consultation, ord);
+            if (!res.Succes)
             {
-                MessageBox.Show($"Une erreur est survenue lors de l'enregistrement en base de données : {resultat.MessageErreur}",
-                                "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Erreur SQL : {res.MessageErreur}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            string messageFacture = resultat.FactureCreee
-                ? $"Facture générée automatiquement pour {resultat.MontantFacture:N0} Ar (visible dans l'onglet Paiements)."
-                : (resultat.MessageFacture ?? "Aucune facture supplémentaire à générer.");
+            string msgFact = res.FactureCreee ? $"Facture générée : {res.MontantFacture:N0} Ar." : (res.MessageFacture ?? "");
+            MessageBox.Show($"Consultation enregistrée avec succès !\n\n{msgFact}", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            MessageBox.Show(
-                $"La consultation a été enregistrée et le dossier médical a été synchronisé avec succès !\n\n{messageFacture}",
-                "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            ReinitialiserChamps();
-            ChargerRendezVousDisponibles(); // le RDV utilise ne doit plus apparaitre dans la liste
+            ResetForm();
+            ChargerRdv();
         }
 
-        //--- Action lors du clic sur "Générer Rappels RDV"
         private void BtnRappels_Click(object sender, RoutedEventArgs e)
         {
-            int nbRappels = _rappelService.GenererRappels24h();
-
-            MessageBox.Show($"{nbRappels} notification(s) de rappel de rendez-vous générée(s) pour les prochaines 24h.",
-                            "Rappels RDV", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"{_rappelService.GenererRappels24h()} rappel(s) généré(s).", "Rappels", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        //--- Méthode utilitaire pour vider le formulaire après enregistrement
-        private void ReinitialiserChamps()
+        private void ResetForm()
         {
-            TxtNumeroConsultation.Clear();
-            TxtNumeroDossier.Clear();
+            TxtNumeroConsultation.Text = "Aucun numéro affecté";
+            TxtNumeroDossier.Text = "Aucun dossier affecté";
+            TxtNumeroPrescription.Text = "Aucune ordonnance affectée";
+
             TxtDiagnostique.Clear();
             TxtNotesMedicales.Clear();
             TxtPoids.Clear();
             TxtTaille.Clear();
-            TxtGroupeSanguin.Clear();
+            TxtTemperature.Clear();
+            TxtFrequenceCardiaque.Clear();
             TxtAllergies.Clear();
             TxtTraitementDossier.Clear();
             TxtAntecedents.Clear();
-            TxtNumeroPrescription.Clear();
             TxtTraitement.Clear();
             TxtDuree.Clear();
+
+            CbGroupeSanguin.SelectedIndex = 0;
             CbRendezVous.SelectedIndex = -1;
-            LblDetailRdv.Text = "";
+            LblDetailRdv.Text = "👤 Aucun patient sélectionné";
+        }
+
+        private static void Warn(string msg)
+        {
+            MessageBox.Show(msg, "Attention", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 }

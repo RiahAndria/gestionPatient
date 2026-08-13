@@ -1,138 +1,205 @@
 <UserControl x:Class="Patients.Views.Consultation.ConsultationView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Margin="20">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock" x:Key="Lbl">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,3"/>
+        </Style>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel>
+        <!-- Style Champ ReadOnly pour Auto-génération -->
+        <Style TargetType="TextBox" x:Key="ReadOnlyTxt">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,2"/>
+        </Style>
 
-            <TextBlock Text="Gestion des Consultations &amp; Ordonnances" 
-                       FontSize="22" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,15"/>
+        <!-- Style Watermark -->
+        <Style TargetType="TextBox" x:Key="WmTxt">
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                                <ScrollViewer x:Name="PART_ContentHost"/>
+                            </Border>
+                            <TextBlock Text="{TemplateBinding Tag}" Foreground="#94A3B8" FontStyle="Italic" Margin="8,5" IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource WmTxt}"/>
+    </UserControl.Resources>
 
-            <!-- RENDEZ-VOUS CONCERNE (obligatoire) -->
-            <Border BorderBrush="#BDC3C7" BorderThickness="1" CornerRadius="5" Padding="15" Background="#FAFAFA" Margin="0,0,0,15">
-                <StackPanel>
-                    <TextBlock Text="0. Rendez-vous concerné" FontSize="16" FontWeight="SemiBold" Foreground="#8E44AD" Margin="0,0,0,10"/>
-                    <ComboBox x:Name="CbRendezVous" DisplayMemberPath="PatientNom" SelectionChanged="CbRendezVous_SelectionChanged"/>
-                    <TextBlock x:Name="LblDetailRdv" FontSize="11" Foreground="#7F8C8D" Margin="0,6,0,0"/>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Gestion des Consultations &amp; Ordonnances" FontSize="18" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+
+        <!-- Selection Rendez-vous et En-tête Patient -->
+        <Border Grid.Row="1" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="260"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="🔍 Rendez-vous :" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ComboBox x:Name="CbRendezVous" Grid.Column="1" DisplayMemberPath="PatientNom" Height="28" SelectionChanged="CbRendezVous_SelectionChanged"/>
+
+                <!-- Cartouche d'information du patient sélectionné -->
+                <Border Grid.Column="2" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="4" Margin="12,0,0,0" Padding="8,4">
+                    <TextBlock x:Name="LblDetailRdv" FontSize="12" FontWeight="Bold" Foreground="#1E40AF" VerticalAlignment="Center" Text="👤 Aucun patient sélectionné"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Formulaire principal -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="0.8*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Colonne Gauche : Consultation & Constantes Médicales -->
+                <Border Grid.Column="0" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="12" VerticalAlignment="Top">
+                    <StackPanel>
+                        <TextBlock Text="Dossier &amp; Examen Médical" FontSize="14" FontWeight="Bold" Foreground="#2563EB" Margin="0,0,0,8"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="N° Consultation :" Grid.Row="0" Style="{StaticResource Lbl}"/>
+                            <TextBox x:Name="TxtNumeroConsultation" Grid.Row="0" Grid.Column="1" Style="{StaticResource ReadOnlyTxt}" Text="Aucun numéro affecté"/>
+
+                            <TextBlock Text="N° Dossier patient :" Grid.Row="1" Style="{StaticResource Lbl}"/>
+                            <TextBox x:Name="TxtNumeroDossier" Grid.Row="1" Grid.Column="1" Style="{StaticResource ReadOnlyTxt}" Text="Aucun dossier affecté"/>
+
+                            <!-- Constantes Médicales : Poids & Taille -->
+                            <TextBlock Text="Poids / Taille :" Grid.Row="2" Style="{StaticResource Lbl}"/>
+                            <Grid Grid.Row="2" Grid.Column="1">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="1*"/><ColumnDefinition Width="6"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+                                <Grid Grid.Column="0">
+                                    <TextBox x:Name="TxtPoids" Padding="5,3,25,3" PreviewTextInput="NumberValidationTextBox"/>
+                                    <TextBlock Text="kg" Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
+                                </Grid>
+                                <Grid Grid.Column="2">
+                                    <TextBox x:Name="TxtTaille" Padding="5,3,28,3" PreviewTextInput="NumberValidationTextBox"/>
+                                    <TextBlock Text="cm" Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Constantes Médicales : Température & Fréquence Cardiaque -->
+                            <TextBlock Text="Temp. / Pouls :" Grid.Row="3" Style="{StaticResource Lbl}"/>
+                            <Grid Grid.Row="3" Grid.Column="1">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="1*"/><ColumnDefinition Width="6"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+                                <Grid Grid.Column="0">
+                                    <TextBox x:Name="TxtTemperature" Padding="5,3,25,3" PreviewTextInput="NumberValidationTextBox"/>
+                                    <TextBlock Text="°C" Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
+                                </Grid>
+                                <Grid Grid.Column="2">
+                                    <TextBox x:Name="TxtFrequenceCardiaque" Padding="5,3,32,3" PreviewTextInput="IntegerValidationTextBox"/>
+                                    <TextBlock Text="bpm" Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
+                                </Grid>
+                            </Grid>
+
+                            <TextBlock Text="Groupe sanguin :" Grid.Row="4" Style="{StaticResource Lbl}"/>
+                            <ComboBox x:Name="CbGroupeSanguin" Grid.Row="4" Grid.Column="1" Height="26" Margin="0,2"/>
+
+                            <TextBlock Text="Diagnostic :" Grid.Row="5" Style="{StaticResource Lbl}" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                            <TextBox x:Name="TxtDiagnostique" Grid.Row="5" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Tag="Saisir le diagnostic..."/>
+
+                            <TextBlock Text="Notes Médicales :" Grid.Row="6" Style="{StaticResource Lbl}" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                            <TextBox x:Name="TxtNotesMedicales" Grid.Row="6" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Tag="Remarques et observations..."/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Colonne Droite : Historique & Ordonnance -->
+                <StackPanel Grid.Column="2">
+                    <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Historique &amp; Antécédents" FontSize="14" FontWeight="Bold" Foreground="#2563EB" Margin="0,0,0,8"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+                                <TextBlock Text="Allergies :" Grid.Row="0" Style="{StaticResource Lbl}" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                                <TextBox x:Name="TxtAllergies" Grid.Row="0" Grid.Column="1" Height="50" TextWrapping="Wrap" AcceptsReturn="True" Tag="Aucune allergie répertoriée" KeyDown="List_KeyDown" GotFocus="List_GotFocus"/>
+
+                                <TextBlock Text="Traitement en cours :" Grid.Row="1" Style="{StaticResource Lbl}" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                                <TextBox x:Name="TxtTraitementDossier" Grid.Row="1" Grid.Column="1" Height="50" TextWrapping="Wrap" AcceptsReturn="True" Tag="Aucun traitement en cours" KeyDown="List_KeyDown" GotFocus="List_GotFocus"/>
+
+                                <TextBlock Text="Antécédents :" Grid.Row="2" Style="{StaticResource Lbl}" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                                <TextBox x:Name="TxtAntecedents" Grid.Row="2" Grid.Column="1" Height="50" TextWrapping="Wrap" AcceptsReturn="True" Tag="Pas d'antécédents majeurs" KeyDown="List_KeyDown" GotFocus="List_GotFocus"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="Ordonnance / Prescription" FontSize="14" FontWeight="Bold" Foreground="#2563EB" Margin="0,0,0,8"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+                                <TextBlock Text="N° Prescription :" Grid.Row="0" Style="{StaticResource Lbl}"/>
+                                <TextBox x:Name="TxtNumeroPrescription" Grid.Row="0" Grid.Column="1" Style="{StaticResource ReadOnlyTxt}" Text="Aucune ordonnance affectée"/>
+
+                                <TextBlock Text="Traitement prescrit :" Grid.Row="1" Style="{StaticResource Lbl}" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                                <TextBox x:Name="TxtTraitement" Grid.Row="1" Grid.Column="1" Height="45" TextWrapping="Wrap" AcceptsReturn="True" Tag="Détails du traitement..."/>
+
+                                <TextBlock Text="Durée :" Grid.Row="2" Style="{StaticResource Lbl}"/>
+                                <Grid Grid.Row="2" Grid.Column="1">
+                                    <TextBox x:Name="TxtDuree" Padding="5,3,40,3" PreviewTextInput="IntegerValidationTextBox"/>
+                                    <TextBlock Text="Jours" Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" IsHitTestVisible="False"/>
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-            </Border>
+            </Grid>
+        </ScrollViewer>
 
-            <!-- INFORMATIONS DE CONSULTATION -->
-            <Border BorderBrush="#BDC3C7" BorderThickness="1" CornerRadius="5" Padding="15" Background="#FAFAFA" Margin="0,0,0,15">
-                <StackPanel>
-                    <TextBlock Text="1. Consultation Médicale" FontSize="16" FontWeight="SemiBold" Foreground="#2980B9" Margin="0,0,0,10"/>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Numéro Consultation -->
-                        <TextBlock Text="N° Consultation :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtNumeroConsultation" Grid.Row="0" Grid.Column="1" Margin="0,5" Padding="5"/>
-
-                        <!-- Diagnostic -->
-                        <TextBlock Text="Diagnostic :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtDiagnostique" Grid.Row="1" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
-
-                        <!-- Notes Médicales -->
-                        <TextBlock Text="Notes Médicales :" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtNotesMedicales" Grid.Row="2" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- DOSSIER MÉDICAL -->
-            <Border BorderBrush="#BDC3C7" BorderThickness="1" CornerRadius="5" Padding="15" Background="#FAFAFA" Margin="0,0,0,15">
-                <StackPanel>
-                    <TextBlock Text="2. Informations du dossier médical" FontSize="16" FontWeight="SemiBold" Foreground="#27AE60" Margin="0,0,0,10"/>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="180"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Text="N° Dossier patient :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtNumeroDossier" Grid.Row="0" Grid.Column="1" Margin="0,5" Padding="5"/>
-
-                        <TextBlock Text="Poids (kg) :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtPoids" Grid.Row="1" Grid.Column="1" Margin="0,5" Padding="5"/>
-
-                        <TextBlock Text="Taille (cm) :" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtTaille" Grid.Row="2" Grid.Column="1" Margin="0,5" Padding="5"/>
-
-                        <TextBlock Text="Groupe sanguin :" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtGroupeSanguin" Grid.Row="3" Grid.Column="1" Margin="0,5" Padding="5"/>
-
-                        <TextBlock Text="Allergies :" Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtAllergies" Grid.Row="4" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
-
-                        <TextBlock Text="Traitement en cours :" Grid.Row="5" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtTraitementDossier" Grid.Row="5" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
-
-                        <TextBlock Text="Antécédents :" Grid.Row="6" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtAntecedents" Grid.Row="6" Grid.Column="1" Height="80" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- PRESCRIPTION (ORDONNANCE) -->
-            <Border BorderBrush="#BDC3C7" BorderThickness="1" CornerRadius="5" Padding="15" Background="#FAFAFA">
-                <StackPanel>
-                    <TextBlock Text="3. Ordonnance / Prescription (Optionnel)" FontSize="16" FontWeight="SemiBold" Foreground="#27AE60" Margin="0,0,0,10"/>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Numéro Prescription -->
-                        <TextBlock Text="N° Prescription :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtNumeroPrescription" Grid.Row="0" Grid.Column="1" Margin="0,5" Padding="5"/>
-
-                        <!-- Traitement -->
-                        <TextBlock Text="Traitement prescrit :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Margin="0,5"/>
-                        <TextBox x:Name="TxtTraitement" Grid.Row="1" Grid.Column="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,5" Padding="5"/>
-
-                        <!-- Durée -->
-                        <TextBlock Text="Durée du traitement :" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
-                        <TextBox x:Name="TxtDuree" Grid.Row="2" Grid.Column="1" Margin="0,5" Padding="5"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <TextBlock x:Name="LblMessage" TextWrapping="Wrap" Margin="0,12,0,0" FontSize="12"/>
-
-            <!-- BOUTONS D'ACTION -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-                <Button x:Name="BtnRappels" Content="🔔 Générer Rappels RDV (24h)" Background="#E67E22" Foreground="White" Padding="12,8" Margin="0,0,10,0" Click="BtnRappels_Click"/>
-                <Button x:Name="BtnEnregistrer" Content="💾 Enregistrer la Consultation" Background="#2980B9" Foreground="White" FontWeight="Bold" Padding="15,8" Click="BtnEnregistrer_Click"/>
-            </StackPanel>
-
+        <!-- Actions -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+            <Button Content="Rappels (24h)" Background="#D97706" Foreground="White" Padding="12,6" BorderThickness="0" Margin="0,0,8,0" Click="BtnRappels_Click"/>
+            <Button Content="Enregistrer la Consultation" Background="#2563EB" Foreground="White" FontWeight="Bold" Padding="14,6" BorderThickness="0" Click="BtnEnregistrer_Click"/>
         </StackPanel>
-    </ScrollViewer>
+    </Grid>
 </UserControl>
