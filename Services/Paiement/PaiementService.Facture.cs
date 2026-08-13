@@ -1,4 +1,5 @@
 using Npgsql;
+using Patients.Models;
 
 namespace Patients.Services;
 
@@ -99,5 +100,57 @@ public partial class PaiementService
         cmd.Parameters.AddWithValue("NumeroRdv", numeroRdv);
         var resultat = cmd.ExecuteScalar();
         return resultat is decimal montant ? montant : 0m;
+    }
+
+    // Toutes les informations necessaires a l'apercu de facture (page
+    // Paiements, bouton "Facturer"). N'imprime ni n'exporte rien : la
+    // fenetre appelante se contente d'afficher ces donnees.
+    public Patients.Models.FactureDetail? ObtenirDetailFacture(string numeroPaiement)
+    {
+        string query = @"
+            SELECT pa.NUMEROPAIEMENT, pa.NUMERORDV, pa.DATEPAIEMENT, pa.TYPEPAIEMENT, pa.MONTANT, pa.MODEPAIEMENT,
+                   pp.NOM, pp.PRENOM, pat.NUMERODOSSIER,
+                   mp.NOM, mp.PRENOM, f.NOM_FONCTION
+            FROM PAIEMENT pa
+            INNER JOIN RENDEZ_VOUS r ON pa.NUMERORDV = r.NUMERORDV
+            INNER JOIN PATIENT pat ON r.ID = pat.ID
+            INNER JOIN PERSONNE pp ON pat.ID = pp.ID
+            INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_MEDECIN
+            INNER JOIN PERSONNE mp ON me.ID_MEDECIN = mp.ID
+            INNER JOIN FONCTION f ON me.CODE_FONCTION = f.CODE_FONCTION
+            WHERE pa.NUMEROPAIEMENT = @NumeroPaiement;";
+
+        using var conn = new NpgsqlConnection(_connectionString);
+        using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("NumeroPaiement", numeroPaiement);
+
+        conn.Open();
+        using var reader = cmd.ExecuteReader();
+        if (!reader.Read()) return null;
+
+        return new Patients.Models.FactureDetail
+        {
+            NumeroPaiement = reader.GetString(0),
+            NumeroRdv = reader.GetString(1),
+            DateReglement = reader.GetDateTime(2),
+            TypePaiement = reader.GetString(3),
+            Montant = reader.GetDecimal(4),
+            ModePaiement = reader.GetString(5),
+            PatientNom = $"{reader.GetString(6)} {reader.GetString(7)}",
+            PatientMatricule = reader.GetString(8),
+            MedecinNom = $"Dr. {reader.GetString(9)} {reader.GetString(10)}",
+            MedecinFonction = reader.GetString(11)
+        };
+    }
+
+    // Bouton "Confirmer la facturation" de la fenetre d'apercu :
+    // ❌ -> ✔️ dans la colonne Facturation de l'historique des paiements.
+    public void MarquerFacture(string numeroPaiement)
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+        using var cmd = new NpgsqlCommand("UPDATE PAIEMENT SET EST_FACTURE = true WHERE NUMEROPAIEMENT = @NumeroPaiement;", conn);
+        cmd.Parameters.AddWithValue("NumeroPaiement", numeroPaiement);
+        cmd.ExecuteNonQuery();
     }
 }

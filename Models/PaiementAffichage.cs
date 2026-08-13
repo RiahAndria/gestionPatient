@@ -12,7 +12,19 @@ public class PaiementAffichage
     // ACOMPTE (paiement en avance, avant consultation) ou NORMAL (solde,
     // apres consultation).
     public string TypePaiement { get; set; } = "NORMAL";
-    public string TypePaiementAffiche => TypePaiement == "ACOMPTE" ? "Acompte" : "Normal";
+
+    // Tarif total du rendez-vous (taux horaire du medecin), necessaire
+    // pour distinguer un acompte "Complète" (couvre tout) d'un acompte
+    // "Avance" (partiel) dans la colonne Type de l'historique.
+    public decimal MontantTotalRdv { get; set; }
+
+    public string TypeAffiche => TypePaiement switch
+    {
+        "NORMAL" => "Reste",
+        "ACOMPTE" when Montant >= MontantTotalRdv && MontantTotalRdv > 0 => "Complète",
+        "ACOMPTE" => "Avance",
+        _ => TypePaiement
+    };
 
     // Date de creation de la facture (= DATEPAIEMENT tant que le
     // paiement n'est pas encore regle ; devient la date de reglement
@@ -23,6 +35,11 @@ public class PaiementAffichage
     public string ModePaiement { get; set; } = string.Empty;
     public bool EstPaye { get; set; }
     public int NombreRelances { get; set; }
+
+    // Vrai une fois qu'une facture a ete affichee/confirmee pour ce
+    // paiement (page Paiements, colonne "Facturation").
+    public bool EstFacture { get; set; }
+    public string FacturationAffichee => EstFacture ? "✔️" : "❌";
 
     // Nombre de jours ecoules depuis la creation de la facture, utilise
     // par la regle d'annulation automatique en cas d'impaye.

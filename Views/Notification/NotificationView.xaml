@@ -11,7 +11,7 @@
     <Border Background="White" CornerRadius="8" Padding="20">
         <StackPanel>
 
-            <Grid Margin="0,0,0,6">
+            <Grid Margin="0,0,0,14">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -22,23 +22,22 @@
                     <TextBlock x:Name="TxtTitre" Text="Notifications" FontSize="18" FontWeight="Bold" Foreground="#1E293B"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Click="BtnMarquerToutesLues_Click" Background="#F1F5F9" Foreground="#334155"
-                            BorderThickness="0" Padding="12,7" Margin="0,0,8,0" Cursor="Hand">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CheckAll" Width="15" Height="15" Margin="0,0,6,0"/>
-                            <TextBlock Text="Tout marquer comme lu" FontSize="12"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Click="BtnGenererRappels_Click" Background="#2563EB" Foreground="White"
-                            BorderThickness="0" Padding="12,7" Cursor="Hand">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="BellRingOutline" Width="15" Height="15" Margin="0,0,6,0"/>
-                            <TextBlock Text="Générer les rappels (24h)" FontSize="12"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+                <Button Grid.Column="1" Click="BtnMarquerToutesLues_Click" Background="#F1F5F9" Foreground="#334155"
+                        BorderThickness="0" Padding="12,7" Cursor="Hand">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CheckAll" Width="15" Height="15" Margin="0,0,6,0"/>
+                        <TextBlock Text="Tout marquer comme lu" FontSize="12"/>
+                    </StackPanel>
+                </Button>
             </Grid>
+
+            <!-- Onglets Reservations / Paiements -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                <Button x:Name="BtnOngletReservations" Content="Réservations" Click="BtnOngletReservations_Click"
+                        Padding="14,7" Margin="0,0,8,0" BorderThickness="0" Cursor="Hand" FontSize="12"/>
+                <Button x:Name="BtnOngletPaiements" Content="Paiements" Click="BtnOngletPaiements_Click"
+                        Padding="14,7" BorderThickness="0" Cursor="Hand" FontSize="12"/>
+            </StackPanel>
 
             <TextBlock Text="Double-clique sur une notification pour voir le rendez-vous concerné."
                        FontSize="11" Foreground="#94A3B8" FontStyle="Italic" Margin="0,0,0,14"/>

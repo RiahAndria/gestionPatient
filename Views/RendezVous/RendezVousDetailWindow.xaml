@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Détail du rendez-vous" Height="560" Width="620"
+        Title="Détail du rendez-vous" Height="650" Width="820"
         WindowStartupLocation="CenterScreen" AllowsTransparency="True" WindowStyle="None" Background="Transparent">
 
     <Window.Resources>
@@ -19,6 +19,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="LigneInfo" TargetType="Grid">
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
     </Window.Resources>
 
     <Border CornerRadius="25" Background="#F0F4F8" BorderBrush="#2563EB" BorderThickness="1">
@@ -28,7 +31,8 @@
             </Image>
 
             <DockPanel Margin="20">
-                <Border DockPanel.Dock="Top" Height="70" Margin="0,0,0,10">
+                <!-- En-tete -->
+                <Border DockPanel.Dock="Top" Height="60" Margin="0,0,0,6">
                     <Grid>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock x:Name="lblNumeroRdv" FontSize="22" FontWeight="Bold" Foreground="#1E293B"/>
@@ -36,29 +40,55 @@
                                 <TextBlock x:Name="lblStatut" Foreground="White" FontSize="11" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
-                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="BtnFermer_Click">
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="BtnFermer_Click" Cursor="Hand">
                             <materialDesign:PackIcon Kind="CloseCircle" Foreground="#64748B" Width="24" Height="24"/>
                         </Button>
                     </Grid>
                 </Border>
 
-                <StackPanel>
-                    <Border Style="{StaticResource GlassSection}">
-                        <StackPanel>
-                            <TextBlock Text="Rendez-vous" FontWeight="Bold" Margin="0,0,0,10" Foreground="#334155"/>
-                            <TextBlock x:Name="lblDateHeure" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                            <TextBlock x:Name="lblMotif" TextWrapping="Wrap" FontSize="13" FontStyle="Italic" Foreground="#475569"/>
-                            <TextBlock x:Name="lblMotifAnnulation" TextWrapping="Wrap" FontSize="13" Foreground="#B91C1C" Margin="0,6,0,0"/>
+                <!-- Barre d'actions -->
+                <Border DockPanel.Dock="Bottom" Height="60" Margin="0,6,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Content="Reprogrammer" Click="BtnReprogrammer_Click" Height="38" Width="140" Margin="0,0,10,0"
+                                    Background="#16A34A" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                            <Button Content="Changer Statut" Click="BtnChangerStatut_Click" Height="38" Width="140" Margin="0,0,10,0"
+                                    Background="#D97706" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                            <Button Content="Supprimer" Click="BtnSupprimer_Click" Height="38" Width="130"
+                                    Background="#DC2626" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
                         </StackPanel>
-                    </Border>
+                        <Button Content="Fermer" Click="BtnFermer_Click" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Height="38" Width="100" Background="#64748B" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                    </Grid>
+                </Border>
 
+                <!-- Contenu : 2 colonnes x 2 lignes -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <Border Grid.Column="0" Style="{StaticResource GlassSection}">
+                        <!-- Rendez-vous -->
+                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassSection}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <materialDesign:PackIcon Kind="CalendarClockOutline" Width="18" Height="18" Foreground="#2563EB" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Rendez-vous" FontWeight="Bold" Foreground="#334155"/>
+                                </StackPanel>
+                                <TextBlock x:Name="lblDateHeure" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,4" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="lblMotif" TextWrapping="Wrap" FontSize="13" FontStyle="Italic" Foreground="#475569"/>
+                                <TextBlock x:Name="lblMotifAnnulation" TextWrapping="Wrap" FontSize="13" Foreground="#B91C1C" Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Patient -->
+                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassSection}">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                     <materialDesign:PackIcon Kind="AccountOutline" Width="18" Height="18" Foreground="#2563EB" VerticalAlignment="Center" Margin="0,0,6,0"/>
@@ -70,7 +100,8 @@
                             </StackPanel>
                         </Border>
 
-                        <Border Grid.Column="1" Style="{StaticResource GlassSection}">
+                        <!-- Medecin -->
+                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassSection}">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                     <materialDesign:PackIcon Kind="Doctor" Width="18" Height="18" Foreground="#2563EB" VerticalAlignment="Center" Margin="0,0,6,0"/>
@@ -80,47 +111,47 @@
                                 <TextBlock x:Name="lblMedecinFonction" FontSize="12" Foreground="#64748B"/>
                             </StackPanel>
                         </Border>
-                    </Grid>
 
-                    <Border Style="{StaticResource GlassSection}">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <materialDesign:PackIcon Kind="CashMultiple" Width="18" Height="18" Foreground="#2563EB" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Text="Paiements liés" FontWeight="Bold" Foreground="#334155"/>
+                        <!-- Paiement -->
+                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassSection}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <materialDesign:PackIcon Kind="CashMultiple" Width="18" Height="18" Foreground="#2563EB" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Paiement" FontWeight="Bold" Foreground="#334155"/>
+                                </StackPanel>
+
+                                <Grid Style="{StaticResource LigneInfo}">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Montant total" FontSize="12" Foreground="#64748B"/>
+                                    <TextBlock Grid.Column="1" x:Name="lblMontantTotal" FontSize="12" FontWeight="SemiBold"/>
+                                </Grid>
+                                <Grid Style="{StaticResource LigneInfo}">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Montant payé" FontSize="12" Foreground="#64748B"/>
+                                    <TextBlock Grid.Column="1" x:Name="lblMontantPaye" FontSize="12" FontWeight="SemiBold" Foreground="#16A34A"/>
+                                </Grid>
+                                <Grid Style="{StaticResource LigneInfo}">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Montant non payé" FontSize="12" Foreground="#64748B"/>
+                                    <TextBlock Grid.Column="1" x:Name="lblMontantNonPaye" FontSize="12" FontWeight="SemiBold" Foreground="#DC2626"/>
+                                </Grid>
+                                <Grid x:Name="ligneDateLimite" Style="{StaticResource LigneInfo}">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Date limite de paiement" FontSize="12" Foreground="#64748B"/>
+                                    <TextBlock Grid.Column="1" x:Name="lblDateLimite" FontSize="12" FontWeight="SemiBold"/>
+                                </Grid>
+                                <Grid Style="{StaticResource LigneInfo}">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Mode de paiement" FontSize="12" Foreground="#64748B"/>
+                                    <TextBlock Grid.Column="1" x:Name="lblModePaiement" FontSize="12" FontWeight="SemiBold"/>
+                                </Grid>
+
+                                <TextBlock x:Name="lblAucunPaiement" Text="Aucun paiement enregistré pour ce rendez-vous." FontSize="12"
+                                           Foreground="#94A3B8" FontStyle="Italic" Margin="0,6,0,0"/>
                             </StackPanel>
-                            <ItemsControl x:Name="listePaiements">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="0,3">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{Binding TypePaiementAffiche}" FontSize="12" Foreground="#475569"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding MontantAffiche}" FontSize="12" FontWeight="SemiBold" Margin="0,0,10,0"/>
-                                            <TextBlock Grid.Column="2" FontSize="11">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Text" Value="Payé"/>
-                                                        <Setter Property="Foreground" Value="#16A34A"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding EstPaye}" Value="False">
-                                                                <Setter Property="Text" Value="En attente"/>
-                                                                <Setter Property="Foreground" Value="#D97706"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock x:Name="lblAucunPaiement" Text="Aucun paiement enregistré pour ce rendez-vous." FontSize="12" Foreground="#94A3B8" FontStyle="Italic"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
             </DockPanel>
         </Grid>
     </Border>

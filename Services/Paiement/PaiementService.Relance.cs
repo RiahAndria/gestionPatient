@@ -35,16 +35,32 @@ public partial class PaiementService
             numeroRdv = (string)(cmdRdv.ExecuteScalar() ?? throw new InvalidOperationException("Paiement introuvable."));
         }
 
+        return EnvoyerRelanceInterne(conn, numeroRdv);
+    }
+
+    // Meme chose, mais directement depuis un numero de rendez-vous : cas
+    // d'un acompte encore incomplet, pour lequel il n'existe pas encore
+    // de ligne PAIEMENT dediee au solde (voir ObtenirPaiementsIncomplets).
+    public int EnvoyerRelanceParRdv(string numeroRdv)
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+        return EnvoyerRelanceInterne(conn, numeroRdv);
+    }
+
+    private int EnvoyerRelanceInterne(NpgsqlConnection conn, string numeroRdv)
+    {
         int prochainNumero;
-        using (var cmdCompte = new NpgsqlCommand("SELECT COUNT(*) FROM NOTIFICATION WHERE NUMERORDV = @NumeroRdv;", conn))
+        using (var cmdCompte = new NpgsqlCommand(
+            "SELECT COUNT(*) FROM NOTIFICATION WHERE NUMERORDV = @NumeroRdv AND TYPE_NOTIF = 'PAIEMENT';", conn))
         {
             cmdCompte.Parameters.AddWithValue("NumeroRdv", numeroRdv);
             prochainNumero = (int)(long)cmdCompte.ExecuteScalar()! + 1;
         }
 
         string queryInsert = @"
-            INSERT INTO NOTIFICATION (NUMERONOTIF, NUMERORDV, TEXTENOTIF)
-            VALUES (@NumeroNotif, @NumeroRdv, @Texte);";
+            INSERT INTO NOTIFICATION (NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU, TYPE_NOTIF)
+            VALUES (@NumeroNotif, @NumeroRdv, @Texte, now(), false, 'PAIEMENT');";
 
         using var cmdInsert = new NpgsqlCommand(queryInsert, conn);
         cmdInsert.Parameters.AddWithValue("NumeroNotif", $"NOTIF-{Guid.NewGuid().ToString()[..8].ToUpper()}");
@@ -53,6 +69,40 @@ public partial class PaiementService
         cmdInsert.ExecuteNonQuery();
 
         return prochainNumero;
+    }
+
+    // Bouton "Rejeter" de la section "Paiements non complets" : supprime
+    // definitivement la facture NORMALE en attente (rejetee par le
+    // secretariat, ex : erreur de saisie, patient ne se presentera pas).
+    // Le motif est trace dans une notification avant suppression.
+    public void RejeterPaiement(string numeroPaiement, string motif)
+    {
+        using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+        string queryRdv = "SELECT NUMERORDV FROM PAIEMENT WHERE NUMEROPAIEMENT = @NumeroPaiement;";
+        string? numeroRdv;
+        using (var cmdRdv = new NpgsqlCommand(queryRdv, conn))
+        {
+            cmdRdv.Parameters.AddWithValue("NumeroPaiement", numeroPaiement);
+            numeroRdv = cmdRdv.ExecuteScalar() as string;
+        }
+
+        using (var cmdDelete = new NpgsqlCommand("DELETE FROM PAIEMENT WHERE NUMEROPAIEMENT = @NumeroPaiement;", conn))
+        {
+            cmdDelete.Parameters.AddWithValue("NumeroPaiement", numeroPaiement);
+            cmdDelete.ExecuteNonQuery();
+        }
+
+        if (numeroRdv is null) return;
+
+        using var cmdInsert = new NpgsqlCommand(@"
+            INSERT INTO NOTIFICATION (NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU, TYPE_NOTIF)
+            VALUES (@NumeroNotif, @NumeroRdv, @Texte, now(), false, 'PAIEMENT');", conn);
+        cmdInsert.Parameters.AddWithValue("NumeroNotif", $"NOTIF-{Guid.NewGuid().ToString()[..8].ToUpper()}");
+        cmdInsert.Parameters.AddWithValue("NumeroRdv", numeroRdv);
+        cmdInsert.Parameters.AddWithValue("Texte", $"Paiement {numeroPaiement} rejeté : {motif}");
+        cmdInsert.ExecuteNonQuery();
     }
 
     // A lancer manuellement (bouton "Traiter les impayes"). Pour chaque

@@ -45,8 +45,8 @@ public partial class RappelService
             string message = $"Rappel RDV : M./Mme {rdv.NomComplet} le {rdv.DateHeure:dd/MM/yyyy à HH:mm}.";
 
             string insertQuery = @"
-                INSERT INTO NOTIFICATION (NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU)
-                VALUES (@numNotif, @numRdv, @texte, now(), false);";
+                INSERT INTO NOTIFICATION (NUMERONOTIF, NUMERORDV, TEXTENOTIF, DATENOTIF, LU, TYPE_NOTIF)
+                VALUES (@numNotif, @numRdv, @texte, now(), false, 'RESERVATION');";
 
             using var cmdInsert = new NpgsqlCommand(insertQuery, conn);
             cmdInsert.Parameters.AddWithValue("@numNotif", idNotif);

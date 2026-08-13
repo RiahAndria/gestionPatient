@@ -1,84 +1,27 @@
 <UserControl x:Class="Patients.Views.Paiement.PaiementView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:Patients.Views.Paiement">
+
+    <UserControl.Resources>
+        <local:BoolInverseToVisibilityConverter x:Key="BoolInverseToVisibility"/>
+    </UserControl.Resources>
 
     <StackPanel>
 
-        <!-- Encaisser un acompte (paiement en avance) -->
+        <!-- Paiements non complets -->
         <Border Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,16">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <materialDesign:PackIcon Kind="HandCoinOutline" Width="20" Height="20" Foreground="#2563EB" Margin="0,0,8,0"/>
-                    <TextBlock Text="Encaisser un acompte" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
+                    <materialDesign:PackIcon Kind="ClockAlertOutline" Width="20" Height="20" Foreground="#2563EB" Margin="0,0,8,0"/>
+                    <TextBlock Text="Paiements non complets" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
                 </StackPanel>
-                <TextBlock Text="Paiement en avance sur un rendez-vous pas encore réalisé, déduit automatiquement de la facture finale."
+                <TextBlock Text="Avances partielles pas encore réglées en totalité et soldes dus après consultation."
                            FontSize="12" Foreground="#94A3B8" Margin="0,2,0,14"/>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Rendez-vous planifié" FontSize="12" Foreground="#64748B" Margin="0,0,0,4"/>
-                        <ComboBox x:Name="cbRdvAcompte" Height="32" DisplayMemberPath="PatientNom"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="Montant (Ar)" FontSize="12" Foreground="#64748B" Margin="0,0,0,4"/>
-                        <TextBox x:Name="txtMontantAcompte" Height="32" Padding="8,6"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="4">
-                        <TextBlock Text="Mode" FontSize="12" Foreground="#64748B" Margin="0,0,0,4"/>
-                        <ComboBox x:Name="cbModeAcompte" Height="32" SelectedIndex="0">
-                            <ComboBoxItem Content="Espèces"/>
-                            <ComboBoxItem Content="Mobile Money"/>
-                            <ComboBoxItem Content="Carte bancaire"/>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <Button Grid.Column="6" VerticalAlignment="Bottom" Click="btnEncaisserAcompte_Click"
-                            Background="#2563EB" Foreground="White" BorderThickness="0" Padding="14,7" Cursor="Hand">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CashPlus" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Encaisser" FontSize="13"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
-            </StackPanel>
-        </Border>
-
-        <!-- Factures en attente (solde post-consultation) -->
-        <Border Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,16">
-            <StackPanel>
-                <Grid Margin="0,0,0,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="ReceiptTextOutline" Width="20" Height="20" Foreground="#2563EB" Margin="0,0,8,0"/>
-                        <TextBlock Text="Factures en attente" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
-                    </StackPanel>
-                    <Button Grid.Column="1" Click="btnTraiterImpayes_Click" Background="#F1F5F9" Foreground="#334155"
-                            BorderThickness="0" Padding="12,6" Cursor="Hand">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="AlertCircleOutline" Width="15" Height="15" Margin="0,0,6,0"/>
-                            <TextBlock Text="Traiter les impayés" FontSize="12"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
-
-                <DataGrid x:Name="dgEnAttente" AutoGenerateColumns="False" IsReadOnly="True" Height="220"
-                          RowHeight="38" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" BorderThickness="0">
+                <DataGrid x:Name="dgIncomplets" AutoGenerateColumns="False" IsReadOnly="True" Height="230"
+                          RowHeight="40" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" BorderThickness="0">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8FAFC"/>
@@ -90,22 +33,28 @@
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="N° paiement" Binding="{Binding NumeroPaiement}" Width="110"/>
+                        <DataGridTextColumn Header="N° paiement" Binding="{Binding NumeroAffiche}" Width="110"/>
                         <DataGridTextColumn Header="Patient" Binding="{Binding PatientNom}" Width="*"/>
-                        <DataGridTextColumn Header="Facturé le" Binding="{Binding DateFacture, StringFormat='dd/MM/yyyy'}" Width="100"/>
-                        <DataGridTextColumn Header="Jours" Binding="{Binding JoursEcoules}" Width="55"/>
-                        <DataGridTextColumn Header="Montant" Binding="{Binding MontantAffiche}" Width="110"/>
-                        <DataGridTextColumn Header="Relances" Binding="{Binding NombreRelances}" Width="70"/>
-                        <DataGridTemplateColumn Header="Actions" Width="220">
+                        <DataGridTextColumn Header="Montant à payer" Binding="{Binding MontantRestantAffiche}" Width="130"/>
+                        <DataGridTemplateColumn Header="Alertes" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding AlerteAffichee}" FontSize="12" Padding="8,4" BorderThickness="0" Cursor="Hand"
+                                            Background="Transparent" Foreground="#334155" Click="btnAlertePaiement_Click" Tag="{Binding NumeroRdv}"
+                                            ToolTip="Créer une alerte de paiement pour ce rendez-vous"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Actions" Width="180">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="Relancer" Margin="0,0,6,0" Padding="8,4" FontSize="11"
-                                                Background="#F1F5F9" Foreground="#334155" BorderThickness="0" Cursor="Hand"
-                                                Click="btnRelancer_Click" Tag="{Binding NumeroPaiement}"/>
-                                        <Button Content="Confirmer" Padding="8,4" FontSize="11"
-                                                Background="#DCFCE7" Foreground="#15803D" BorderThickness="0" Cursor="Hand"
-                                                Click="btnConfirmer_Click" Tag="{Binding NumeroPaiement}"/>
+                                        <Button Content="Régler" Margin="0,0,6,0" Padding="10,4" FontSize="11"
+                                                Background="#16A34A" Foreground="White" BorderThickness="0" Cursor="Hand"
+                                                Click="btnRegler_Click" Tag="{Binding}"/>
+                                        <Button Content="Rejeter" Padding="10,4" FontSize="11"
+                                                Background="#DC2626" Foreground="White" BorderThickness="0" Cursor="Hand"
+                                                Click="btnRejeter_Click" Tag="{Binding}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -124,8 +73,8 @@
                     <materialDesign:PackIcon Kind="History" Width="20" Height="20" Foreground="#2563EB" Margin="0,0,8,0"/>
                     <TextBlock Text="Historique des paiements réglés" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
                 </StackPanel>
-                <DataGrid x:Name="dgHistorique" AutoGenerateColumns="False" IsReadOnly="True" Height="200"
-                          RowHeight="38" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" BorderThickness="0">
+                <DataGrid x:Name="dgHistorique" AutoGenerateColumns="False" IsReadOnly="True" Height="240"
+                          RowHeight="40" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" BorderThickness="0">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8FAFC"/>
@@ -153,14 +102,27 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <TextBlock Text="{Binding TypePaiementAffiche}" FontSize="10" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                        <TextBlock Text="{Binding TypeAffiche}" FontSize="10" FontWeight="SemiBold" Foreground="#1E293B"/>
                                     </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Réglé le" Binding="{Binding DateFacture, StringFormat='dd/MM/yyyy HH:mm'}" Width="140"/>
-                        <DataGridTextColumn Header="Montant" Binding="{Binding MontantAffiche}" Width="110"/>
-                        <DataGridTextColumn Header="Mode" Binding="{Binding ModePaiement}" Width="120"/>
+                        <DataGridTextColumn Header="Montant" Binding="{Binding MontantAffiche}" Width="100"/>
+                        <DataGridTextColumn Header="Mode" Binding="{Binding ModePaiement}" Width="110"/>
+                        <DataGridTemplateColumn Header="Facturation" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding FacturationAffichee}" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <Button Content="Facturer" Padding="8,4" FontSize="11"
+                                                Background="#EFF6FF" Foreground="#2563EB" BorderThickness="0" Cursor="Hand"
+                                                Click="btnFacturer_Click" Tag="{Binding NumeroPaiement}"
+                                                Visibility="{Binding EstFacture, Converter={StaticResource BoolInverseToVisibility}}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

@@ -13,4 +13,9 @@ public class Notification
 
     public DateTime DateNotif { get; set; }
     public bool Lu { get; set; }
+
+    // RESERVATION (rappel/confirmation de rendez-vous) ou PAIEMENT
+    // (relance de facture) : determine l'onglet d'affichage sur la
+    // page Notifications.
+    public string TypeNotif { get; set; } = "RESERVATION";
 }

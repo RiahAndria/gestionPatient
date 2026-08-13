@@ -16,14 +16,16 @@ public partial class RendezVousService
             SELECT r.NUMERORDV, 
                    pp.NOM, pp.PRENOM,
                    mp.NOM, mp.PRENOM,
-                   r.DATEHEURERDV, r.MOTIFRDV, r.STATUT
+                   r.DATEHEURERDV, r.MOTIFRDV, r.STATUT,
+                   (SELECT COUNT(*) FROM NOTIFICATION n WHERE n.NUMERORDV = r.NUMERORDV AND n.TYPE_NOTIF = 'RESERVATION') AS NBALERTES
             FROM RENDEZ_VOUS r
             INNER JOIN PATIENT pa ON r.ID = pa.ID
             INNER JOIN PERSONNE pp ON pa.ID = pp.ID
             INNER JOIN MEDECIN me ON r.ID_HER_2 = me.ID_MEDECIN
             INNER JOIN PERSONNE mp ON me.ID_MEDECIN = mp.ID
             WHERE (@Terme = '' OR pp.NOM ILIKE '%' || @Terme || '%' OR pp.PRENOM ILIKE '%' || @Terme || '%'
-                                OR mp.NOM ILIKE '%' || @Terme || '%' OR mp.PRENOM ILIKE '%' || @Terme || '%')
+                                OR mp.NOM ILIKE '%' || @Terme || '%' OR mp.PRENOM ILIKE '%' || @Terme || '%'
+                                OR r.NUMERORDV ILIKE '%' || @Terme || '%')
               AND (@DateFiltre::date IS NULL OR r.DATEHEURERDV::date = @DateFiltre::date)
               AND (@Statut = '' OR r.STATUT = @Statut)
             ORDER BY r.DATEHEURERDV;";
@@ -46,7 +48,8 @@ public partial class RendezVousService
                 MedecinNom = $"Dr. {reader.GetString(3)} {reader.GetString(4)}",
                 DateHeure = reader.GetDateTime(5),
                 Motif = reader.GetString(6),
-                Statut = reader.GetString(7)
+                Statut = reader.GetString(7),
+                NombreAlertes = (int)reader.GetInt64(8)
             });
         }
 

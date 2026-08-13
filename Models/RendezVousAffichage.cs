@@ -31,6 +31,21 @@ public class RendezVousAffichage
     // Valeur telle que stockee en base : PLANIFIE, ANNULE ou TERMINE.
     public string Statut { get; set; } = string.Empty;
 
+    // Nombre d'alertes rendez-vous deja envoyees (notifications
+    // TYPE_NOTIF = 'RESERVATION' liees a ce RDV), affiche dans la
+    // colonne Alertes de la grille.
+    public int NombreAlertes { get; set; }
+
+    // Jours restants avant la date du rendez-vous (peut etre negatif
+    // si la date est passee).
+    public int JoursRestants => (DateHeure.Date - DateTime.Today).Days;
+
+    // Alerte cliquable uniquement pour un RDV encore a venir et non
+    // annule/termine ; sinon rien a afficher.
+    public bool AlerteActivable => Statut == "PLANIFIE" && JoursRestants >= 0;
+
+    public string AlerteAffichee => AlerteActivable ? $"{NombreAlertes}🔔 J-{JoursRestants}" : "—";
+
     // Version en francais du statut, pour l'affichage a l'ecran.
     public string StatutAffiche => Statut switch
     {

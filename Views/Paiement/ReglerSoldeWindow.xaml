@@ -1,0 +1,35 @@
+<Window x:Class="Patients.Views.Paiement.ReglerSoldeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Régler le paiement" Height="360" Width="380"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="White">
+
+    <StackPanel Margin="20">
+        <TextBlock x:Name="lblPatient" FontSize="15" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,4"/>
+        <TextBlock x:Name="lblContexte" FontSize="12" Foreground="#64748B" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+        <Border Background="#F8FAFC" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+            <TextBlock x:Name="lblMontantDu" FontSize="16" FontWeight="Bold" Foreground="#2563EB"/>
+        </Border>
+
+        <TextBlock Text="Montant réglé (Ar)" FontSize="12" Foreground="#64748B" Margin="0,0,0,4"/>
+        <TextBox x:Name="txtMontant" Height="32" Padding="8,6" Margin="0,0,0,14"/>
+
+        <TextBlock Text="Méthode de paiement" FontSize="12" Foreground="#64748B" Margin="0,0,0,4"/>
+        <ComboBox x:Name="cbMode" Height="32" SelectedIndex="0" Margin="0,0,0,16">
+            <ComboBoxItem Content="Espèces"/>
+            <ComboBoxItem Content="Mobile Money"/>
+            <ComboBoxItem Content="Chèque"/>
+            <ComboBoxItem Content="Carte bancaire"/>
+        </ComboBox>
+
+        <TextBlock x:Name="txtErreur" Foreground="Red" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Annuler" Width="90" Height="34" Margin="0,0,10,0" Background="#F1F5F9" Foreground="#334155"
+                    BorderThickness="0" Cursor="Hand" Click="BtnAnnuler_Click"/>
+            <Button Content="Valider le paiement" Width="150" Height="34" Background="#16A34A" Foreground="White"
+                    FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Click="BtnValider_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>
