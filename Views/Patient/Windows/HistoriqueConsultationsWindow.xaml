@@ -17,12 +17,23 @@
             <TextBlock x:Name="txtPatient" FontSize="13" Foreground="#475569" Margin="0,4,0,0"/>
         </StackPanel>
 
-        <DataGrid x:Name="dgHistorique" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" Background="White" BorderThickness="1" BorderBrush="#CBD5E1">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Date" Binding="{Binding DateConsultation, StringFormat=dd/MM/yyyy}" Width="110"/>
-                <DataGridTextColumn Header="N° consultation" Binding="{Binding NumeroConsultation}" Width="130"/>
-                <DataGridTextColumn Header="Diagnostic" Binding="{Binding Diagnostique}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Row="1">
+            <DataGrid x:Name="dgHistorique" AutoGenerateColumns="False" IsReadOnly="True" Background="White" BorderThickness="1" BorderBrush="#CBD5E1" Visibility="Collapsed">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Date" Binding="{Binding DateConsultation, StringFormat=dd/MM/yyyy}" Width="110"/>
+                    <DataGridTextColumn Header="N° consultation" Binding="{Binding NumeroConsultation}" Width="130"/>
+                    <DataGridTextColumn Header="Diagnostic" Binding="{Binding Diagnostique}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock x:Name="txtAucuneConsultation"
+                       Text="Aucune consultation pour le moment"
+                       Foreground="#64748B"
+                       FontStyle="Italic"
+                       FontSize="14"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Visibility="Collapsed"/>
+        </Grid>
     </Grid>
 </Window>
