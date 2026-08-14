@@ -159,7 +159,10 @@ public partial class ModifierMedecinView : Window
                 return; 
             }
 
-            string code_fonc = ComboBoxFonction.SelectedValuePath;
+            string code_fonc = string.Empty;
+            code_fonc = ComboBoxFonction?.SelectedValue?.ToString();
+            
+
             //On touche plus au matricule??
         
             // ici on appel le service enregistrerMedecin même si elle est encore vide 
@@ -192,7 +195,7 @@ public partial class ModifierMedecinView : Window
             }
             else
             {
-                txtMessageMedecin.Text = "Une erreur est survenue lors de l'enregistrement dans le service.";
+                txtMessageMedecin.Text = _medecinService.message;
             }
         }
         catch
@@ -227,7 +230,7 @@ public partial class ModifierMedecinView : Window
         if (estFermer == true)
         {
             RechargerListeFonction();
-            MessageBox.Show("taybe");
+            //MessageBox.Show("taybe");
         }
     }
 
