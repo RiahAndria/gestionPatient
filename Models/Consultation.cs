@@ -11,6 +11,7 @@ namespace Patients.Models
         public string NumeroRdv { get; set; } = string.Empty;
 
         public string NumeroDossier { get; set; } = string.Empty;
+        public DateTime? DateConsultation { get; set; }
         public string Diagnostique { get; set; } = string.Empty;
         public string NotesMedicales { get; set; } = string.Empty;
         public decimal? Poids { get; set; }

@@ -16,6 +16,11 @@ public partial class DetailPatientWindow : Window
         InitializeComponent();
         _patient = patient;
 
+        if (_patient is not null && dossier is null)
+        {
+            dossier = _patientService.ObtenirDossierMedical(_patient.NumeroDossier);
+        }
+
         AfficherInfoPatient();
         AfficherInfoDossier(dossier);
     }
@@ -34,13 +39,34 @@ public partial class DetailPatientWindow : Window
             : $"N° Assurance: {_patient.NumeroAssurance}";
     }
 
+    private static bool EstDossierMedicalVide(Dossier? dossier)
+    {
+        if (dossier is null)
+        {
+            return true;
+        }
+
+        bool infosPhysiquesVides =
+            dossier.Poids <= 0m &&
+            dossier.Taille <= 0m &&
+            (string.IsNullOrWhiteSpace(dossier.GroupeSanguin) || dossier.GroupeSanguin.Equals("N/A", StringComparison.OrdinalIgnoreCase));
+
+        return infosPhysiquesVides &&
+               string.IsNullOrWhiteSpace(dossier.Allergies) &&
+               string.IsNullOrWhiteSpace(dossier.Antecedents) &&
+               string.IsNullOrWhiteSpace(dossier.Traitement);
+    }
+
     private void AfficherInfoDossier(Dossier? dossier)
     {
-        if (dossier != null)
+        if (dossier != null && !EstDossierMedicalVide(dossier))
         {
-            lblPoids.Text = $"{dossier.Poids} kg";
-            lblTaille.Text = $"{dossier.Taille} cm";
-            lblGroupe.Text = string.IsNullOrWhiteSpace(dossier.GroupeSanguin) ? "-" : dossier.GroupeSanguin;
+            lblPoids.Text = dossier.Poids > 0m ? $"{dossier.Poids} kg" : "-- kg";
+            lblTaille.Text = dossier.Taille > 0m ? $"{dossier.Taille} cm" : "-- cm";
+            lblGroupe.Text = string.IsNullOrWhiteSpace(dossier.GroupeSanguin) || dossier.GroupeSanguin.Equals("N/A", StringComparison.OrdinalIgnoreCase)
+                ? "--"
+                : dossier.GroupeSanguin;
+
             if (string.IsNullOrWhiteSpace(dossier.NumeroAssurance) && _patient != null)
             {
                 dossier.NumeroAssurance = _patient.NumeroAssurance;
@@ -60,16 +86,15 @@ public partial class DetailPatientWindow : Window
             txtAntecedents.Text = string.IsNullOrWhiteSpace(dossier.Antecedents)
                 ? "Aucun antécédent répertorié."
                 : dossier.Antecedents;
+            return;
         }
-        else
-        {
-            lblPoids.Text = "-- kg";
-            lblTaille.Text = "-- cm";
-            lblGroupe.Text = "--";
-            txtTraitements.Text = "Aucun dossier médical enregistré.";
-            txtAllergies.Text = "Aucune donnée.";
-            txtAntecedents.Text = "Aucune donnée.";
-        }
+
+        lblPoids.Text = "-- kg";
+        lblTaille.Text = "-- cm";
+        lblGroupe.Text = "--";
+        txtTraitements.Text = "Aucun dossier médical enregistré.";
+        txtAllergies.Text = "Aucune donnée.";
+        txtAntecedents.Text = "Aucune donnée.";
     }
 
     private void BtnOuvrirModification_Click(object sender, RoutedEventArgs e)

@@ -11,6 +11,18 @@ public partial class HistoriqueConsultationsWindow : Window
     {
         InitializeComponent();
         txtPatient.Text = $"Patient : {patient.Nom} {patient.Prenom}  •  Dossier : {patient.NumeroDossier}";
-        dgHistorique.ItemsSource = consultations;
+
+        var listeConsultations = consultations?.ToList() ?? new List<Patients.Models.Consultation>();
+
+        if (listeConsultations.Count == 0)
+        {
+            dgHistorique.Visibility = Visibility.Collapsed;
+            txtAucuneConsultation.Visibility = Visibility.Visible;
+            return;
+        }
+
+        dgHistorique.ItemsSource = listeConsultations;
+        dgHistorique.Visibility = Visibility.Visible;
+        txtAucuneConsultation.Visibility = Visibility.Collapsed;
     }
 }
