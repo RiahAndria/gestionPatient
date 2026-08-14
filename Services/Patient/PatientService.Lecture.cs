@@ -63,17 +63,20 @@ public partial class PatientService
     {
         var consultations = new List<Patients.Models.Consultation>();
 
-        // Le schéma actuel de la table CONSULTATION ne contient ni colonne NUMERORDV,
-        // ni lien direct vers le patient ; il n'existe donc pas de jointure fiable
-        // entre CONSULTATION et PATIENT dans la base. On charge l'historique disponible
-        // depuis la table de consultations elle-même pour éviter la colonne inexistante.
         const string query = @"
-            SELECT c.NUMEROCONSULTATION, c.DIAGNOSTIQUE, c.NOTESMEDICALES
+            SELECT c.NUMEROCONSULTATION,
+                   c.DIAGNOSTIQUE,
+                   c.NOTESMEDICALES,
+                   c.NUMERORDV,
+                   rv.DATEHEURERDV
             FROM CONSULTATION c
-            ORDER BY c.NUMEROCONSULTATION DESC;";
+            INNER JOIN RENDEZ_VOUS rv ON rv.NUMERORDV = c.NUMERORDV
+            WHERE rv.ID = @PatientId
+            ORDER BY rv.DATEHEURERDV DESC, c.NUMEROCONSULTATION DESC;";
 
         using var conn = new NpgsqlConnection(_connectionString);
         using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@PatientId", patientId);
 
         conn.Open();
         using var reader = cmd.ExecuteReader();
@@ -82,10 +85,10 @@ public partial class PatientService
         {
             consultations.Add(new Patients.Models.Consultation
             {
-                NumeroConsultation = reader.GetString(0),
-                NumeroRdv = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
-                Diagnostique = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                NotesMedicales = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
+                NumeroConsultation = reader.IsDBNull(0) ? string.Empty : reader.GetString(0),
+                Diagnostique = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+                NotesMedicales = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+                NumeroRdv = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                 DateConsultation = reader.IsDBNull(4) ? null : reader.GetDateTime(4)
             });
         }
