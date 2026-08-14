@@ -20,13 +20,14 @@ public partial class AjoutFonctionView : Window
     {
         if (string.IsNullOrWhiteSpace(TXTFonctionAjouter.Text))
         {
-            MessageBox.Show("Ajout non effectue");
+            TXTMessageAjoutFonction.Text = "Ajout non effectue";
+            return;
         }
 
         string normeNouvFonc = @"^[a-zA-Z]{5,20}$";
         if (!Regex.IsMatch(TXTFonctionAjouter.Text, normeNouvFonc))
         {
-            MessageBox.Show("Nom fonction invalide");
+            TXTMessageAjoutFonction.Text = "Nom fonction invalide";
             return;   
         }
 
@@ -37,11 +38,19 @@ public partial class AjoutFonctionView : Window
         bool estAjouter = _fonctionService.AjouterNouvelleFonction(_fonction);
         if (estAjouter)
         {
+            MessageBox.Show("tafiditra");
             TXTMessageAjoutFonction.Text = "Ajout de fonction effectue";
+            this.DialogResult = true;
+            this.Close();
         }
         else
         {
             TXTMessageAjoutFonction.Text = _fonctionService.message;
         }
+    }
+
+    public void fermer_ajoutFonction(Object sender, RoutedEventArgs e)
+    {
+        this.Close();   
     }
 }

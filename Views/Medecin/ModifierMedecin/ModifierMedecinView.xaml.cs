@@ -6,17 +6,25 @@ using System.Windows;
 using Patients.Services;
 using Medecins.Services;
 using System.Text.Json;
+using Patients.Views.Medecin.ListeMedecin;
+using Patients.Views.Medecin.AjoutFonction;
+using System.Collections.ObjectModel;
 
 namespace Patients.Views.Medecin.ModifierMedecin;
 
 public partial class ModifierMedecinView : Window
 {
     // public ModifierMedecinView(Patients.Models.Medecin medecinAmodifier)
-    private MedecinService _medecinService = new MedecinService();
+    public MedecinService _medecinService = new MedecinService();
+    public readonly FonctionService _fonctionService = new FonctionService();
+    // public AjoutFonctionView _ajoutFonction = new AjoutFonctionView();
+    public ObservableCollection<Fonction> CboListeFonction { get; set; }= new ObservableCollection<Fonction>();
     public ModifierMedecinView(Patients.Models.Medecin donneAModifier)
     {
         InitializeComponent();
+        DataContext = this;
         remplirChampParLesDonneesMedecin(donneAModifier);
+        RechargerListeFonction();
     }
 
     private void BtnFermerModif_Click(object sender, RoutedEventArgs e)
@@ -145,7 +153,13 @@ public partial class ModifierMedecinView : Window
                 return;   
             }
 
-            int code_fonc = _medecinService.RecupererCodeFonction(FonctionMedecinModif.Text);
+            if ( ComboBoxFonction.SelectedValue == null)
+            {
+                txtMessageMedecin.Text = "Choisissez votre fonction";
+                return; 
+            }
+
+            string code_fonc = ComboBoxFonction.SelectedValuePath;
             //On touche plus au matricule??
         
             // ici on appel le service enregistrerMedecin même si elle est encore vide 
@@ -162,8 +176,8 @@ public partial class ModifierMedecinView : Window
                 Email = EmailMedecinModif.Text,
                 statut = StatutMedecinModif.Text,
                 numero_ordre = numeroOrdreMedecinModif.Text,
-                nom_fonction = FonctionMedecinModif.Text,
-                code_fonction = code_fonc,
+                nom_fonction = "Coucou mes loulouuuu",
+                code_fonction = int.Parse(code_fonc),
                 taux_horaire = Decimal.Parse(TauxHoraireMedecinModif.Text)
             };
 
@@ -172,9 +186,9 @@ public partial class ModifierMedecinView : Window
             if (estEnregistre)
             {
                 txtMessageMedecin.Text = "Modification efféctué avec succès !";
-                //je sais pas comment recharger la liste apres l'ajout et modification zut 
+                //je sais pas comment recharger la liste apres l'ajout et modification zut
+                this.DialogResult = true;  
                 this.Close();
-                // .RechargerListeMedecin();
             }
             else
             {
@@ -199,8 +213,37 @@ public partial class ModifierMedecinView : Window
         EmailMedecinModif.Text = donneMedecin.Email;
         StatutMedecinModif.Text = donneMedecin.statut;
         numeroOrdreMedecinModif.Text = donneMedecin.numero_ordre;
-        FonctionMedecinModif.Text = donneMedecin.nom_fonction;
+        //TXTCodeFonction = donneMedecin.nom_fonction;
+        //ComboBoxFonction.SelectedValuePath = donneMedecin.code_fonction.ToString();
         TauxHoraireMedecinModif.Text = donneMedecin.taux_horaire.ToString();
+    }
+
+    public void AjoutFOnction(object sender, RoutedEventArgs e)
+    {
+        AjoutFonctionView _ajoutFonction = new AjoutFonctionView();
+        _ajoutFonction.Owner = Window.GetWindow(this);
+        bool? estFermer = _ajoutFonction.ShowDialog();
+
+        if (estFermer == true)
+        {
+            RechargerListeFonction();
+            MessageBox.Show("taybe");
+        }
+    }
+
+    public void RechargerListeFonction()
+    {
+        var ListeFonctionBD = _fonctionService.recupererLeListeDesFonctions();
+        CboListeFonction.Clear();
+        foreach (Fonction chaqueFonc in ListeFonctionBD)
+        {
+            CboListeFonction.Add(chaqueFonc);
+        }
+    }
+
+    public void btnAnnulerModifier_Click(object sender, RoutedEventArgs e)
+    {
+        this.Close();
     }
 }
     

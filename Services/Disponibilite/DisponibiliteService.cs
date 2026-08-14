@@ -10,6 +10,8 @@ public partial class DisponibiliteService
 {
     private readonly string _connectionString;
 
+    public string message {set; get; } = string.Empty;
+
     public DisponibiliteService()
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
