@@ -28,6 +28,7 @@
 -- ⚠️ SAUVEGARDE D'ABORD : pg_dump -U postgres -d gestion_patient_db -f sauvegarde_avant_reset.sql
 -- Toutes les dates sont calées sur "aujourd'hui" = 2026-08-06.
 -- =====================================================================
+SET client_encoding = 'UTF8';
 
 BEGIN;
 
