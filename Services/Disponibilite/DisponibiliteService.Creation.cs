@@ -3,30 +3,9 @@ using Dapper;
 using Patients.Models;
 
 namespace Patients.Services;
-<<<<<<< HEAD:Services/Disponibilite/DisponibiliteService.Creation.cs
-
+//Patients.Services.DisponibiliteService
 public partial class DisponibiliteService
 {
-    public bool CreerDisponibilite(Temps nouveauTempsDisponible, int[] tabNumBloc)
-    {
-        int i, heure = 0;
-
-=======
-//Patients.Services.DisponibiliteService
-public class DisponibiliteService
-{
-    private readonly string _connectionString;
-
-    public string message {set; get; } = string.Empty;
-    public DisponibiliteService()
-    {
-        IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
-
-        _connectionString = configuration.GetConnectionString("DefaultConnection")!;
-    }
 
     public bool CreerDisponibilite(Disponibilite donneMedecin ,List<string> tabNumBloc)
     {
@@ -36,7 +15,6 @@ public class DisponibiliteService
         nouveauTempsDisponible.id_medecin = donneMedecin.id_medecin;
         nouveauTempsDisponible.date_disponibilite = donneMedecin.date_disponibilite;
          
->>>>>>> branche_alinot:Services/DisponibiliteService.cs
         //verifier qu'aucune date de disponibilite a une bloque soit creer
         using var connexion = new NpgsqlConnection(_connectionString);
         connexion.Open();
@@ -121,8 +99,6 @@ public class DisponibiliteService
             return false;
         }
     }
-<<<<<<< HEAD:Services/Disponibilite/DisponibiliteService.Creation.cs
-=======
 
 
     public bool CreerDisponibiliteNew(Disponibilite donneMedecin ,List<string> tabNumBloc, DateTime dateSelectionner)
@@ -314,5 +290,4 @@ public class DisponibiliteService
         }
         return AgendaSemaine;
     }
->>>>>>> branche_alinot:Services/DisponibiliteService.cs
 }
