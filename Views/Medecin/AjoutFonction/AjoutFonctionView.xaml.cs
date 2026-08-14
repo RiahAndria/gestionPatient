@@ -38,7 +38,6 @@ public partial class AjoutFonctionView : Window
         bool estAjouter = _fonctionService.AjouterNouvelleFonction(_fonction);
         if (estAjouter)
         {
-            MessageBox.Show("tafiditra");
             TXTMessageAjoutFonction.Text = "Ajout de fonction effectue";
             this.DialogResult = true;
             this.Close();

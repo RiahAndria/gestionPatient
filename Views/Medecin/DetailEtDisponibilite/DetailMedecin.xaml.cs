@@ -86,7 +86,7 @@ public partial class DetailMedecin : UserControl
 
             if (estAjouter)
             {
-                 txtResultat.Text = $"Codes Ajouter ({tagCoches.Count})";
+                txtResultat.Text = $"Ajout éfféctué avec succés";
             } 
             else
             {

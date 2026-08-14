@@ -42,7 +42,7 @@ public partial class MedecinService
         catch (Exception e)
         {
             transaction.Rollback();
-            Console.WriteLine("Erreur lors de M.A.J de medecin : " + e.Message);
+            message = "Erreur lors de M.A.J de medecin : " + e.Message;
             return false;
         }
     }

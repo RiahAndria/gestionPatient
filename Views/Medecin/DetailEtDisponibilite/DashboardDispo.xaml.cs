@@ -187,8 +187,8 @@ namespace Patients.Views.Medecin.DetailEtDisponibilite
 
         private void modifierDateAfficher(DateTime dateDebutSemaine)
         {
-            string dateDebut = dateDebutSemaine.ToString("dd/mm/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
-            string dateFin = dateDebutSemaine.AddDays(6).ToString("dd/mm/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
+            string dateDebut = dateDebutSemaine.ToString("dd/MM/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
+            string dateFin = dateDebutSemaine.AddDays(6).ToString("dd/MM/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
              txtSemaineCourante.Text = $"Semaine du {dateDebut} au {dateFin}";
         }
     }
