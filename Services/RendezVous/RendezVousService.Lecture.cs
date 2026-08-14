@@ -16,7 +16,7 @@ public partial class RendezVousService
             SELECT r.NUMERORDV, 
                    pp.NOM, pp.PRENOM,
                    mp.NOM, mp.PRENOM,
-                   r.DATEHEURERDV, r.MOTIFRDV, r.STATUT,
+                   r.DATEHEURERDV, r.MOTIFRDV, me.STATUT,
                    (SELECT COUNT(*) FROM NOTIFICATION n WHERE n.NUMERORDV = r.NUMERORDV AND n.TYPE_NOTIF = 'RESERVATION') AS NBALERTES
             FROM RENDEZ_VOUS r
             INNER JOIN PATIENT pa ON r.ID = pa.ID
@@ -27,7 +27,7 @@ public partial class RendezVousService
                                 OR mp.NOM ILIKE '%' || @Terme || '%' OR mp.PRENOM ILIKE '%' || @Terme || '%'
                                 OR r.NUMERORDV ILIKE '%' || @Terme || '%')
               AND (@DateFiltre::date IS NULL OR r.DATEHEURERDV::date = @DateFiltre::date)
-              AND (@Statut = '' OR r.STATUT = @Statut)
+              AND (@Statut = '' OR me.STATUT = @Statut)
             ORDER BY r.DATEHEURERDV;";
 
         using var conn = new NpgsqlConnection(_connectionString);
@@ -63,7 +63,7 @@ public partial class RendezVousService
     public RendezVousDetail? ObtenirDetail(string numeroRdv)
     {
         string query = @"
-            SELECT r.NUMERORDV, r.DATEHEURERDV, r.MOTIFRDV, r.STATUT, r.MOTIFANNULATION,
+            SELECT r.NUMERORDV, r.DATEHEURERDV, r.MOTIFRDV, me.STATUT, r.MOTIFANNULATION,
                    pp.ID, pp.NOM, pp.PRENOM, pp.TELEPHONE, pp.MAIL, pa.NUMERODOSSIER,
                    mp.NOM, mp.PRENOM, f.NOM_FONCTION, me.TAUX_HORAIRE
             FROM RENDEZ_VOUS r
