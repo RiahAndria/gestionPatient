@@ -65,7 +65,7 @@ public partial class DetailMedecin : UserControl
             DateTime datePicker = TXTDateDisponibilite.SelectedDate.Value;
             DateTime dateAujourdhui = DateTime.Now;
 
-            if (datePicker <= dateAujourdhui)
+            if (datePicker < dateAujourdhui)
             {
                 txtResultat.Text = "La date sélectionnée est innaccessible ! ";
                 return;
