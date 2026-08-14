@@ -27,7 +27,7 @@ public partial class MedecinService
         catch (Exception e)
         {
             transaction.Rollback();
-            Console.WriteLine("Erreur de suppression de Medecin" + e.Message);
+            message = "Erreur de suppression de Medecin" + e.Message;
             return false;
         }
         
