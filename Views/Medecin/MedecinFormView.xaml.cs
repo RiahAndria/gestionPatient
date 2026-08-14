@@ -26,12 +26,12 @@ public partial class MedecinFormView : UserControl
     public MedecinFormView()
     {
         InitializeComponent();
-        
+        //Définir le DataContext sur la vue elle-même pour autoriser le Binding
+        this.DataContext = this;
         // 1. Appeler le service pour récupérer la liste
         RechargerListeFonction();
 
-        //Définir le DataContext sur la vue elle-même pour autoriser le Binding
-        this.DataContext = this;
+        
     }
 
 
@@ -229,6 +229,12 @@ public partial class MedecinFormView : UserControl
     public void RechargerListeFonction()
     {
         //ListeDesFonctions.ItemsSource = null;
-        ListeDesFonctions = service.recupererLeListeDesFonctions();
+        var ListeFonctionBD = service.recupererLeListeDesFonctions();
+        ListeDesFonctions.Clear();
+        foreach (Fonction chaqueFonction in ListeFonctionBD)
+        {
+            //MessageBox.Show(chaqueFonction.nom_fonction);
+            ListeDesFonctions.Add(chaqueFonction);
+        }
     }
 }
