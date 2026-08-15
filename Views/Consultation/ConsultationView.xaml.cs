@@ -24,14 +24,18 @@ namespace Patients.Views.Consultation
 
             CbGroupeSanguin.ItemsSource = new string[] { "Inconnu", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
             CbGroupeSanguin.SelectedIndex = 0;
-            ChargerRdv();
+           this.Loaded += (s, e) => ChargerRdv();
         }
 
         private void ChargerRdv()
         {
             CbRendezVous.ItemsSource = _rendezVousService.Rechercher("", null, "PLANIFIE");
         }
-
+        // Action du bouton de rafraîchissement 🔄
+        private void BtnRafraichirRdv_Click(object sender, RoutedEventArgs e)
+        {
+           ChargerRdv();
+        }
         private void CbRendezVous_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CbRendezVous.SelectedItem is not RendezVousAffichage rdv)
