@@ -36,4 +36,3 @@ namespace Patient.Views.Medecin.DetailMedecin
         }
     }
 }
-

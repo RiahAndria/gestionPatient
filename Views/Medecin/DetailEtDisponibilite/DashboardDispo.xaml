@@ -1,0 +1,728 @@
+<UserControl x:Class="Patients.Views.Medecin.DetailEtDisponibilite.DashboardDispo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="650" Width="1050"
+             Background="#F9FAFB">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        
+        <!-- EN-TÊTE -->
+        <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock x:Name="txtNomMedecinHeader" 
+                               Text="Dr. Nom du Médecin" 
+                               FontSize="20" FontWeight="Bold" Foreground="#1E3A8A"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="txtSpecialiteHeader"
+                               FontSize="13" Foreground="#4B5563" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="BordelDEspace"
+                                Text="  •  Tel: "
+                                FontSize="13" Foreground="#4B5563" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="txtContactHeader"  
+                               FontSize="13" Foreground="#4B5563" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="btnSemainePrecedente" Content="◄ Semaine précédente" 
+                            Padding="10,6" Background="#E5E7EB" Foreground="#374151" 
+                            FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Margin="0,0,8,0" Click="btnSemainePrecedente_Click"/>
+                    
+                    <TextBlock x:Name="txtSemaineCourante" Text="Semaine du 03/08/2026 au 09/08/2026" 
+                               FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="8,0"/>
+                    
+                    <Button x:Name="btnSemaineSuivante" Content="Semaine suivante ►" 
+                            Padding="10,6" Background="#E5E7EB" Foreground="#374151" 
+                            FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0" Click="btnSemaineSuivante_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5,0,0,10">
+            <Border Width="14" Height="14" Background="#DCFCE7" BorderBrush="#16A34A" BorderThickness="1" CornerRadius="3" VerticalAlignment="Center"/>
+            <TextBlock Text="Disponible" FontSize="12" Foreground="#374151" Margin="6,0,20,0" VerticalAlignment="Center"/>
+
+            <Border Width="14" Height="14" Background="#F3F4F6" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="3" VerticalAlignment="Center"/>
+            <TextBlock Text="Non disponible" FontSize="12" Foreground="#9CA3AF" Margin="6,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="gridPlanning" Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110"/> 
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>   
+                    <ColumnDefinition Width="*"/>  
+                    <ColumnDefinition Width="*"/>  
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>   
+                    <RowDefinition Height="Auto"/> 
+                    <RowDefinition Height="85"/>   
+                    <RowDefinition Height="85"/>   
+                    <RowDefinition Height="Auto"/> 
+                    <RowDefinition Height="85"/>  
+                    <RowDefinition Height="85"/>  
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Grid.Column="0" Background="#1E3A8A"><TextBlock Text="Horaires" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="1" Background="#1E3A8A"><TextBlock Text="Lundi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="2" Background="#1E3A8A"><TextBlock Text="Mardi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="3" Background="#1E3A8A"><TextBlock Text="Mercredi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="4" Background="#1E3A8A"><TextBlock Text="Jeudi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="5" Background="#1E3A8A"><TextBlock Text="Vendredi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Row="0" Grid.Column="6" Background="#1E3A8A"><TextBlock Text="Samedi" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+
+                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Background="#EFF6FF" Padding="8,4">
+                    <TextBlock Text="MATIN" FontWeight="Bold" Foreground="#1D4ED8" FontSize="11"/>
+                </Border>
+                <Border Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="7" Background="#FFF7ED" Padding="8,4">
+                    <TextBlock Text="APRÈS-MIDI" FontWeight="Bold" Foreground="#C2410C" FontSize="11"/>
+                </Border>
+
+                <Border Grid.Row="2" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,1">
+                    <TextBlock Text="08h00 - 10h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="3" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,1">
+                    <TextBlock Text="10h00 - 12h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="5" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,1">
+                    <TextBlock Text="14h00 - 16h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="6" Grid.Column="0" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="0,0,1,0">
+                    <TextBlock Text="16h00 - 18h00" FontSize="11" FontWeight="SemiBold" Foreground="#4B5563" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+            <!--Lundi matin-->
+                <Border Grid.Row="2" Grid.Column="1" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="lun_0800_0815" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock x:Name="txt_mer_0800_0815" Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_0815_0830" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_0830_0845" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_0845_0900" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="lun_0900_0915" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_0915_0930" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_0930_0945" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_0945_1000" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Lundi 10h-12h (Croix rouge) -->
+                <Border Grid.Row="3" Grid.Column="1" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="lun_1000_1015" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1015_1030" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1030_1045" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1045_1100" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="lun_1100_1115" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1115_1130" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1130_1145" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1145_1200" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+                
+                <!--Lundi apre midi-->
+                <Border Grid.Row="5" Grid.Column="1" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="lun_1400_1415" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1415_1430" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1430_1445" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1445_1500" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="lun_1500_1515" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1515_1530" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1530_1545" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1545_1600" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Lundi 16-18h (Croix rouge) -->
+                <Border Grid.Row="6" Grid.Column="1" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="lun_1600_1615" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1615_1630" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1630_1645" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1645_1700" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="lun_1700_1715" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1715_1730" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1730_1745" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="lun_1745_1800" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+            <!--Mardi Matin-->
+                <Border Grid.Row="2" Grid.Column="2" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mar_0800_0815" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_0815_0830" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_0830_0845" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_0845_0900" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mar_0900_0915" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_0915_0930" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_0930_0945" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_0945_1000" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Mardi 10h-12h (Croix rouge) -->
+                <Border Grid.Row="3" Grid.Column="2" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mar_1000_1015" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1015_1030" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1030_1045" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1045_1100" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mar_1100_1115" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1115_1130" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1130_1145" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1145_1200" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!--Mardi apre midi-->
+                <Border Grid.Row="5" Grid.Column="2" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h00 - 14h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h15 - 14h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h30 - 14h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h45 - 15h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h00 - 15h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h15 - 15h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h30 - 15h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h45 - 16h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mar_1400_1415" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1415_1430" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1430_1445" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1445_1500" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mar_1500_1515" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1515_1530" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1530_1545" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1545_1600" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Mardi 16-18h (Croix rouge) -->
+                <Border Grid.Row="6" Grid.Column="2" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h00 - 16h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h15 - 16h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h30 - 16h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h45 - 17h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h00 - 17h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h15 - 17h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h30 - 17h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h45 - 18h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mar_1600_1615" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1615_1630" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1630_1645" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1645_1700" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mar_1700_1715" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1715_1730" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1730_1745" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mar_1745_1800" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+
+
+                
+
+                <!--  ___________________________________________________________________________________________________________ -->
+                
+                <!-- DISPONIBLE : Mercredi 08h-10h (Croix rouge)-->
+                <Border Grid.Row="2" Grid.Column="3" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mer_0800_0815" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_0815_0830" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_0830_0845" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_0845_0900" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mer_0900_0915" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_0915_0930" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_0930_0945" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_0945_1000" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Mercredi 10h-12h (Croix rouge) -->
+                <Border Grid.Row="3" Grid.Column="3" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mer_1000_1015" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1015_1030" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1030_1045" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1045_1100" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mer_1100_1115" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1115_1130" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1130_1145" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1145_1200" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!--Mercreer apre midi-->
+                <Border Grid.Row="5" Grid.Column="3" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h00 - 14h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h15 - 14h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h30 - 14h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h45 - 15h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h00 - 15h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h15 - 15h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h30 - 15h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h45 - 16h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mer_1400_1415" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1415_1430" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1430_1445" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1445_1500" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mer_1500_1515" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1515_1530" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1530_1545" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1545_1600" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Mercredi 16-18h (Croix rouge) -->
+                <Border Grid.Row="6" Grid.Column="3" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h00 - 16h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h15 - 16h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h30 - 16h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h45 - 17h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h00 - 17h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h15 - 17h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h30 - 17h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h45 - 18h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="mer_1600_1615" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1615_1630" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1630_1645" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1645_1700" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="mer_1700_1715" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1715_1730" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1730_1745" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="mer_1745_1800" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+            <!--Jeudi -->
+                <Border Grid.Row="2" Grid.Column="4" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="jeu_0800_0815" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_0815_0830" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_0830_0845" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_0845_0900" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="jeu_0900_0915" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_0915_0930" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_0930_0945" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_0945_1000" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Jeudi 10h-12h (Croix rouge) -->
+                <Border Grid.Row="3" Grid.Column="4" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="jeu_1000_1015" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1015_1030" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1030_1045" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1045_1100" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="jeu_1100_1115" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1115_1130" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1130_1145" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1145_1200" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!--jeudi apres midi-->
+                <Border Grid.Row="5" Grid.Column="4" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h00 - 14h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h15 - 14h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h30 - 14h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h45 - 15h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h00 - 15h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h15 - 15h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h30 - 15h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h45 - 16h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="jeu_1400_1415" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1415_1430" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1430_1445" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1445_1500" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="jeu_1500_1515" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1515_1530" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1530_1545" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1545_1600" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Mardi 16-18h (Croix rouge) -->
+                <Border Grid.Row="6" Grid.Column="4" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h00 - 16h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h15 - 16h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h30 - 16h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h45 - 17h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h00 - 17h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h15 - 17h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h30 - 17h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h45 - 18h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="jeu_1600_1615" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1615_1630" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1630_1645" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1645_1700" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="jeu_1700_1715" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1715_1730" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1730_1745" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="jeu_1745_1800" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!--Vendredi -->
+                <Border Grid.Row="2" Grid.Column="5" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="ven_0800_0815" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_0815_0830" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_0830_0845" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_0845_0900" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="ven_0900_0915" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_0915_0930" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_0930_0945" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_0945_1000" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Vendredi 10h-12h (Croix rouge) -->
+                <Border Grid.Row="3" Grid.Column="5" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="ven_1000_1015" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1015_1030" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1030_1045" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1045_1100" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="ven_1100_1115" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1115_1130" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1130_1145" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1145_1200" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!--Vendredi apres midi-->
+                <Border Grid.Row="5" Grid.Column="5" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h00 - 14h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h15 - 14h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h30 - 14h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h45 - 15h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h00 - 15h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h15 - 15h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h30 - 15h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h45 - 16h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="ven_1400_1415" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1415_1430" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1430_1445" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1445_1500" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="ven_1500_1515" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1515_1530" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1530_1545" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1545_1600" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Vendredi 16-18h (Croix rouge) -->
+                <Border Grid.Row="6" Grid.Column="5" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h00 - 16h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h15 - 16h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h30 - 16h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h45 - 17h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h00 - 17h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h15 - 17h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h30 - 17h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h45 - 18h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="ven_1600_1615" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1615_1630" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1630_1645" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1645_1700" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="ven_1700_1715" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1715_1730" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1730_1745" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="ven_1745_1800" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!--Samedi -->
+                <Border Grid.Row="2" Grid.Column="6" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="sam_0800_0815" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_0815_0830" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_0830_0845" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_0845_0900" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="sam_0900_0915" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_0915_0930" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_0930_0945" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_0945_1000" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : sanedi 10h-12h (Croix rouge) -->
+                <Border Grid.Row="3" Grid.Column="6" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h00 - 08h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h15 - 08h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h30 - 08h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 08h45 - 09h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h00 - 09h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h15 - 09h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h30 - 09h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 09h45 - 10h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="sam_1000_1015" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1015_1030" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1030_1045" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1045_1100" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="sam_1100_1115" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1115_1130" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1130_1145" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1145_1200" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!--Samedi apres midi-->
+                <Border Grid.Row="5" Grid.Column="6" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h00 - 14h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h15 - 14h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h30 - 14h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 14h45 - 15h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h00 - 15h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h15 - 15h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h30 - 15h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 15h45 - 16h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="sam_1400_1415" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1415_1430" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1430_1445" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1445_1500" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="sam_1500_1515" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1515_1530" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1530_1545" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1545_1600" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+                <!-- DISPONIBLE : Samedi 16-18h (Croix rouge) -->
+                <Border Grid.Row="6" Grid.Column="6" Background="#DCFCE7" BorderBrush="#86EFAC" BorderThickness="1" Margin="3" CornerRadius="6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h00 - 16h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h15 - 16h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h30 - 16h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 16h45 - 17h00 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h00 - 17h15 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h15 - 17h30 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h30 - 17h45 -->
+                            <RowDefinition Height="10"/>   <!-- Ligne  : 17h45 - 18h00 -->
+                        </Grid.RowDefinitions>
+                        
+                        <Border x:Name="sam_1600_1615" Grid.Row="0" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1615_1630" Grid.Row="1" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1630_1645" Grid.Row="2" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1645_1700" Grid.Row="3" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>    
+                        <Border x:Name="sam_1700_1715" Grid.Row="4" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1715_1730" Grid.Row="5" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1730_1745" Grid.Row="6" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border x:Name="sam_1745_1800" Grid.Row="7" Background="#ebedf2" BorderBrush="#E5E7EB" BorderThickness="1"><TextBlock Text=" - " FontSize="10" Foreground="#9CA3AF" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <!-- <Button Content="Fermer" Width="110" Height="34" 
+                    Background="#6B7280" Foreground="White" FontWeight="Bold" Cursor="Hand" 
+                    BorderThickness="0" Click="BtnFermer_Click"/> -->
+        </StackPanel>
+    </Grid>
+</UserControl>

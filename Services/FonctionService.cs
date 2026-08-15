@@ -73,6 +73,7 @@ public class FonctionService
             {
                 Fonctions.Add(chaqueFonction);
             }
+            
         } catch (NpgsqlException e)
         {
             Console.WriteLine("erreur d'enregistrement de nouvelle fonction: " + e.Message);
