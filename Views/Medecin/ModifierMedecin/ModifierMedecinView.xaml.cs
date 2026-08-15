@@ -99,6 +99,7 @@ public partial class ModifierMedecinView : Window
 
             // vérif téléphone (jsp comment faire le regex alors j'ai fait le plus classique XD)
             string telephoneRegex = @"^\d{10}$";
+            string telRegex = "^(032|033|034|037|038)[0-9]{7}";
 
             if (string.IsNullOrWhiteSpace(TelephoneMedecinModif.Text))
             {
@@ -111,8 +112,14 @@ public partial class ModifierMedecinView : Window
                 return;
             }
 
-            // vérif email avec regex
-            string emailRegex = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            if (!Regex.IsMatch(TelephoneMedecinModif.Text, telRegex))
+            {
+                txtMessageMedecin.Text = "Le numéro de téléphone doit commencer par : 032/033/034/037/038";
+                return;
+            }
+
+        // vérif email avec regex
+        string emailRegex = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
             if (string.IsNullOrWhiteSpace(EmailMedecinModif.Text))
             {
@@ -160,7 +167,7 @@ public partial class ModifierMedecinView : Window
             }
 
             string code_fonc = string.Empty;
-            code_fonc = ComboBoxFonction?.SelectedValue?.ToString();
+            code_fonc = ComboBoxFonction?.SelectedValue?.ToString() ?? "0";
             
 
             //On touche plus au matricule??

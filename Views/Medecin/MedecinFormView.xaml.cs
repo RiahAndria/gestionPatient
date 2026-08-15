@@ -104,15 +104,23 @@ public partial class MedecinFormView : UserControl
 
         // vérif téléphone (jsp comment faire le regex alors j'ai fait le plus classique XD)
         string telephoneRegex = @"^\d{10}$";
+        string telRegex = "^(032|033|034|037|038)[0-9]{7}";
 
         if (string.IsNullOrWhiteSpace(txtTelephoneMedecin.Text))
         {
             txtMessageMedecin.Text = "Veuillez entrer un numéro de téléphone.";
             return;
         }
+
         if (!Regex.IsMatch(txtTelephoneMedecin.Text, telephoneRegex))
         {
             txtMessageMedecin.Text = "Le numéro de téléphone doit contenir exactement 10 chiffres.";
+            return;
+        }
+
+        if (!Regex.IsMatch(txtTelephoneMedecin.Text, telRegex))
+        {
+            txtMessageMedecin.Text = "Le numéro de téléphone doit commencer par : 032/033/034/037/038";
             return;
         }
 
