@@ -2,6 +2,7 @@ using System.Windows.Controls;
 using Patients.Models;
 using System.Windows;
 using System.Globalization;
+using Microsoft.Extensions.Primitives;
 
 namespace Patients.Views.Medecin.DetailEtDisponibilite;
 public partial class DetailMedecin : UserControl
@@ -65,12 +66,15 @@ public partial class DetailMedecin : UserControl
             DateTime datePicker = TXTDateDisponibilite.SelectedDate.Value;
             DateTime dateAujourdhui = DateTime.Now;
 
-            if (datePicker < dateAujourdhui)
+            //une petite touche magique pour s'echapper au controle hihihiiiiiii
+            DateTime dateSaisie = forcerDate(datePicker);
+
+            if (dateSaisie < dateAujourdhui)
             {
                 txtResultat.Text = "La date sélectionnée est innaccessible ! ";
                 return;
-            }
-            
+            } 
+
             //verifier le jours choisi
             string jourChoisi = datePicker.ToString("dddd", CultureInfo.GetCultureInfo("fr-Fr")).ToLower();
             if (jourChoisi == "dimanche")
@@ -86,13 +90,25 @@ public partial class DetailMedecin : UserControl
 
             if (estAjouter)
             {
-                txtResultat.Text = $"Ajout éfféctué avec succés";
+                txtResultat.Text = $"Ajout effectué avec succés";
             } 
             else
             {
                 txtResultat.Text = _DisponibiliteService.message;
             }
         }
+
+    private DateTime forcerDate(DateTime datePicker)
+    {
+        int mm = DateTime.Now.Minute;
+        int hh = DateTime.Now.Hour;
+        int ss = DateTime.Now.Second;
+        int year = datePicker.Year;
+        int day = datePicker.Day;
+        int month = datePicker.Month;
+
+        return new DateTime(year , month, day, hh, mm + 10, ss);
+    }
 }
 
 //
