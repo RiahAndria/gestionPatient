@@ -67,13 +67,22 @@ public partial class DisponibiliteService
         DateTime dateHeureBloc = date.ToDateTime(TimeOnly.FromTimeSpan(bloc.HeureDebut));
         var resultat = new List<MedecinDisponible>();
 
-        string query = @"
+        var codesFonctions = ObtenirCodesFonctionsCompatibles(codeFonction);
+
+        if (codesFonctions.Count == 0)
+        {
+            codesFonctions = new List<int> { codeFonction };
+        }
+
+        string placeholders = string.Join(", ", codesFonctions.Select((_, index) => $"@CodeFonction{index}"));
+
+        string query = $@"
             SELECT m.ID_MEDECIN, p.NOM, p.PRENOM, f.NOM_FONCTION, m.TAUX_HORAIRE
             FROM MEDECIN m
             INNER JOIN PERSONNE p ON p.ID = m.ID_MEDECIN
             INNER JOIN FONCTION f ON f.CODE_FONCTION = m.CODE_FONCTION
-            WHERE m.CODE_FONCTION = @CodeFonction
-              AND LOWER(m.STATUT) = 'actif'
+            WHERE m.CODE_FONCTION IN ({placeholders})
+              AND LOWER(TRIM(m.STATUT)) = 'actif'
               AND NOT EXISTS (
                   SELECT 1 FROM RENDEZ_VOUS r
                   WHERE r.ID_HER_2 = m.ID_MEDECIN
@@ -84,7 +93,10 @@ public partial class DisponibiliteService
 
         using var conn = new NpgsqlConnection(_connectionString);
         using var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("CodeFonction", codeFonction);
+        for (int i = 0; i < codesFonctions.Count; i++)
+        {
+            cmd.Parameters.AddWithValue($"CodeFonction{i}", codesFonctions[i]);
+        }
         cmd.Parameters.AddWithValue("DateHeure", dateHeureBloc);
 
         conn.Open();
@@ -105,10 +117,17 @@ public partial class DisponibiliteService
 
     private bool AuMoinsUnMedecinLibre(NpgsqlConnection conn, int codeFonction, DateTime dateHeureBloc)
     {
-        string query = @"
+        var codesFonctions = ObtenirCodesFonctionsCompatibles(codeFonction);
+        if (codesFonctions.Count == 0)
+        {
+            codesFonctions = new List<int> { codeFonction };
+        }
+
+        string placeholders = string.Join(", ", codesFonctions.Select((_, index) => $"@CodeFonction{index}"));
+        string query = $@"
             SELECT COUNT(*) FROM MEDECIN m
-            WHERE m.CODE_FONCTION = @CodeFonction
-              AND LOWER(m.STATUT) = 'actif'
+            WHERE m.CODE_FONCTION IN ({placeholders})
+              AND LOWER(TRIM(m.STATUT)) = 'actif'
               AND NOT EXISTS (
                   SELECT 1 FROM RENDEZ_VOUS r
                   WHERE r.ID_HER_2 = m.ID_MEDECIN
@@ -117,10 +136,34 @@ public partial class DisponibiliteService
               );";
 
         using var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("CodeFonction", codeFonction);
+        for (int i = 0; i < codesFonctions.Count; i++)
+        {
+            cmd.Parameters.AddWithValue($"CodeFonction{i}", codesFonctions[i]);
+        }
         cmd.Parameters.AddWithValue("DateHeure", dateHeureBloc);
 
         var count = (long)cmd.ExecuteScalar()!;
         return count > 0;
+    }
+
+    private List<int> ObtenirCodesFonctionsCompatibles(int codeFonction)
+    {
+        if (codeFonction <= 0)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+            using var cmd = new NpgsqlCommand("SELECT code_fonction FROM fonction ORDER BY code_fonction", conn);
+            using var reader = cmd.ExecuteReader();
+
+            var tous = new List<int>();
+            while (reader.Read())
+            {
+                tous.Add(reader.GetInt32(0));
+            }
+
+            return tous;
+        }
+
+        return new ServiceMedicalLookupService().ObtenirCodesFonctionsCompatibles(codeFonction);
     }
 }

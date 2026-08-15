@@ -8,6 +8,17 @@ namespace Patients.Services
     {
         public ResultatEnregistrementConsultation EnregistrerConsultation(Consultation consultation, Ordonnance? ordonnance)
         {
+            // Vérifier si une consultation existe déjà pour ce rendez-vous
+            var consultationExistante = ObtenirParNumeroRendezVous(consultation.NumeroRdv);
+            if (consultationExistante != null)
+            {
+                return new ResultatEnregistrementConsultation
+                {
+                    Succes = false,
+                    MessageErreur = $"Une consultation existe déjà pour ce rendez-vous (N° {consultationExistante.NumeroConsultation}). Veuillez sélectionner un autre rendez-vous."
+                };
+            }
+
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
             using var transaction = conn.BeginTransaction();

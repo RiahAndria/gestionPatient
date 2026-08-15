@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Patients.Models;
 
 namespace Patients.Services;
@@ -23,7 +26,7 @@ public class ServiceMedicalLookupService
     // possible (consultations courantes, sans plateau technique
     // particulier). Toute fonction absente de cette liste est
     // consideree comme necessitant une reservation a l'avance.
-    private static readonly HashSet<string> _fonctionsSansDelai = new(System.StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> _fonctionsSansDelai = new(StringComparer.OrdinalIgnoreCase)
     {
         "Médecine Générale",
         "Medecine Generale",
@@ -33,14 +36,71 @@ public class ServiceMedicalLookupService
 
     public List<ServiceMedical> ObtenirServicesDisponibles()
     {
-        return _fonctions.recupererLeListeDesFonctions()
+        var fonctions = _fonctions.recupererLeListeDesFonctions();
+
+        var services = fonctions
+            .GroupBy(f => NormaliserNomFonction(f.nom_fonction))
+            .Select(g => g.OrderBy(f => f.code_fonction).First())
+            .OrderBy(f => f.nom_fonction, StringComparer.OrdinalIgnoreCase)
             .Select(f => new ServiceMedical
             {
                 CodeFonction = f.code_fonction,
                 NomService = f.nom_fonction,
-                NecessiteDelai = !_fonctionsSansDelai.Contains(f.nom_fonction)
+                NecessiteDelai = !EstFonctionSansDelai(f.nom_fonction)
             })
-            .OrderBy(s => s.NomService)
             .ToList();
+
+        return services;
+    }
+
+    public List<int> ObtenirCodesFonctionsCompatibles(int codeFonction)
+    {
+        var fonctions = _fonctions.recupererLeListeDesFonctions();
+        var service = fonctions.FirstOrDefault(f => f.code_fonction == codeFonction);
+
+        if (service is null)
+        {
+            return new List<int> { codeFonction };
+        }
+
+        string nomNormalise = NormaliserNomFonction(service.nom_fonction);
+
+        return fonctions
+            .Where(f => NormaliserNomFonction(f.nom_fonction) == nomNormalise)
+            .Select(f => f.code_fonction)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+    }
+
+    private static bool EstFonctionSansDelai(string nomFonction)
+    {
+        if (string.IsNullOrWhiteSpace(nomFonction))
+        {
+            return false;
+        }
+
+        return _fonctionsSansDelai.Contains(nomFonction)
+            || _fonctionsSansDelai.Contains(NormaliserNomFonction(nomFonction));
+    }
+
+    private static string NormaliserNomFonction(string nomFonction)
+    {
+        if (string.IsNullOrWhiteSpace(nomFonction))
+        {
+            return string.Empty;
+        }
+
+        string sansAccents = new string(
+            nomFonction.Normalize(NormalizationForm.FormD)
+                .Where(ch => CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
+                .ToArray());
+
+        return sansAccents
+            .Trim()
+            .Replace("-", " ")
+            .Replace("_", " ")
+            .Replace("  ", " ")
+            .ToLowerInvariant();
     }
 }

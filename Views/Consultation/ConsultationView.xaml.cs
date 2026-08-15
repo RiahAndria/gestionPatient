@@ -29,7 +29,8 @@ namespace Patients.Views.Consultation
 
         private void ChargerRdv()
         {
-            CbRendezVous.ItemsSource = _rendezVousService.Rechercher("", null, "PLANIFIE");
+            // Récupère tous les rendez-vous de la base (passés et futurs) sans filtre par statut
+            CbRendezVous.ItemsSource = _rendezVousService.Rechercher("", null, "");
         }
         // Action du bouton de rafraîchissement 🔄
         private void BtnRafraichirRdv_Click(object sender, RoutedEventArgs e)
@@ -141,7 +142,7 @@ namespace Patients.Views.Consultation
             var res = _consultationService.EnregistrerConsultation(consultation, ord);
             if (!res.Succes)
             {
-                MessageBox.Show($"Erreur SQL : {res.MessageErreur}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Erreur : {res.MessageErreur}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
