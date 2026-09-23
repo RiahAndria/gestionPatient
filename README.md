@@ -358,4 +358,4 @@ Le seed est facultatif. Le relancer recharge les données de démonstration, mai
 
 ## Licence
 
-Aucun fichier de licence n'est actuellement fourni dans le dépôt. Ajouter une licence explicite avant toute distribution publique ou réutilisation externe du projet.
+Ce projet est distribué sous licence **MIT**. Consultez le fichier [LICENCE](LICENCE) pour connaître les conditions d'utilisation, de modification et de redistribution.
