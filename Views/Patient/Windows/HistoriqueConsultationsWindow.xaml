@@ -22,6 +22,8 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Date" Binding="{Binding DateConsultation, StringFormat=dd/MM/yyyy}" Width="110"/>
                     <DataGridTextColumn Header="N° consultation" Binding="{Binding NumeroConsultation}" Width="130"/>
+                    <DataGridTextColumn Header="Médecin" Binding="{Binding NomMedecin}" Width="150"/>
+                    <DataGridTextColumn Header="Fonction" Binding="{Binding FonctionMedecin}" Width="120"/>
                     <DataGridTextColumn Header="Diagnostic" Binding="{Binding Diagnostique}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>

@@ -1,24 +1,4 @@
--- =====================================================================
--- gestion_patient_db — schéma complet (tables, séquences, contraintes)
--- =====================================================================
--- Extrait tel quel d'un export réel de la base (pg_dump --schema-only),
--- fourni par l'équipe le 10/08/2026. Ce fichier est la RÉFÉRENCE du
--- schéma pour toute l'équipe : en cas de doute sur une colonne, une
--- contrainte ou une clé étrangère, c'est ici qu'il faut regarder (pas
--- dans le code C#, qui peut se tromper ou être en retard sur la base réelle).
---
--- Pour recréer une base vide à partir de zéro :
---   createdb -U postgres gestion_patient_db
---   psql -U postgres -d gestion_patient_db -f schema.sql
--- =====================================================================
 
---
--- PostgreSQL database dump
---
-
-
--- Dumped from database version 18.4
--- Dumped by pg_dump version 18.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -36,10 +16,6 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
---
--- Name: consultation; Type: TABLE; Schema: public; Owner: postgres
---
-
 CREATE TABLE public.consultation (
     numeroconsultation character varying(50) NOT NULL,
     diagnostique text NOT NULL,
@@ -50,9 +26,6 @@ CREATE TABLE public.consultation (
 
 ALTER TABLE public.consultation OWNER TO postgres;
 
---
--- Name: disponibilite; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.disponibilite (
     id_medecin character varying(50) NOT NULL,
@@ -63,9 +36,6 @@ CREATE TABLE public.disponibilite (
 
 ALTER TABLE public.disponibilite OWNER TO postgres;
 
---
--- Name: dossier_medical; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.dossier_medical (
     numerodossier character varying(50) NOT NULL,
@@ -79,9 +49,6 @@ CREATE TABLE public.dossier_medical (
 
 ALTER TABLE public.dossier_medical OWNER TO postgres;
 
---
--- Name: fonction; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.fonction (
     code_fonction integer NOT NULL,
@@ -91,9 +58,6 @@ CREATE TABLE public.fonction (
 
 ALTER TABLE public.fonction OWNER TO postgres;
 
---
--- Name: fonction_code_fonction_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 ALTER TABLE public.fonction ALTER COLUMN code_fonction ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public.fonction_code_fonction_seq
@@ -105,9 +69,6 @@ ALTER TABLE public.fonction ALTER COLUMN code_fonction ADD GENERATED ALWAYS AS I
 );
 
 
---
--- Name: medecin; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.medecin (
     id_medecin character varying(50) NOT NULL,
@@ -120,9 +81,6 @@ CREATE TABLE public.medecin (
 
 ALTER TABLE public.medecin OWNER TO postgres;
 
---
--- Name: notification; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.notification (
     numeronotif character varying(50) NOT NULL,
@@ -137,8 +95,6 @@ CREATE TABLE public.notification (
 ALTER TABLE public.notification OWNER TO postgres;
 
 --
--- Name: ordonance; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.ordonance (
     numeroprescritption character varying(50) NOT NULL,
@@ -151,9 +107,6 @@ CREATE TABLE public.ordonance (
 
 ALTER TABLE public.ordonance OWNER TO postgres;
 
---
--- Name: paiement; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.paiement (
     numeropaiement character varying(50) NOT NULL,
@@ -171,9 +124,6 @@ CREATE TABLE public.paiement (
 
 ALTER TABLE public.paiement OWNER TO postgres;
 
---
--- Name: patient; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.patient (
     id character varying(50) NOT NULL,
@@ -192,9 +142,6 @@ CREATE TABLE public.patient (
 
 ALTER TABLE public.patient OWNER TO postgres;
 
---
--- Name: personne; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.personne (
     id character varying(50) NOT NULL,
@@ -210,9 +157,6 @@ CREATE TABLE public.personne (
 
 ALTER TABLE public.personne OWNER TO postgres;
 
---
--- Name: rendez_vous; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.rendez_vous (
     numerordv character varying(50) NOT NULL,

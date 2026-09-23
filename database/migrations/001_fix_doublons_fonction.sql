@@ -1,22 +1,3 @@
--- Fusion des fonctions en double dans la table FONCTION.
--- A executer une seule fois sur gestion_patient_db (psql, pgAdmin, DBeaver...).
---
--- Constat (fourni par l'utilisateur) :
---   SELECT nom_fonction FROM fonction;
---     Chirurgien
---     Cardiologue
---     Dermatologue
---     Medecin generaliste
---     Chirurgie generale
---     Généraliste
---     Pédiatre
---
--- "Chirurgien" et "Chirurgie generale" designent la meme specialite,
--- de meme que "Medecin generaliste" et "Généraliste". On garde une
--- seule ligne par specialite (celle dont le nom est deja utilise
--- comme reference dans Services/ServiceMedicalLookupService.cs cote
--- code : "Chirurgie generale" et "Généraliste"), on reattribue les
--- medecins concernes, puis on supprime la ligne devenue inutile.
 
 BEGIN;
 

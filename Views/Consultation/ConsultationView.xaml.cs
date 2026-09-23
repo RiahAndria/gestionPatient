@@ -24,14 +24,19 @@ namespace Patients.Views.Consultation
 
             CbGroupeSanguin.ItemsSource = new string[] { "Inconnu", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
             CbGroupeSanguin.SelectedIndex = 0;
-            ChargerRdv();
+           this.Loaded += (s, e) => ChargerRdv();
         }
 
         private void ChargerRdv()
         {
-            CbRendezVous.ItemsSource = _rendezVousService.Rechercher("", null, "PLANIFIE");
+            // Récupère tous les rendez-vous de la base (passés et futurs) sans filtre par statut
+            CbRendezVous.ItemsSource = _rendezVousService.Rechercher("", null, "");
         }
-
+        // Action du bouton de rafraîchissement 🔄
+        private void BtnRafraichirRdv_Click(object sender, RoutedEventArgs e)
+        {
+           ChargerRdv();
+        }
         private void CbRendezVous_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CbRendezVous.SelectedItem is not RendezVousAffichage rdv)
@@ -137,7 +142,7 @@ namespace Patients.Views.Consultation
             var res = _consultationService.EnregistrerConsultation(consultation, ord);
             if (!res.Succes)
             {
-                MessageBox.Show($"Erreur SQL : {res.MessageErreur}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Erreur : {res.MessageErreur}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 

@@ -74,8 +74,22 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="🔍 Rendez-vous :" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <ComboBox x:Name="CbRendezVous" Grid.Column="1" DisplayMemberPath="PatientNom" Height="28" SelectionChanged="CbRendezVous_SelectionChanged"/>
+                <!--  <ComboBox x:Name="CbRendezVous" Grid.Column="1" DisplayMemberPath="PatientNom" Height="28" SelectionChanged="CbRendezVous_SelectionChanged"/> -->
+<!-- Conteneur pour le ComboBox + Bouton Rafraîchir -->
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
+            <ComboBox x:Name="CbRendezVous" Grid.Column="0" DisplayMemberPath="PatientNom" Height="28" SelectionChanged="CbRendezVous_SelectionChanged"/>
+
+            <!-- BOUTON DE RAFRAÎCHISSEMENT -->
+            <Button Grid.Column="1" Content="🔄" Width="28" Height="28" Margin="5,0,0,0"
+                    Click="BtnRafraichirRdv_Click"
+                    ToolTip="Rafraîchir la liste des rendez-vous"
+                    Background="#E2E8F0" BorderBrush="#CBD5E1" Cursor="Hand"/>
+        </Grid>
                 <!-- Cartouche d'information du patient sélectionné -->
                 <Border Grid.Column="2" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="4" Margin="12,0,0,0" Padding="8,4">
                     <TextBlock x:Name="LblDetailRdv" FontSize="12" FontWeight="Bold" Foreground="#1E40AF" VerticalAlignment="Center" Text="👤 Aucun patient sélectionné"/>
@@ -198,7 +212,7 @@
 
         <!-- Actions -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-            <Button Content="Rappels (24h)" Background="#D97706" Foreground="White" Padding="12,6" BorderThickness="0" Margin="0,0,8,0" Click="BtnRappels_Click"/>
+            <!-- <Button Content="Rappels (24h)" Background="#D97706" Foreground="White" Padding="12,6" BorderThickness="0" Margin="0,0,8,0" Click="BtnRappels_Click"/> -->
             <Button Content="Enregistrer la Consultation" Background="#2563EB" Foreground="White" FontWeight="Bold" Padding="14,6" BorderThickness="0" Click="BtnEnregistrer_Click"/>
         </StackPanel>
     </Grid>

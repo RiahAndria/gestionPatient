@@ -7,12 +7,12 @@ namespace Patients.Views.Patient.Windows;
 
 public partial class HistoriqueConsultationsWindow : Window
 {
-    public HistoriqueConsultationsWindow(Models.Patient patient, IEnumerable<Patients.Models.Consultation> consultations)
+    public HistoriqueConsultationsWindow(Models.Patient patient, IEnumerable<Patients.Models.ConsultationAffichage> consultations)
     {
         InitializeComponent();
         txtPatient.Text = $"Patient : {patient.Nom} {patient.Prenom}  •  Dossier : {patient.NumeroDossier}";
 
-        var listeConsultations = consultations?.ToList() ?? new List<Patients.Models.Consultation>();
+        var listeConsultations = consultations?.ToList() ?? new List<Patients.Models.ConsultationAffichage>();
 
         if (listeConsultations.Count == 0)
         {
