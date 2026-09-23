@@ -189,7 +189,7 @@ namespace Patients.Views.Medecin.DetailEtDisponibilite
         {
             string dateDebut = dateDebutSemaine.ToString("dd/MM/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
             string dateFin = dateDebutSemaine.AddDays(6).ToString("dd/MM/yyyy" , CultureInfo.GetCultureInfo("fr-Fr"));
-             txtSemaineCourante.Text = $"Semaine du {dateDebut} au {dateFin}";
+            txtSemaineCourante.Text = $"Semaine du {dateDebut} au {dateFin}";
         }
     }
 }

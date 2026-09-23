@@ -9,6 +9,7 @@ using Patients.Services;
 using Patients.Views.Medecin.ListeMedecin;
 using System.Windows.Documents;
 using Microsoft.VisualBasic;
+using System.Collections.ObjectModel;
 using Patients.Views.Medecin.AjoutFonction;
 
 
@@ -21,7 +22,7 @@ public partial class MedecinFormView : UserControl
     public FonctionService service = new FonctionService();
 
     public int TXTCodeFonction { get; set; }
-    public List<Fonction> ListeDesFonctions { get; set; } = new List<Fonction>();
+    public ObservableCollection<Fonction> ListeDesFonctions { get; set; } = new ObservableCollection<Fonction>();
 
     public MedecinFormView()
     {
@@ -104,7 +105,7 @@ public partial class MedecinFormView : UserControl
 
         // vérif téléphone (jsp comment faire le regex alors j'ai fait le plus classique XD)
         string telephoneRegex = @"^\d{10}$";
-        string telRegex = "^(032|033|034|037|038)[0-9]{7}";
+        string telRegex = "^(032|033|034|035|037|038)[0-9]{7}";
 
         if (string.IsNullOrWhiteSpace(txtTelephoneMedecin.Text))
         {
@@ -237,7 +238,7 @@ public partial class MedecinFormView : UserControl
     public void RechargerListeFonction()
     {
         //ListeDesFonctions.ItemsSource = null;
-        var ListeFonctionBD = service.recupererLeListeDesFonctions();
+        var ListeFonctionBD = _fonctionService.recupererLeListeDesFonctions();
         ListeDesFonctions.Clear();
         foreach (Fonction chaqueFonction in ListeFonctionBD)
         {
@@ -245,4 +246,5 @@ public partial class MedecinFormView : UserControl
             ListeDesFonctions.Add(chaqueFonction);
         }
     }
+
 }
